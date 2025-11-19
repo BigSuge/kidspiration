@@ -161,15 +161,15 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     return null;
   }
 
+  // Parent/Teacher and Pastor/Leader Dashboard (same experience)
+  if (user.type === 'parent' || user.type === 'leader' || (user as any).type === 'pastor') {
+    return <ParentDashboard onNavigate={onNavigate} />;
+  }
+
   // Kids Dashboard
   if (user.type === 'kid') {
     const dashboardCards = [
       {
-
-      // Parent/Teacher and Pastor/Leader Dashboard (same experience)
-      if (user.type === 'parent' || user.type === 'leader' || (user as any).type === 'pastor') {
-        return <ParentDashboard onNavigate={onNavigate} />;
-      }
         title: 'Play Bible Games',
         description: 'Bible quizzes, puzzles, word search & more!',
         icon: Gamepad2,
