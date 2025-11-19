@@ -1,10 +1,27 @@
 # Dependencies
 node_modules/
+**/node_modules/
 /.pnp
 .pnp.js
+/.npm
+.yarn/
+.turbo
+.parcel-cache
+.vite
+
+# Build outputs
+/.next
+.expo/
+.svelte-kit/
+/.cache
+/tmp
+*.tmp
 
 # Testing
 /coverage
+.nyc_output
+/.jest-cache
+/.jest-test-results
 
 # Production
 /build
@@ -18,22 +35,32 @@ node_modules/
 .env.production.local
 
 # Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+*.pid
+*.seed
+*.pid.lock
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
+.vs/
+.history
 .DS_Store
+**/.DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.iml
+*.orig
 
 # Vercel
 .vercel
@@ -41,11 +68,32 @@ lerna-debug.log*
 # TypeScript
 *.tsbuildinfo
 
-# Optional npm cache directory
-.npm
-
 # Optional eslint cache
 .eslintcache
+.stylelintcache
 
 # Misc
-.cache
+.husky/_/
+.firebaserc.local
+.firebase/
+.sass-cache
+.grunt/
+.bower-cache
+.bower-registry
+.bower-tmp
+*.local
+*.local.*
+*.code-workspace
+
+Kidspiration website.zip
+*.zip
+*.tar
+*.tgz
+
+# OS metadata
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+Kidspiration website.zip
