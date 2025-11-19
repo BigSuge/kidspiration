@@ -285,3 +285,4 @@ export const impactStories = [
           '"Every crusade adds another wave of impact. We are seeing children in Cuba strengthened in the Word and filled with the Holy Spirit. This is a movement of champions!" - MVP Minister, Kidspiration HTTN Crusades for Kids'
       }
     }
+  ];
