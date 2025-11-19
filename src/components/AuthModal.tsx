@@ -13,7 +13,7 @@ interface AuthModalProps {
 type UserType = 'kid' | 'parent' | 'leader' | null;
 type AuthMode = 'select' | 'login' | 'signup' | 'verify-otp' | 'forgot-password' | 'reset-password';
 
-const adultAssetAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869.wav'); // Placeholder
+const adultAssistanceAudio = new Audio('/assets/audio/signup onboarding.mp3');
 
 export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const { login } = useAuth();
@@ -105,13 +105,11 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   };
 
   const playAdultAssistanceAudio = () => {
-    // Play audio message for kids
-    const utterance = new SpeechSynthesisUtterance(
-      "Hello! To sign up, you need an adult's help. Please ask a parent or teacher to help you create your account."
-    );
-    utterance.rate = 0.9;
-    utterance.pitch = 1.2;
-    window.speechSynthesis.speak(utterance);
+    adultAssistanceAudio.pause();
+    adultAssistanceAudio.currentTime = 0;
+    adultAssistanceAudio.play().catch(() => {
+      /* Ignored: autoplay restrictions will surface UI controls elsewhere */
+    });
   };
 
   const handleUserTypeSelect = (type: UserType) => {
