@@ -7,22 +7,16 @@ import {
   Heart,
   Trophy,
   Sparkles,
-  Video,
-  Users,
-  BarChart3,
-  Calendar,
-  Gift,
+  
+  
   Star,
-  Music,
-  Palette,
   Crown,
   Zap,
-  Globe,
-  Book,
+  
   Newspaper,
   PartyPopper,
   ArrowRight,
-  Check,
+  
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { ParentDashboard } from './ParentDashboard';
@@ -165,6 +159,11 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
   if (!user) {
     return null;
+  }
+
+  // Parent/Teacher and Pastor/Leader Dashboard (same experience)
+  if (user.type === 'parent' || user.type === 'leader' || (user as any).type === 'pastor') {
+    return <ParentDashboard onNavigate={onNavigate} />;
   }
 
   // Kids Dashboard
@@ -566,7 +565,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                       poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect fill='%23EC4899' width='800' height='450'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white' font-family='sans-serif'%3E▶ Play Video%3C/text%3E%3C/svg%3E"
                     >
                       <source
-                        src="https://kidspiration.world/videos/kids_health_confessions.mp4"
+                        src="/videos/kids_health_confessions.mp4"
                         type="video/mp4"
                       />
                       Your browser does not support the video tag.
@@ -1160,110 +1159,11 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     );
   }
 
-  // Parent/Teacher Dashboard
-  if (user.type === 'parent') {
+  // Parent/Teacher and Pastor/Leader Dashboard (same experience)
+  if (user.type === 'parent' || user.type === 'leader' || (user as any).type === 'pastor') {
     return <ParentDashboard onNavigate={onNavigate} />;
   }
-
-  // Pastor/Leader Dashboard
-  if (user.type === 'pastor') {
-    const pastorCards = [
-      {
-        title: 'Analytics',
-        description: 'View engagement and statistics',
-        icon: BarChart3,
-        gradient: 'from-[#FF6B9D] to-[#F472B6]',
-        action: () => {},
-        delay: 0.1,
-      },
-      {
-        title: 'ER100 Campaign',
-        description: 'Everyone Reach 100 initiative',
-        icon: Users,
-        gradient: 'from-[#A78BFA] to-[#8B5CF6]',
-        action: () => onNavigate?.('er100'),
-        delay: 0.2,
-      },
-      {
-        title: 'Resources',
-        description: 'Materials for your ministry',
-        icon: BookOpen,
-        gradient: 'from-[#4ECDC4] to-[#06B6D4]',
-        action: () => onNavigate?.('explore'),
-        delay: 0.3,
-      },
-      {
-        title: 'Glowfest Planning',
-        description: 'Organize events in your area',
-        icon: Calendar,
-        gradient: 'from-[#FBBF24] to-[#F59E0B]',
-        action: () => onNavigate?.('home'),
-        delay: 0.4,
-      },
-      {
-        title: 'Translators Network',
-        description: 'Join the translation team',
-        icon: Globe,
-        gradient: 'from-[#EC4899] to-[#BE185D]',
-        action: () => onNavigate?.('translators'),
-        delay: 0.5,
-      },
-      {
-        title: 'Impact Stories',
-        description: 'Share testimonies',
-        icon: Heart,
-        gradient: 'from-[#10B981] to-[#059669]',
-        action: () => onNavigate?.('impact-stories'),
-        delay: 0.6,
-      },
-    ];
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-32 pb-20">
-        <div className="container mx-auto px-4 sm:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B9D] via-[#A78BFA] to-[#4ECDC4] mb-4 text-5xl font-extrabold">
-              Welcome, {user.title || ''} {user.firstName}!
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto text-[24px]">
-              Your Pastor/Leader Dashboard
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {pastorCards.map((card) => (
-              <motion.div
-                key={card.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: card.delay }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="group relative cursor-pointer"
-                onClick={card.action}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} rounded-3xl blur-xl opacity-0 group-hover:opacity-30 transition-opacity`} />
-                <div className="relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${card.gradient} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
-                    <card.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-gray-900 mb-2 text-2xl font-bold">
-                    {card.title}
-                  </h3>
-                  <p className="text-gray-600 text-[18px]">
-                    {card.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  
 
   return null;
 }

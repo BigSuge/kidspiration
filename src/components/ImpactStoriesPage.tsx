@@ -79,7 +79,7 @@ export function ImpactStoriesPage({ onViewStory, onAuthClick }: ImpactStoriesPag
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black">
               <video
                 className="w-full h-full object-cover"
-                src="https://cdn1.kingscloud.co/kingscloud/files/5f567790890bc50001bf1b5f/a82452e9-756d-4bad-8590-d2ec03f51ef9?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJZ7R2RYYHYMD7OLA%2F20251114%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251114T085429Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=72793e28b78cd9b5cf49ec87e2229460314d0bca9423852b73113474a173c78f"
+                src="/videos/KIDSPIRATION_IMPACT.mp4"
                 controls
                 controlsList="nodownload"
                 playsInline
