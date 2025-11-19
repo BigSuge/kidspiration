@@ -79,7 +79,7 @@ export function ImpactStoriesPage({ onViewStory, onAuthClick }: ImpactStoriesPag
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black">
               <video
                 className="w-full h-full object-cover"
-                src="https://kidspiration.org/videos/KIDSPIRATION_IMPACT.mp4"
+                src="/videos/KIDSPIRATION_IMPACT.mp4"
                 controls
                 controlsList="nodownload"
                 playsInline

@@ -165,6 +165,11 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   if (user.type === 'kid') {
     const dashboardCards = [
       {
+
+      // Parent/Teacher and Pastor/Leader Dashboard (same experience)
+      if (user.type === 'parent' || user.type === 'leader' || (user as any).type === 'pastor') {
+        return <ParentDashboard onNavigate={onNavigate} />;
+      }
         title: 'Play Bible Games',
         description: 'Bible quizzes, puzzles, word search & more!',
         icon: Gamepad2,
@@ -560,7 +565,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                       poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450'%3E%3Crect fill='%23EC4899' width='800' height='450'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white' font-family='sans-serif'%3E▶ Play Video%3C/text%3E%3C/svg%3E"
                     >
                       <source
-                        src="https://kidspiration.world/videos/kids_health_confessions.mp4"
+                        src="/videos/kids_health_confessions.mp4"
                         type="video/mp4"
                       />
                       Your browser does not support the video tag.

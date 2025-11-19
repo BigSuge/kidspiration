@@ -3,7 +3,7 @@ export default function HomepageGlowfestVideo() {
     <div className="relative w-full h-full" data-name="Homepage Glowfest Video">
       <video
         className="absolute inset-0 w-full h-full object-cover"
-        src="https://kidspiration.org/videos/KIDSPIRATION_GLOWFEST_HD.mp4"
+        src="/videos/KIDSPIRATION_GLOWFEST_HD.mp4"
         controls
         controlsList="nodownload"
         playsInline
