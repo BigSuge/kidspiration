@@ -6,7 +6,7 @@ import { Button } from '../ui/button';
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const MAX_HISTORY = 30;
-const BRUSH_OPACITY = 0.75; // Keep brush strokes translucent so template lines stay visible
+const BRUSH_OPACITY = 0.1; // Keep brush strokes translucent so template lines stay visible
 
 interface ArtworkTemplate {
   id: string;
