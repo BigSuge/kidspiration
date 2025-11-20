@@ -6,6 +6,7 @@ import { Button } from '../ui/button';
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const MAX_HISTORY = 30;
+const BRUSH_OPACITY = 0.75; // Keep brush strokes translucent so template lines stay visible
 
 interface ArtworkTemplate {
   id: string;
@@ -247,6 +248,7 @@ export function ColorMeGame({ onBack }: ColorMeGameProps) {
     ctx.lineJoin = 'round';
     ctx.lineWidth = brushSize;
     ctx.strokeStyle = selectedColor;
+    ctx.globalAlpha = isEraser ? 1 : BRUSH_OPACITY;
     ctx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
   };
 
