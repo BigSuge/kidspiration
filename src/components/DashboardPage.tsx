@@ -20,9 +20,7 @@ import {
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { ParentDashboard } from './ParentDashboard';
-
-// External URL for HTTN Magazine - to be updated when available
-export const HTTN_MAGAZINE_URL = '#httn-magazine'; // TODO: Replace with actual external URL
+import { HTTN_MAGAZINE_URL } from '../config/urls';
 
 interface DashboardPageProps {
   onNavigate?: (page: string) => void;
