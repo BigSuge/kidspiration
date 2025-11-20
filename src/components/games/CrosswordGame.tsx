@@ -24,16 +24,16 @@ type CellPointer = {
   direction: 'across' | 'down';
 };
 
-const DISCIPLE_WORDS: Word[] = [
-  { word: 'PETER', clue: 'Jesus called him "the rock"', startRow: 0, startCol: 0, direction: 'across', number: 1 },
-  { word: 'JOHN', clue: 'The beloved disciple', startRow: 2, startCol: 0, direction: 'across', number: 2 },
-  { word: 'JAMES', clue: 'Brother of John', startRow: 4, startCol: 0, direction: 'across', number: 3 },
-  { word: 'ANDREW', clue: "Peter's brother", startRow: 0, startCol: 0, direction: 'down', number: 4 },
-  { word: 'MATTHEW', clue: 'He was a tax collector', startRow: 6, startCol: 1, direction: 'across', number: 5 },
-];
-
 export function CrosswordGame({ onBack }: CrosswordGameProps) {
-  const words = DISCIPLE_WORDS;
+  const words: Word[] = [
+    { word: 'JAMES', clue: 'Son of Zebedee (brother of John)', startRow: 0, startCol: 5, direction: 'across', number: 1 },
+    { word: 'JOHN', clue: 'The disciple whom Jesus loved', startRow: 1, startCol: 3, direction: 'across', number: 2 },
+    { word: 'JUDAS', clue: 'Betrayed Jesus for silver', startRow: 2, startCol: 4, direction: 'across', number: 3 },
+    { word: 'PETER', clue: 'Walked on water toward Jesus', startRow: 3, startCol: 2, direction: 'across', number: 4 },
+    { word: 'THADDEUS', clue: 'Also called Jude', startRow: 4, startCol: 1, direction: 'across', number: 5 },
+    { word: 'MATTHEW', clue: 'Former tax collector', startRow: 5, startCol: 0, direction: 'across', number: 6 },
+    { word: 'ANDREW', clue: "Peter's brother", startRow: 0, startCol: 6, direction: 'down', number: 7 },
+  ];
 
   const [grid, setGrid] = useState<string[][]>([]);
   const [userGrid, setUserGrid] = useState<string[][]>([]);
