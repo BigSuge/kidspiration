@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Heart, ArrowRight, CheckCircle } from "lucide-react";
+import { useAuth } from "../utils/AuthContext";
+
+const createEmptyGlowfestForm = () => ({ name: "", email: "", phone: "" });
 
 interface GlowfestSponsorshipModalProps {
   isOpen: boolean;
@@ -15,11 +18,8 @@ export function GlowfestSponsorshipModal({
   selectedTierId,
   onTierSelect,
 }: GlowfestSponsorshipModalProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-  });
+  const [formData, setFormData] = useState(createEmptyGlowfestForm);
+  const { user } = useAuth();
 
   const glowfestTiers = [
     {
@@ -62,6 +62,24 @@ export function GlowfestSponsorshipModal({
       [e.target.name]: e.target.value,
     });
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData(createEmptyGlowfestForm());
+      return;
+    }
+
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name:
+          prev.name ||
+          [user.title, user.firstName, user.lastName].filter(Boolean).join(" ") ||
+          user.username,
+        email: prev.email || user.email || "",
+      }));
+    }
+  }, [isOpen, user]);
 
   const handleSubmit = () => {
     // Validate form

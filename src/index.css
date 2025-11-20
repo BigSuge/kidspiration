@@ -5973,6 +5973,42 @@
   }
 }
 
+/* Color Me layout helpers */
+.color-me-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.color-me-desktop-tools {
+  display: none;
+}
+
+.color-me-mobile-selector,
+.color-me-mobile-tools {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .color-me-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) 360px;
+    align-items: flex-start;
+    gap: 2.5rem;
+  }
+
+  .color-me-desktop-tools {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .color-me-mobile-selector,
+  .color-me-mobile-tools {
+    display: none !important;
+  }
+}
+
 
 :root {
   --font-size: 18px;

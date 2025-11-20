@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, Grid3x3, Lightbulb, RotateCcw, Trophy, Sparkles } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -30,6 +30,10 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [hints, setHints] = useState<number>(3);
   const [isComplete, setIsComplete] = useState(false);
+  const [activeWord, setActiveWord] = useState<Word | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const wordKey = (word: Word) => `${word.number}-${word.direction}`;
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -68,6 +72,23 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     setHints(3);
     setIsComplete(false);
     setSelectedCell(null);
+    setActiveWord(null);
+  };
+
+  const getWordCells = (word: Word) => {
+    const cells = [] as { row: number; col: number }[];
+    for (let i = 0; i < word.word.length; i++) {
+      if (word.direction === 'across') {
+        cells.push({ row: word.startRow, col: word.startCol + i });
+      } else {
+        cells.push({ row: word.startRow + i, col: word.startCol });
+      }
+    }
+    return cells;
+  };
+
+  const cellBelongsToWord = (word: Word, row: number, col: number) => {
+    return getWordCells(word).some((cell) => cell.row === row && cell.col === col);
   };
 
   const checkCompletion = () => {
@@ -93,23 +114,56 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
   };
 
   const handleCellClick = (row: number, col: number) => {
-    if (grid[row][col] !== '') {
-      setSelectedCell({ row, col });
-    }
+    if (grid[row][col] === '') return;
+
+    const overlappingWords = words.filter((word) => cellBelongsToWord(word, row, col));
+    const prioritizedWord = overlappingWords.find((word) => word.direction === activeWord?.direction) || overlappingWords[0] || null;
+
+    setSelectedCell({ row, col });
+    setActiveWord(prioritizedWord || null);
+    inputRef.current?.focus();
   };
 
   const handleKeyPress = (key: string) => {
     if (!selectedCell) return;
+    inputRef.current?.focus();
 
     const newUserGrid = [...userGrid.map(row => [...row])];
+    const { row, col } = selectedCell;
 
     if (key === 'Backspace') {
-      newUserGrid[selectedCell.row][selectedCell.col] = '';
+      if (newUserGrid[row][col]) {
+        newUserGrid[row][col] = '';
+      } else {
+        moveSelection(-1, true, newUserGrid);
+      }
     } else if (key.length === 1 && /[A-Z]/.test(key.toUpperCase())) {
-      newUserGrid[selectedCell.row][selectedCell.col] = key.toUpperCase();
+      newUserGrid[row][col] = key.toUpperCase();
+      moveSelection(1, false, newUserGrid);
     }
 
     setUserGrid(newUserGrid);
+  };
+
+  const moveSelection = (step: 1 | -1, allowStay: boolean, newGrid?: string[][]) => {
+    if (!activeWord || !selectedCell) return;
+    const cells = getWordCells(activeWord);
+    const currentIndex = cells.findIndex(cell => cell.row === selectedCell.row && cell.col === selectedCell.col);
+    if (currentIndex === -1) return;
+    const nextIndex = currentIndex + step;
+
+    if (nextIndex < 0 || nextIndex >= cells.length) {
+      if (!allowStay && nextIndex >= cells.length) {
+        setSelectedCell(cells[cells.length - 1]);
+      }
+      return;
+    }
+
+    setSelectedCell(cells[nextIndex]);
+    if (newGrid && step === -1) {
+      const prevCell = cells[nextIndex];
+      newGrid[prevCell.row][prevCell.col] = '';
+    }
   };
 
   const useHint = () => {
@@ -140,7 +194,30 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     else if (isWrong) classes += 'border-red-400 bg-red-50 ';
     else classes += 'border-gray-300 ';
 
+    if (activeWord && cellBelongsToWord(activeWord, row, col)) {
+      classes += ' bg-yellow-50 ';
+    }
+
     return classes;
+  };
+
+  const overlappingWordsForSelection = useMemo(() => {
+    if (!selectedCell) return [] as Word[];
+    return words.filter((word) => cellBelongsToWord(word, selectedCell.row, selectedCell.col));
+  }, [selectedCell, words]);
+
+  useEffect(() => {
+    if (selectedCell) {
+      inputRef.current?.focus();
+    }
+  }, [selectedCell]);
+
+  const focusWord = (word: Word, moveToStart = true) => {
+    setActiveWord(word);
+    if (moveToStart) {
+      setSelectedCell({ row: word.startRow, col: word.startCol });
+    }
+    inputRef.current?.focus();
   };
 
   return (
@@ -225,10 +302,57 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
               </div>
             </div>
 
+            {selectedCell && activeWord && (
+              <div className="mt-4 sm:mt-6 bg-white rounded-xl sm:rounded-2xl p-4 shadow-lg">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
+                  <div>
+                    <p className="text-xs sm:text-sm text-gray-500 uppercase">Active Word</p>
+                    <p className="text-lg sm:text-xl text-gray-900 font-semibold">#{activeWord.number} · {activeWord.direction.toUpperCase()}</p>
+                    <p className="text-sm text-gray-600">{activeWord.clue}</p>
+                  </div>
+                  {overlappingWordsForSelection.length > 1 && (
+                    <div className="flex gap-2">
+                      {overlappingWordsForSelection.map((word) => (
+                        <button
+                          key={wordKey(word)}
+                          onClick={() => focusWord(word, false)}
+                          className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                            activeWord && wordKey(word) === wordKey(activeWord)
+                              ? 'bg-cyan-100 border-cyan-300 text-cyan-700'
+                              : 'bg-gray-100 border-gray-200 text-gray-500'
+                          }`}
+                        >
+                          #{word.number} {word.direction === 'across' ? 'Across' : 'Down'}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {selectedCell && (
               <div className="mt-4 sm:mt-6 flex justify-center">
                 <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg max-w-sm w-full">
                   <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 text-center">Type a letter</p>
+                  <input
+                    ref={inputRef}
+                    className="sr-only"
+                    aria-hidden="true"
+                    value=""
+                    onChange={() => {}}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Tab') return;
+                      event.preventDefault();
+                      if (event.key === 'Backspace') {
+                        handleKeyPress('Backspace');
+                        return;
+                      }
+                      if (/^[a-zA-Z]$/.test(event.key)) {
+                        handleKeyPress(event.key.toUpperCase());
+                      }
+                    }}
+                  />
                   <div className="flex flex-wrap justify-center gap-1 sm:gap-1.5">
                     {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => (
                       <button
@@ -269,10 +393,16 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                   <h4 className="text-xs sm:text-sm text-cyan-600 mb-2">Across</h4>
                   <div className="space-y-2">
                     {words.filter(w => w.direction === 'across').map(word => (
-                      <div key={word.number} className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg sm:rounded-xl p-2 sm:p-3">
+                      <button
+                        key={word.number}
+                        onClick={() => focusWord(word)}
+                        className={`w-full text-left bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg sm:rounded-xl p-2 sm:p-3 transition-all ${
+                          activeWord && wordKey(activeWord) === wordKey(word) ? 'ring-2 ring-cyan-300' : ''
+                        }`}
+                      >
                         <p className="text-xs text-gray-600 font-bold">#{word.number}</p>
                         <p className="text-xs sm:text-sm text-gray-800">{word.clue}</p>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -281,10 +411,16 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                   <h4 className="text-xs sm:text-sm text-purple-600 mb-2">Down</h4>
                   <div className="space-y-2">
                     {words.filter(w => w.direction === 'down').map(word => (
-                      <div key={word.number} className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg sm:rounded-xl p-2 sm:p-3">
+                      <button
+                        key={word.number}
+                        onClick={() => focusWord(word)}
+                        className={`w-full text-left bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg sm:rounded-xl p-2 sm:p-3 transition-all ${
+                          activeWord && wordKey(activeWord) === wordKey(word) ? 'ring-2 ring-purple-200' : ''
+                        }`}
+                      >
                         <p className="text-xs text-gray-600 font-bold">#{word.number}</p>
                         <p className="text-xs sm:text-sm text-gray-800">{word.clue}</p>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -294,8 +430,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
             <div className="bg-gradient-to-r from-cyan-100 to-blue-100 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center">
               <h3 className="text-gray-800 mb-2 font-bold">How to Play 🎮</h3>
               <p className="text-xs sm:text-sm text-gray-700">
-                Click a white cell and type a letter. Use hints if you're stuck. 
-                Complete all words to win!
+                Tap a clue or cell, then type or use the on-screen keyboard. Letters now auto-advance so touch players can keep their focus. Complete all highlighted words to win!
               </p>
             </div>
           </motion.div>

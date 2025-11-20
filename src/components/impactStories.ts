@@ -106,18 +106,6 @@ export const impactStories = [
       image_fde90bd1b7b853d1b86d567d7b7e582b4bb83f9d,
       image_f0d166fc331e992862f0e9001ac836447ca66bea,
     ],
-      category: 'Kidspiration Heroes',
-      title: 'KIDSPIRATION ER100 Campaign | Everyone Reach 100 Children',
-      story: 'GYLF\'s Kidspiration Hero, Ambassador Melanie Ortiz, reached 150 children in Venezuela! The kids were filled with joy as they prepared for the Healing Streams Live Healing Services.',
-      image: image_2b5b03a9e550a73cfad9488452cfe7ecddc3adcf,
-      impact: '150 children reached',
-      gallery: [
-        image_2b5b03a9e550a73cfad9488452cfe7ecddc3adcf,
-        image_bf02bd8d011866f1dbc26ef9857829c851292c52,
-        image_00081c37629d8487e02327f1cc91d2968dab2cc4,
-        image_fde90bd1b7b853d1b86d567d7b7e582b4bb83f9d,
-        image_f0d166fc331e992862f0e9001ac836447ca66bea,
-      ],
       fullStory: {
         intro: 'GYLF\'s Kidspiration Hero, Ambassador Melanie Ortiz, reached 150 children in Venezuela! The kids were inspired with the message of faith and filled with joy as they prepared for the October Edition of the Healing Streams Live Healing Services with our Man of God.',
         sections: [

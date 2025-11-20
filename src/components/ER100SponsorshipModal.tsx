@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Heart, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 import { useAuth } from "../utils/AuthContext";
+
+const createEmptyERForm = () => ({
+  name: "",
+  email: "",
+  phone: "",
+  hasAdultSupport: false,
+});
 
 interface ER100SponsorshipModalProps {
   isOpen: boolean;
@@ -19,12 +26,7 @@ export function ER100SponsorshipModal({
   sponsorshipType = 'parent',
 }: ER100SponsorshipModalProps) {
   const { user } = useAuth();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    hasAdultSupport: false,
-  });
+  const [formData, setFormData] = useState(createEmptyERForm);
 
   const isKid = user?.type === "kid";
 
@@ -176,6 +178,24 @@ export function ER100SponsorshipModal({
       [name]: type === "checkbox" ? checked : value,
     });
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData(createEmptyERForm());
+      return;
+    }
+
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name:
+          prev.name ||
+          [user.title, user.firstName, user.lastName].filter(Boolean).join(" ") ||
+          user.username,
+        email: prev.email || user.email || "",
+      }));
+    }
+  }, [isOpen, user]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
