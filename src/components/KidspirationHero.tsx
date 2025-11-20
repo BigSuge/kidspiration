@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { HTTN_MAGAZINE_URL } from './DashboardPage';
+import { HTTN_MAGAZINE_URL } from '../config/urls';
 
 interface KidspirationHeroProps {
   onAuthClick?: () => void;

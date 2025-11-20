@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { Heart, BookOpen, Globe, Sparkles, Star, Users, Trophy, Zap, Target, TrendingUp, Baby, Smile, Award, Flame, UserCheck, BookMarked, PartyPopper, Languages, ShoppingBag } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import aboutHeroImage from 'figma:asset/0be9827fc0cf186798f1b48d67101495ed9a9353.png';
+import { HTTN_MAGAZINE_URL } from '../config/urls';
 
 interface AboutPageProps {
   onNavigate?: (page: string) => void;
@@ -436,7 +437,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
               </p>
               <div className="text-center">
                 <button
-                  onClick={() => window.open('#httn-magazine', '_blank')}
+                  onClick={() => window.open(HTTN_MAGAZINE_URL, '_blank')}
                   className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-full font-bold hover:shadow-lg transform hover:scale-105 transition-all"
                 >
                   Read HTTN Magazine

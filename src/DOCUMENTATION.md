@@ -1381,25 +1381,25 @@ const slides = [
 
 ### 2. External URL Constants
 
-**Location**: `/components/DashboardPage.tsx`
+**Location**: `/config/urls.ts`
 
 The app defines important URLs as constants for easy updating:
 
 ```typescript
-// Line 31
-export const HTTN_MAGAZINE_URL = '#httn-magazine';
+// src/config/urls.ts
+export const HTTN_MAGAZINE_URL = 'https://httn.kidspiration.org';
 ```
 
 #### How to Update External URLs:
 
-**Step 1**: Locate the URL constant in `DashboardPage.tsx`:
+**Step 1**: Update the URL constant in `src/config/urls.ts`:
 
 ```typescript
 // OLD - Placeholder
 export const HTTN_MAGAZINE_URL = '#httn-magazine';
 
 // NEW - Real URL
-export const HTTN_MAGAZINE_URL = 'https://httn-magazine.kidspiration.org';
+export const HTTN_MAGAZINE_URL = 'https://httn.kidspiration.org';
 ```
 
 **Step 2**: This URL is automatically used in multiple places:
@@ -1411,7 +1411,7 @@ export const HTTN_MAGAZINE_URL = 'https://httn-magazine.kidspiration.org';
 
 | Constant | Current Value | Location | Purpose |
 |----------|---------------|----------|---------|
-| `HTTN_MAGAZINE_URL` | `#httn-magazine` | DashboardPage.tsx | HTTN Magazine link |
+| `HTTN_MAGAZINE_URL` | `https://httn.kidspiration.org` | config/urls.ts | HTTN Magazine link |
 | Healing Streams TV | `https://healingstreams.tv/kids/` | DashboardPage.tsx (line 187) | Live TV redirect |
 
 ---
@@ -1682,7 +1682,7 @@ const navItems = [
 
 | URL Type | Location | Line | Current Value | How to Update |
 |----------|----------|------|---------------|---------------|
-| HTTN Magazine | DashboardPage.tsx | 31 | `#httn-magazine` | Change constant value |
+| HTTN Magazine | config/urls.ts | 1 | `https://httn.kidspiration.org` | Change constant value |
 | Healing Streams TV | DashboardPage.tsx | 187 | `https://healingstreams.tv/kids/` | Update URL in action function |
 | Glowfest Video | imports/GlowfestVideo.tsx | 6 | `https://kidspiration.org/videos/kids_vid.mp4` | Change `src` attribute |
 | Flag Images | Navigation.tsx | 49 | `https://flagcdn.com/w40/{code}.png` | Update getFlagUrl function |
@@ -1792,7 +1792,7 @@ const isDevelopment = import.meta.env.DEV;
 export const CONFIG = {
   HTTN_MAGAZINE_URL: isDevelopment 
     ? 'http://localhost:3000/magazine' 
-    : 'https://httn-magazine.kidspiration.org',
+    : 'https://httn.kidspiration.org',
   
   LIVE_TV_URL: isDevelopment
     ? 'http://localhost:3000/tv'
