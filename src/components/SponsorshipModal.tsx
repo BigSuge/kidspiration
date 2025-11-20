@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Heart, ArrowRight, CheckCircle } from "lucide-react";
+import { useAuth } from "../utils/AuthContext";
+
+const createEmptySponsorForm = () => ({ name: "", email: "", phone: "" });
 
 interface SponsorshipModalProps {
   isOpen: boolean;
@@ -15,11 +18,8 @@ export function SponsorshipModal({
   selectedTierId,
   onTierSelect,
 }: SponsorshipModalProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-  });
+  const [formData, setFormData] = useState(createEmptySponsorForm);
+  const { user } = useAuth();
 
   const sponsorshipTiers = [
     {
@@ -100,6 +100,24 @@ export function SponsorshipModal({
       [e.target.name]: e.target.value,
     });
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData(createEmptySponsorForm());
+      return;
+    }
+
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name:
+          prev.name ||
+          [user.title, user.firstName, user.lastName].filter(Boolean).join(" ") ||
+          user.username,
+        email: prev.email || user.email || "",
+      }));
+    }
+  }, [isOpen, user]);
 
   const handleSubmit = () => {
     // Validate form

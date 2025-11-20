@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Heart, ArrowRight, CheckCircle } from "lucide-react";
+import { useAuth } from "../utils/AuthContext";
+
+const createEmptyPartyForm = () => ({ name: "", email: "", phone: "" });
 
 interface PartyInitiativeSponsorshipModalProps {
   isOpen: boolean;
@@ -17,11 +20,8 @@ export function PartyInitiativeSponsorshipModal({
   onTierSelect,
   programType,
 }: PartyInitiativeSponsorshipModalProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-  });
+  const [formData, setFormData] = useState(createEmptyPartyForm);
+  const { user } = useAuth();
 
   const fullPartyTiers = [
     {
@@ -101,6 +101,24 @@ export function PartyInitiativeSponsorshipModal({
       [e.target.name]: e.target.value,
     });
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData(createEmptyPartyForm());
+      return;
+    }
+
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name:
+          prev.name ||
+          [user.title, user.firstName, user.lastName].filter(Boolean).join(" ") ||
+          user.username,
+        email: prev.email || user.email || "",
+      }));
+    }
+  }, [isOpen, user]);
 
   const handleSubmit = () => {
     // Validate form
