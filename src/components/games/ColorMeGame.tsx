@@ -242,6 +242,14 @@ export function ColorMeGame({ onBack }: ColorMeGameProps) {
     };
   };
 
+  const applyStrokeStyle = (ctx: CanvasRenderingContext2D) => {
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = brushSize;
+    ctx.strokeStyle = selectedColor;
+    ctx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
+  };
+
   const startDrawing = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (isDrawing) return;
     e.preventDefault();
@@ -251,8 +259,11 @@ export function ColorMeGame({ onBack }: ColorMeGameProps) {
     if (!ctx) return;
     const point = getCanvasCoordinates(e);
     if (!point) return;
+    applyStrokeStyle(ctx);
     ctx.beginPath();
     ctx.moveTo(point.x, point.y);
+    ctx.lineTo(point.x, point.y);
+    ctx.stroke();
     setIsDrawing(true);
     e.currentTarget.setPointerCapture(e.pointerId);
   };
@@ -265,12 +276,7 @@ export function ColorMeGame({ onBack }: ColorMeGameProps) {
     const point = getCanvasCoordinates(e);
     if (!point) return;
 
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = brushSize;
-    ctx.strokeStyle = selectedColor;
-    ctx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
-
+    applyStrokeStyle(ctx);
     ctx.lineTo(point.x, point.y);
     ctx.stroke();
   };
