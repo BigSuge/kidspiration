@@ -46,6 +46,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     confirmPassword: '',
     country: '',
     occupation: '',
+    churchAffiliation: '',
+    churchBranch: '',
+    churchName: '',
   });
 
   // Helper function to calculate age from birthday
@@ -97,7 +100,21 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setShowAdultAssistance(false);
     setAdultConfirmed(false);
     setKidForm({ firstName: '', lastName: '', birthday: '', username: '', country: '' });
-    setAdultForm({ title: '', firstName: '', lastName: '', username: '', birthday: '', email: '', password: '', confirmPassword: '', country: '', occupation: '' });
+    setAdultForm({
+      title: '',
+      firstName: '',
+      lastName: '',
+      username: '',
+      birthday: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      country: '',
+      occupation: '',
+      churchAffiliation: '',
+      churchBranch: '',
+      churchName: '',
+    });
     setLoginForm({ username: '', password: '' });
     setOtpForm({ email: '', otp: '' });
     setResetForm({ email: '', otp: '', newPassword: '', confirmPassword: '' });
@@ -258,6 +275,26 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
       setError('Please fill in all fields');
       setLoading(false);
       return;
+    }
+
+    if (userType === 'leader') {
+      if (!adultForm.churchAffiliation) {
+        setError('Please select your church');
+        setLoading(false);
+        return;
+      }
+
+      if (adultForm.churchAffiliation === 'christ-embassy' && !adultForm.churchBranch) {
+        setError('Please enter your Christ Embassy branch');
+        setLoading(false);
+        return;
+      }
+
+      if (adultForm.churchAffiliation === 'other' && !adultForm.churchName) {
+        setError('Please enter your church name');
+        setLoading(false);
+        return;
+      }
     }
 
     const age = calculateAge(adultForm.birthday);
@@ -913,6 +950,56 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                   placeholder="Enter your occupation"
                 />
               </div>
+
+              {userType === 'leader' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-gray-700 mb-2">Church</label>
+                    <select
+                      value={adultForm.churchAffiliation}
+                      onChange={(e) =>
+                        setAdultForm({
+                          ...adultForm,
+                          churchAffiliation: e.target.value,
+                          churchBranch: '',
+                          churchName: '',
+                        })
+                      }
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#A78BFA] focus:outline-none"
+                    >
+                      <option value="">Select your church</option>
+                      <option value="christ-embassy">Christ Embassy</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  {adultForm.churchAffiliation === 'christ-embassy' && (
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-2">Christ Embassy Branch</label>
+                      <input
+                        type="text"
+                        value={adultForm.churchBranch}
+                        onChange={(e) => setAdultForm({ ...adultForm, churchBranch: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#A78BFA] focus:outline-none"
+                        placeholder="e.g. Christ Embassy Lekki"
+                      />
+                    </div>
+                  )}
+
+                  {adultForm.churchAffiliation === 'other' && (
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-2">Church Name</label>
+                      <input
+                        type="text"
+                        value={adultForm.churchName}
+                        onChange={(e) => setAdultForm({ ...adultForm, churchName: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#A78BFA] focus:outline-none"
+                        placeholder="Enter your church name"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
 
               <button
                 onClick={handleAdultSignup}
