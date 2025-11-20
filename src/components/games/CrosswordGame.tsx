@@ -16,14 +16,24 @@ interface Word {
   number: number;
 }
 
+const BOARD_SIZE = 10;
+
+type CellPointer = {
+  row: number;
+  col: number;
+  direction: 'across' | 'down';
+};
+
+const DISCIPLE_WORDS: Word[] = [
+  { word: 'PETER', clue: 'Jesus called him "the rock"', startRow: 0, startCol: 0, direction: 'across', number: 1 },
+  { word: 'JOHN', clue: 'The beloved disciple', startRow: 2, startCol: 0, direction: 'across', number: 2 },
+  { word: 'JAMES', clue: 'Brother of John', startRow: 4, startCol: 0, direction: 'across', number: 3 },
+  { word: 'ANDREW', clue: "Peter's brother", startRow: 0, startCol: 0, direction: 'down', number: 4 },
+  { word: 'MATTHEW', clue: 'He was a tax collector', startRow: 6, startCol: 1, direction: 'across', number: 5 },
+];
+
 export function CrosswordGame({ onBack }: CrosswordGameProps) {
-  const words: Word[] = [
-    { word: 'PETER', clue: 'Jesus called him "the rock"', startRow: 0, startCol: 0, direction: 'across', number: 1 },
-    { word: 'JOHN', clue: 'The beloved disciple', startRow: 2, startCol: 0, direction: 'across', number: 2 },
-    { word: 'JAMES', clue: 'Brother of John', startRow: 4, startCol: 0, direction: 'across', number: 3 },
-    { word: 'ANDREW', clue: 'Peter\'s brother', startRow: 0, startCol: 0, direction: 'down', number: 4 },
-    { word: 'MATTHEW', clue: 'He was a tax collector', startRow: 6, startCol: 1, direction: 'across', number: 5 },
-  ];
+  const words = DISCIPLE_WORDS;
 
   const [grid, setGrid] = useState<string[][]>([]);
   const [userGrid, setUserGrid] = useState<string[][]>([]);
@@ -36,7 +46,6 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
   const wordKey = (word: Word) => `${word.number}-${word.direction}`;
   const cellKey = (row: number, col: number) => `${row}-${col}`;
 
-  // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -52,96 +61,158 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
   }, [userGrid]);
 
   const initializeGrid = () => {
-    // Create 10x10 grid
-    const size = 10;
-    const newGrid: string[][] = Array(size).fill(null).map(() => Array(size).fill(''));
-    const newUserGrid: string[][] = Array(size).fill(null).map(() => Array(size).fill(''));
+    const newGrid: string[][] = Array(BOARD_SIZE)
+      .fill(null)
+      .map(() => Array(BOARD_SIZE).fill(''));
+    const newUserGrid: string[][] = Array(BOARD_SIZE)
+      .fill(null)
+      .map(() => Array(BOARD_SIZE).fill(''));
 
-    // Place words in grid
-    words.forEach(word => {
+    words.forEach((word) => {
       for (let i = 0; i < word.word.length; i++) {
-                  {grid.map((row, rowIndex) =>
-                    row.map((cell, colIndex) => {
-                      if (cell === '') {
-                        return (
-                          <div
-                            key={`${rowIndex}-${colIndex}`}
-                            className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-gray-800"
-                          />
-                        );
-                      }
+        if (word.direction === 'across') {
+          newGrid[word.startRow][word.startCol + i] = word.word[i];
+        } else {
+          newGrid[word.startRow + i][word.startCol] = word.word[i];
+        }
+      }
+    });
 
-                      const key = `${rowIndex}-${colIndex}`;
-                      return (
-                        <div
-                          key={key}
-                          onClick={() => handleCellClick(rowIndex, colIndex)}
-                          className={`w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center transition-all ${getCellClass(rowIndex, colIndex)}`}
-                        >
-                          <input
-                            ref={(el) => {
-                              if (el) {
-                                cellRefs.current[cellKey(rowIndex, colIndex)] = el;
-                              } else {
-                                delete cellRefs.current[cellKey(rowIndex, colIndex)];
-                              }
-                            }}
-                            value={userGrid[rowIndex][colIndex] || ''}
-                            spellCheck={false}
-                            maxLength={1}
-                            autoComplete="off"
-                            autoCorrect="off"
-                            inputMode="text"
-                            className="w-full h-full text-center text-sm sm:text-base md:text-lg uppercase bg-transparent focus:outline-none"
-                            onChange={(event) => handleCellInputChange(rowIndex, colIndex, event.target.value)}
-                            onKeyDown={(event) => handleCellKeyDown(event, rowIndex, colIndex)}
-                            onFocus={() => selectCell(rowIndex, colIndex)}
-                          />
-                        </div>
-                      );
-                    })
-                  )}
+    cellRefs.current = {};
+    setGrid(newGrid);
+    setUserGrid(newUserGrid);
+    setHints(3);
     setIsComplete(false);
     setSelectedCell(null);
     setActiveWord(null);
   };
 
-            {selectedCell && activeWord && (
-              <div className="mt-4 sm:mt-6 bg-white rounded-xl sm:rounded-2xl p-4 shadow-lg">
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
-                  <div>
-                    <p className="text-xs sm:text-sm text-gray-500 uppercase">Active Word</p>
-                    <p className="text-lg sm:text-xl text-gray-900 font-semibold">#{activeWord.number} · {activeWord.direction.toUpperCase()}</p>
-                    <p className="text-sm text-gray-600">{activeWord.clue}</p>
-                  </div>
-                  {overlappingWordsForSelection.length > 1 && (
-                    <div className="flex gap-2">
-                      {overlappingWordsForSelection.map((word) => (
-                        <button
-                          key={wordKey(word)}
-                          onClick={() => focusWord(word, false)}
-                          className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-                            activeWord && wordKey(word) === wordKey(activeWord)
-                              ? 'bg-cyan-100 border-cyan-300 text-cyan-700'
-                              : 'bg-gray-100 border-gray-200 text-gray-500'
-                          }`}
-                        >
-                          #{word.number} {word.direction === 'across' ? 'Across' : 'Down'}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-    const target = findPreviousCell(row, col);
-    if (target) {
-      selectCell(target.row, target.col, { preferredDirection: target.direction });
+  const getWordCells = (word: Word) => {
+    const cells: { row: number; col: number }[] = [];
+    for (let i = 0; i < word.word.length; i++) {
+      if (word.direction === 'across') {
+        cells.push({ row: word.startRow, col: word.startCol + i });
+      } else {
+        cells.push({ row: word.startRow + i, col: word.startCol });
+      }
     }
-    return target;
+    return cells;
+  };
+
+  const cellBelongsToWord = (word: Word, row: number, col: number) => {
+    return getWordCells(word).some((cell) => cell.row === row && cell.col === col);
+  };
+
+  const getOverlappingWords = (row: number, col: number) => {
+    return words.filter((word) => cellBelongsToWord(word, row, col));
+  };
+
+  const getNextCellInWord = (word: Word | null, row: number, col: number): CellPointer | null => {
+    if (!word) return null;
+    const cells = getWordCells(word);
+    const currentIndex = cells.findIndex((cell) => cell.row === row && cell.col === col);
+    if (currentIndex === -1) return null;
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < cells.length) {
+      const nextCell = cells[nextIndex];
+      return { row: nextCell.row, col: nextCell.col, direction: word.direction };
+    }
+    return null;
+  };
+
+  const getPreviousCellInWord = (word: Word | null, row: number, col: number): CellPointer | null => {
+    if (!word) return null;
+    const cells = getWordCells(word);
+    const currentIndex = cells.findIndex((cell) => cell.row === row && cell.col === col);
+    if (currentIndex <= 0) return null;
+    const previousCell = cells[currentIndex - 1];
+    return { row: previousCell.row, col: previousCell.col, direction: word.direction };
+  };
+
+  const selectCell = (
+    row: number,
+    col: number,
+    options?: { preferredDirection?: 'across' | 'down'; forcedWord?: Word }
+  ) => {
+    if (!grid[row] || grid[row][col] === '') return;
+
+    const overlapping = getOverlappingWords(row, col);
+    const preferredDirection = options?.preferredDirection;
+    const forcedWord = options?.forcedWord;
+
+    let nextWord: Word | null =
+      forcedWord ||
+      (preferredDirection && overlapping.find((word) => word.direction === preferredDirection)) ||
+      (activeWord && overlapping.find((word) => word.direction === activeWord.direction)) ||
+      overlapping.find((word) => word.direction === 'across') ||
+      overlapping[0] ||
+      null;
+
+    setSelectedCell({ row, col });
+    setActiveWord(nextWord);
+  };
+
+  const findNextAvailableCell = (row: number, col: number): CellPointer | null => {
+    if (!grid[row]) return null;
+    if (col + 1 < grid[row].length && grid[row][col + 1] !== '') {
+      return { row, col: col + 1, direction: 'across' };
+    }
+    if (row + 1 < grid.length && grid[row + 1][col] !== '') {
+      return { row: row + 1, col, direction: 'down' };
+    }
+    return null;
+  };
+
+  const findPreviousAvailableCell = (row: number, col: number): CellPointer | null => {
+    if (!grid[row]) return null;
+    if (col - 1 >= 0 && grid[row][col - 1] !== '') {
+      return { row, col: col - 1, direction: 'across' };
+    }
+    if (row - 1 >= 0 && grid[row - 1][col] !== '') {
+      return { row: row - 1, col, direction: 'down' };
+    }
+    return null;
+  };
+
+  const moveToNextCell = (row: number, col: number, referenceWord?: Word | null) => {
+    const wordToUse = referenceWord ?? activeWord;
+    const nextInWord = getNextCellInWord(wordToUse ?? null, row, col);
+    if (nextInWord) {
+      const options = wordToUse
+        ? { preferredDirection: wordToUse.direction, forcedWord: wordToUse }
+        : { preferredDirection: nextInWord.direction };
+      selectCell(nextInWord.row, nextInWord.col, options);
+      return nextInWord;
+    }
+
+    const fallback = findNextAvailableCell(row, col);
+    if (fallback) {
+      selectCell(fallback.row, fallback.col, { preferredDirection: fallback.direction });
+    }
+    return fallback;
+  };
+
+  const moveToPreviousCell = (row: number, col: number, referenceWord?: Word | null) => {
+    const wordToUse = referenceWord ?? activeWord;
+    const prevInWord = getPreviousCellInWord(wordToUse ?? null, row, col);
+    if (prevInWord) {
+      const options = wordToUse
+        ? { preferredDirection: wordToUse.direction, forcedWord: wordToUse }
+        : { preferredDirection: prevInWord.direction };
+      selectCell(prevInWord.row, prevInWord.col, options);
+      return prevInWord;
+    }
+
+    const fallback = findPreviousAvailableCell(row, col);
+    if (fallback) {
+      selectCell(fallback.row, fallback.col, { preferredDirection: fallback.direction });
+    }
+    return fallback;
   };
 
   const checkCompletion = () => {
+    if (!grid.length) return;
+
     let allCorrect = true;
     for (let row = 0; row < grid.length; row++) {
       for (let col = 0; col < grid[row].length; col++) {
@@ -153,9 +224,8 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
       if (!allCorrect) break;
     }
 
-    // Check if all non-empty cells are filled
-    const allFilled = grid.every((row, r) =>
-      row.every((cell, c) => cell === '' || userGrid[r][c] !== '')
+    const allFilled = grid.every((rowArr, r) =>
+      rowArr.every((cell, c) => cell === '' || userGrid[r][c] !== '')
     );
 
     if (allFilled && allCorrect) {
@@ -175,8 +245,9 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
       next[row][col] = sanitized;
       return next;
     });
+
     if (sanitized) {
-      moveToNextCell(row, col);
+      moveToNextCell(row, col, activeWord);
     }
   };
 
@@ -185,22 +256,32 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     row: number,
     col: number
   ) => {
-    if (event.key === 'Backspace' && userGrid[row][col] === '') {
+    if (event.key === 'Tab') return;
+
+    if (event.key === 'Backspace') {
       event.preventDefault();
-      const previous = moveToPreviousCell(row, col);
-      if (previous) {
+      if (userGrid[row][col]) {
         setUserGrid((prev) => {
           const next = prev.map((r) => [...r]);
-          next[previous.row][previous.col] = '';
+          next[row][col] = '';
           return next;
         });
+      } else {
+        const previous = moveToPreviousCell(row, col, activeWord);
+        if (previous) {
+          setUserGrid((prev) => {
+            const next = prev.map((r) => [...r]);
+            next[previous.row][previous.col] = '';
+            return next;
+          });
+        }
       }
       return;
     }
 
     if (event.key === 'ArrowRight') {
       event.preventDefault();
-      moveToNextCell(row, col);
+      moveToNextCell(row, col, activeWord);
       return;
     }
 
@@ -223,21 +304,28 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
       if (row - 1 >= 0 && grid[row - 1][col] !== '') {
         selectCell(row - 1, col, { preferredDirection: 'down' });
       }
+      return;
+    }
+
+    if (/^[a-zA-Z]$/.test(event.key)) {
+      event.preventDefault();
+      handleCellInputChange(row, col, event.key);
     }
   };
 
   const useHint = () => {
     if (hints <= 0 || !selectedCell) return;
 
-    const correctLetter = grid[selectedCell.row][selectedCell.col];
+    const { row, col } = selectedCell;
+    const correctLetter = grid[row][col];
     if (correctLetter) {
       setUserGrid((prev) => {
-        const next = prev.map((row) => [...row]);
-        next[selectedCell.row][selectedCell.col] = correctLetter;
+        const next = prev.map((r) => [...r]);
+        next[row][col] = correctLetter;
         return next;
       });
       setHints((prev) => prev - 1);
-      moveToNextCell(selectedCell.row, selectedCell.col);
+      moveToNextCell(row, col);
     }
   };
 
@@ -250,7 +338,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     const isWrong = userLetter && userLetter !== correctLetter;
 
     if (isEmpty) return 'bg-gray-800';
-    
+
     let classes = 'bg-white border-2 cursor-text hover:bg-blue-50 ';
     if (isSelected) classes += 'border-blue-500 ring-2 ring-blue-300 ';
     else if (isCorrect) classes += 'border-green-400 bg-green-50 ';
@@ -263,6 +351,24 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
 
     return classes;
   };
+
+  const wordStates = useMemo(() => {
+    const states: Record<string, { filled: boolean; correct: boolean }> = {};
+    words.forEach((word) => {
+      const cells = getWordCells(word);
+      let filled = true;
+      let correct = true;
+      cells.forEach((cell, index) => {
+        const value = userGrid[cell.row]?.[cell.col] || '';
+        if (!value) filled = false;
+        if (value !== word.word[index]) {
+          correct = false;
+        }
+      });
+      states[wordKey(word)] = { filled, correct };
+    });
+    return states;
+  }, [userGrid, words]);
 
   const overlappingWordsForSelection = useMemo(() => {
     if (!selectedCell) return [] as Word[];
@@ -278,12 +384,18 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
   }, [selectedCell]);
 
   const focusWord = (word: Word, moveToStart = true) => {
-    setActiveWord(word);
     if (moveToStart) {
       selectCell(word.startRow, word.startCol, {
         preferredDirection: word.direction,
         forcedWord: word,
       });
+    } else if (selectedCell) {
+      selectCell(selectedCell.row, selectedCell.col, {
+        forcedWord: word,
+        preferredDirection: word.direction,
+      });
+    } else {
+      setActiveWord(word);
     }
   };
 
@@ -296,11 +408,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
           animate={{ y: 0, opacity: 1 }}
           className="mb-6 sm:mb-8"
         >
-          <Button
-            onClick={onBack}
-            variant="ghost"
-            className="mb-4 hover:bg-cyan-100"
-          >
+          <Button onClick={onBack} variant="ghost" className="mb-4 hover:bg-cyan-100">
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Games
           </Button>
@@ -353,17 +461,48 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
 
             <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
               <div className="inline-block bg-white sm:rounded-2xl p-2 sm:p-3 md:p-4 shadow-lg min-w-min rounded-[14px]">
-                <div className="grid gap-0.5 sm:gap-1" style={{ gridTemplateColumns: `repeat(10, minmax(28px, 40px))` }}>
+                <div className="grid gap-0.5 sm:gap-1" style={{ gridTemplateColumns: `repeat(${BOARD_SIZE}, minmax(28px, 40px))` }}>
                   {grid.map((row, rowIndex) =>
-                    row.map((cell, colIndex) => (
-                      <div
-                        key={`${rowIndex}-${colIndex}`}
-                        onClick={() => handleCellClick(rowIndex, colIndex)}
-                        className={`w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center text-sm sm:text-base md:text-lg transition-all ${getCellClass(rowIndex, colIndex)}`}
-                      >
-                        {userGrid[rowIndex][colIndex]}
-                      </div>
-                    ))
+                    row.map((cell, colIndex) => {
+                      const key = `${rowIndex}-${colIndex}`;
+
+                      if (cell === '') {
+                        return (
+                          <div
+                            key={key}
+                            className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-gray-800 rounded-[6px]"
+                          />
+                        );
+                      }
+
+                      return (
+                        <div
+                          key={key}
+                          onClick={() => handleCellClick(rowIndex, colIndex)}
+                          className={`w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center transition-all rounded-[6px] ${getCellClass(rowIndex, colIndex)}`}
+                        >
+                          <input
+                            ref={(el) => {
+                              if (el) {
+                                cellRefs.current[cellKey(rowIndex, colIndex)] = el;
+                              } else {
+                                delete cellRefs.current[cellKey(rowIndex, colIndex)];
+                              }
+                            }}
+                            value={userGrid[rowIndex]?.[colIndex] || ''}
+                            spellCheck={false}
+                            maxLength={1}
+                            autoComplete="off"
+                            autoCorrect="off"
+                            inputMode="text"
+                            className="w-full h-full text-center text-sm sm:text-base md:text-lg uppercase bg-transparent focus:outline-none"
+                            onChange={(event) => handleCellInputChange(rowIndex, colIndex, event.target.value)}
+                            onKeyDown={(event) => handleCellKeyDown(event, rowIndex, colIndex)}
+                            onFocus={() => selectCell(rowIndex, colIndex)}
+                          />
+                        </div>
+                      );
+                    })
                   )}
                 </div>
               </div>
@@ -374,7 +513,9 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
                   <div>
                     <p className="text-xs sm:text-sm text-gray-500 uppercase">Active Word</p>
-                    <p className="text-lg sm:text-xl text-gray-900 font-semibold">#{activeWord.number} · {activeWord.direction.toUpperCase()}</p>
+                    <p className="text-lg sm:text-xl text-gray-900 font-semibold">
+                      #{activeWord.number} · {activeWord.direction.toUpperCase()}
+                    </p>
                     <p className="text-sm text-gray-600">{activeWord.clue}</p>
                   </div>
                   {overlappingWordsForSelection.length > 1 && (
@@ -416,36 +557,74 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                 <div>
                   <h4 className="text-xs sm:text-sm text-cyan-600 mb-2">Across</h4>
                   <div className="space-y-2">
-                    {words.filter(w => w.direction === 'across').map(word => (
-                      <button
-                        key={word.number}
-                        onClick={() => focusWord(word)}
-                        className={`w-full text-left bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg sm:rounded-xl p-2 sm:p-3 transition-all ${
-                          activeWord && wordKey(activeWord) === wordKey(word) ? 'ring-2 ring-cyan-300' : ''
-                        }`}
-                      >
-                        <p className="text-xs text-gray-600 font-bold">#{word.number}</p>
-                        <p className="text-xs sm:text-sm text-gray-800">{word.clue}</p>
-                      </button>
-                    ))}
+                    {words
+                      .filter((word) => word.direction === 'across')
+                      .map((word) => {
+                        const state = wordStates[wordKey(word)];
+                        const isActive = activeWord && wordKey(activeWord) === wordKey(word);
+                        const isCorrect = state?.correct;
+                        const isFilled = state?.filled && !state?.correct;
+
+                        let extraClasses = 'bg-gradient-to-r from-cyan-50 to-blue-50 border border-transparent';
+                        if (isCorrect) {
+                          extraClasses = 'bg-green-50 border-green-200 ring-2 ring-green-300 text-green-800';
+                        } else if (isActive) {
+                          extraClasses += ' ring-2 ring-cyan-300';
+                        } else if (isFilled) {
+                          extraClasses += ' ring-2 ring-amber-200';
+                        }
+
+                        return (
+                          <button
+                            key={word.number}
+                            onClick={() => focusWord(word)}
+                            className={`w-full text-left rounded-lg sm:rounded-xl p-2 sm:p-3 transition-all flex items-start justify-between gap-3 ${extraClasses}`}
+                          >
+                            <div>
+                              <p className="text-xs text-gray-600 font-bold">#{word.number}</p>
+                              <p className="text-xs sm:text-sm text-gray-800">{word.clue}</p>
+                            </div>
+                            {isCorrect && <span className="text-xs sm:text-sm font-semibold text-green-600">Done</span>}
+                          </button>
+                        );
+                      })}
                   </div>
                 </div>
 
                 <div>
                   <h4 className="text-xs sm:text-sm text-purple-600 mb-2">Down</h4>
                   <div className="space-y-2">
-                    {words.filter(w => w.direction === 'down').map(word => (
-                      <button
-                        key={word.number}
-                        onClick={() => focusWord(word)}
-                        className={`w-full text-left bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg sm:rounded-xl p-2 sm:p-3 transition-all ${
-                          activeWord && wordKey(activeWord) === wordKey(word) ? 'ring-2 ring-purple-200' : ''
-                        }`}
-                      >
-                        <p className="text-xs text-gray-600 font-bold">#{word.number}</p>
-                        <p className="text-xs sm:text-sm text-gray-800">{word.clue}</p>
-                      </button>
-                    ))}
+                    {words
+                      .filter((word) => word.direction === 'down')
+                      .map((word) => {
+                        const state = wordStates[wordKey(word)];
+                        const isActive = activeWord && wordKey(activeWord) === wordKey(word);
+                        const isCorrect = state?.correct;
+                        const isFilled = state?.filled && !state?.correct;
+
+                        let extraClasses = 'bg-gradient-to-r from-purple-50 to-pink-50 border border-transparent';
+                        if (isCorrect) {
+                          extraClasses = 'bg-green-50 border-green-200 ring-2 ring-green-300 text-green-800';
+                        } else if (isActive) {
+                          extraClasses += ' ring-2 ring-purple-200';
+                        } else if (isFilled) {
+                          extraClasses += ' ring-2 ring-amber-200';
+                        }
+
+                        return (
+                          <button
+                            key={word.number}
+                            onClick={() => focusWord(word)}
+                            className={`w-full text-left rounded-lg sm:rounded-xl p-2 sm:p-3 transition-all flex items-start justify-between gap-3 ${extraClasses}`}
+                          >
+                            <div>
+                              <p className="text-xs text-gray-600 font-bold">#{word.number}</p>
+                              <p className="text-xs sm:text-sm text-gray-800">{word.clue}</p>
+                            </div>
+                            {isCorrect && <span className="text-xs sm:text-sm font-semibold text-green-600">Done</span>}
+                          </button>
+                        );
+                      })}
                   </div>
                 </div>
               </div>
@@ -454,7 +633,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
             <div className="bg-gradient-to-r from-cyan-100 to-blue-100 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center">
               <h3 className="text-gray-800 mb-2 font-bold">How to Play 🎮</h3>
               <p className="text-xs sm:text-sm text-gray-700">
-                Tap a clue or cell, then type directly in the highlighted boxes. Each correct letter jumps to the next square (right first, then down) so you can keep typing without lifting your fingers. Finish every word to win!
+                Tap a clue or cell, then type directly in the highlighted boxes. Each letter auto-advances to the next square (rightwards first, then down) so you can stay in the flow. Finish every word to win!
               </p>
             </div>
           </motion.div>
@@ -469,25 +648,24 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
             >
-              {/* Confetti */}
               {[...Array(50)].map((_, i) => (
                 <motion.div
                   key={i}
-                  initial={{ 
-                    x: typeof window !== 'undefined' ? Math.random() * window.innerWidth : 0, 
+                  initial={{
+                    x: typeof window !== 'undefined' ? Math.random() * window.innerWidth : 0,
                     y: -20,
                     rotate: Math.random() * 360,
-                    opacity: 1
+                    opacity: 1,
                   }}
-                  animate={{ 
+                  animate={{
                     y: typeof window !== 'undefined' ? window.innerHeight + 100 : 1000,
                     rotate: Math.random() * 720,
-                    opacity: 0
+                    opacity: 0,
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 2 + Math.random() * 2,
-                    ease: "easeIn",
-                    delay: Math.random() * 0.3
+                    ease: 'easeIn',
+                    delay: Math.random() * 0.3,
                   }}
                   className="absolute w-3 h-3 pointer-events-none"
                   style={{
@@ -501,12 +679,12 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 exit={{ scale: 0, rotate: 180 }}
-                transition={{ type: "spring", duration: 0.6 }}
+                transition={{ type: 'spring', duration: 0.6 }}
                 className="bg-gradient-to-br from-[#4ECDC4] via-[#A78BFA] to-[#FF6B9D] rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center relative"
               >
                 <motion.div
                   animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}
                   className="absolute -top-6 sm:-top-8 left-1/2 transform -translate-x-1/2"
                 >
                   <Trophy className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-400" />
@@ -514,11 +692,11 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
 
                 <div className="mt-6 sm:mt-8">
                   <h2 className="text-white mb-3 sm:mb-4">🎉 Amazing! 🎉</h2>
-                  <p className="text-white/90 text-lg sm:text-xl mb-3 sm:mb-4">
-                    You completed the crossword!
-                  </p>
+                  <p className="text-white/90 text-lg sm:text-xl mb-3 sm:mb-4">You completed the crossword!</p>
                   <div className="bg-white/20 backdrop-blur rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6">
-                    <p className="text-white text-sm sm:text-base">Hints Used: <span className="text-xl sm:text-2xl">{3 - hints}</span></p>
+                    <p className="text-white text-sm sm:text-base">
+                      Hints Used: <span className="text-xl sm:text-2xl">{3 - hints}</span>
+                    </p>
                   </div>
                   <Button
                     onClick={() => {
