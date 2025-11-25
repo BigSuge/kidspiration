@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navigation } from './components/Navigation';
 import { KidspirationHero } from './components/KidspirationHero';
 import { GlowfestSection } from './components/GlowfestSection';
+import { HomeQuickActions } from './components/HomeQuickActions';
 import { GlowfestPage } from './components/GlowfestPage';
 import { JoinExploreSection } from './components/JoinExploreSection';
 import { GamesPage } from './components/GamesPage';
@@ -34,13 +35,13 @@ function AppContent() {
   const { user, isAuthenticated, trackPageVisit } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showBirthdayOverlay, setShowBirthdayOverlay] = useState(false);
-  
+
   // Get initial page from URL
   const getInitialPage = () => {
     const params = new URLSearchParams(window.location.search);
     return params.get('page') || 'home';
   };
-  
+
   const [currentPage, setCurrentPage] = useState(getInitialPage());
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   const [currentStoryId, setCurrentStoryId] = useState<number | null>(null);
@@ -67,7 +68,7 @@ function AppContent() {
       const page = params.get('page') || 'home';
       const game = params.get('game');
       const storyId = params.get('story');
-      
+
       setCurrentPage(page);
       setCurrentGame(game);
       setCurrentStoryId(storyId ? parseInt(storyId) : null);
@@ -101,36 +102,36 @@ function AppContent() {
     setCurrentPage(page);
     setCurrentGame(null);
     setCurrentStoryId(null);
-    
+
     // Update URL with browser history support
     const url = new URL(window.location.href);
     url.searchParams.set('page', page);
     url.searchParams.delete('game');
     url.searchParams.delete('story');
     window.history.pushState({}, '', url);
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleViewStory = (storyId: number) => {
     setCurrentStoryId(storyId);
-    
+
     // Update URL with story ID
     const url = new URL(window.location.href);
     url.searchParams.set('story', storyId.toString());
     window.history.pushState({}, '', url);
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToStories = () => {
     setCurrentStoryId(null);
-    
+
     // Update URL to remove story ID
     const url = new URL(window.location.href);
     url.searchParams.delete('story');
     window.history.pushState({}, '', url);
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -144,7 +145,7 @@ function AppContent() {
       return;
     }
     setCurrentGame(gameId);
-    
+
     // Update URL with game ID
     const url = new URL(window.location.href);
     url.searchParams.set('game', gameId);
@@ -153,7 +154,7 @@ function AppContent() {
 
   const handleBackToGames = () => {
     setCurrentGame(null);
-    
+
     // Update URL to remove game ID
     const url = new URL(window.location.href);
     url.searchParams.delete('game');
@@ -177,7 +178,7 @@ function AppContent() {
         const welcomeMessage = user.title
           ? `Welcome back ${user.title} ${user.firstName} ${user.lastName}!`
           : `Welcome back ${user.firstName} ${user.lastName}!`;
-        
+
         toast.success(welcomeMessage, {
           duration: 4000,
         });
@@ -213,12 +214,17 @@ function AppContent() {
           <>
             {/* Hero Section with Container */}
             <div className="container mx-auto px-4 sm:px-6 pt-24 md:pt-[144px] pr-[27px] pl-[27px]">
-              <KidspirationHero 
+              <KidspirationHero
                 onAuthClick={() => setShowAuthModal(true)}
                 onNavigate={handleNavigate}
               />
             </div>
-            
+
+            <HomeQuickActions
+              onNavigate={handleNavigate}
+              onAuthClick={() => setShowAuthModal(true)}
+            />
+
             {/* Full Width Sections */}
             <GlowfestSection onNavigate={handleNavigate} />
             <JoinExploreSection
@@ -227,37 +233,37 @@ function AppContent() {
             />
           </>
         );
-      
+
       case 'about':
         return <AboutPage onNavigate={handleNavigate} />;
-      
+
       case 'games':
         return <GamesPage onGameSelect={handleGameSelect} />;
-      
+
       case 'live-tv':
         return <LiveTVPage />;
-      
+
       case 'impact-stories':
         // If a story is selected, show the individual story page
         if (currentStoryId !== null) {
           return (
-            <ImpactStoryPage 
-              storyId={currentStoryId} 
+            <ImpactStoryPage
+              storyId={currentStoryId}
               onBack={handleBackToStories}
               onViewStory={handleViewStory}
             />
           );
         }
         return (
-          <ImpactStoriesPage 
+          <ImpactStoriesPage
             onViewStory={handleViewStory}
-            onAuthClick={() => setShowAuthModal(true)} 
+            onAuthClick={() => setShowAuthModal(true)}
           />
         );
-      
+
       case 'explore':
         return <ExplorePage onNavigate={handleNavigate} />;
-      
+
       case 'dashboard':
         // Only authenticated users can access dashboard
         if (isAuthenticated) {
@@ -267,7 +273,7 @@ function AppContent() {
           toast.error('Please login to access your dashboard.', { duration: 3000 });
           return null;
         }
-      
+
       case 'admin':
         // Only admins can access this page
         if (user?.type === 'admin') {
@@ -277,23 +283,23 @@ function AppContent() {
           toast.error('Access denied. Admin only.', { duration: 3000 });
           return null;
         }
-      
+
       // Program pages
       case 'er100':
         return <ER100Section onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
-      
+
       case 'translators':
         return <TranslatorsNetworkPage onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
-      
+
       case 'glowfest':
         return <GlowfestPage onBack={() => handleNavigate('home')} onAuthClick={() => setShowAuthModal(true)} />;
-      
+
       case 'party':
         return <PartyInitiativePage onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
-      
+
       case 'marketplace':
         return <MarketplacePage onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
-      
+
       default:
         return null;
     }
@@ -302,7 +308,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-white relative">
       <BackgroundEffects />
-      
+
       <Navigation
         currentPage={currentPage}
         onNavigate={handleNavigate}
