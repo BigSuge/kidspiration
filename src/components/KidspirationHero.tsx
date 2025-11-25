@@ -91,7 +91,7 @@ export function KidspirationHero({
         image_5b8918d244f3d9170f1b217e173a624af722400b,
       ctaText: "Discover Glowfest",
       ctaAction: "glowfest",
-      gradient: "from-yellow-400 via-pink-400 to-purple-500",
+      gradient: "from-yellow-400 via-pink-400 to-white-500",
       overlayText: "KIDSPIRATION GLOWFEST",
       overlaySubtext:
         "A joyful celebration where we choose faith instead of fear while distributing the Healing to the Nations Magazine",
@@ -324,11 +324,10 @@ export function KidspirationHero({
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`h-2 rounded-full transition-all ${
-                      index === currentSlide
+                    className={`h-2 rounded-full transition-all ${index === currentSlide
                         ? "w-8 bg-white"
                         : "w-2 bg-white/50"
-                    }`}
+                      }`}
                   />
                 ))}
               </div>
