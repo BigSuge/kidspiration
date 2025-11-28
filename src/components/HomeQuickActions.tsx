@@ -40,7 +40,7 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
                     {title}
                 </h3>
 
-                <p className="text-white/90 text-[10px] sm:text-xs mb-4 flex-grow leading-relaxed font-medium">
+                <p className="text-white/90 text-[12px] sm:text-xs mb-4 flex-grow leading-relaxed font-medium">
                     {description}
                 </p>
 
@@ -90,7 +90,7 @@ export const HomeQuickActions: React.FC<HomeQuickActionsProps> = ({ onNavigate, 
         },
         {
             title: "HTTN Magazine",
-            description: "Read the latest edition of Healing to the Nations for Kids.",
+            description: "Enjoy the Healing to the Nations for Kids Magazine- ANIMATED",
             icon: BookOpen,
             gradient: "from-teal-400 to-cyan-500", // Teal to Cyan - using standard classes for reliability
             onClick: () => window.open('https://httn.kidspiration.org', '_blank'),
