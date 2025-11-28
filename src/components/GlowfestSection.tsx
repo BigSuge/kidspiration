@@ -91,12 +91,6 @@ export function GlowfestSection({
                 Glowfest is a global move to celebrate faith instead of fear, praying for children around
                 the world; while distributing eternal verities with the Healing to the Nations Magazine for kids.
               </p>
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400/20 to-pink-400/20 px-6 py-3 rounded-full border border-yellow-400/30">
-                <Calendar className="w-5 h-5 text-yellow-400" />
-                <span className="text-white text-[16px] font-bold">
-                  October 31 - November 30, 2025
-                </span>
-              </div>
             </div>
           </motion.div>
         </div>
