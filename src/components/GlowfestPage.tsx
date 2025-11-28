@@ -334,7 +334,7 @@ export function GlowfestPage({ onBack, onAuthClick }: GlowfestPageProps) {
                   November 30 at 6am GMT+1 for 30 minutes to intercede for children worldwide.
                 </p>
                 <button
-                  onClick={() => window.open("https://prayerclouds.org/app/signin.php?user=kidspiration", "_blank")}
+                  onClick={() => window.open("https://prayerclouds.org/app/kidspiration", "_blank")}
                   disabled={isDisabled}
                   className={`mt-auto px-4 py-2 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B9D] text-white rounded-full hover:shadow-lg transition-all text-center ${
                     isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
