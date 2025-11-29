@@ -5,7 +5,7 @@ import { useAuth } from '../utils/AuthContext';
 import { projectId, publicAnonKey } from '../utils/supabase/info';
 
 // Helper function to safely parse JSON from a response
-async function safeJsonParse(response: Response): Promise<{ data: any; error: string | null }> {
+async function safeJsonParse<T = Record<string, unknown>>(response: Response): Promise<{ data: T | null; error: string | null }> {
   const text = await response.text();
   
   if (!text || text.trim() === '') {
@@ -13,7 +13,7 @@ async function safeJsonParse(response: Response): Promise<{ data: any; error: st
   }
   
   try {
-    const data = JSON.parse(text);
+    const data = JSON.parse(text) as T;
     return { data, error: null };
   } catch (e) {
     console.error('JSON parse error:', e, 'Response text:', text);
