@@ -1,8 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, User, Users, BookOpen, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { KidspirationLogo } from './KidspirationLogo';
 import { useAuth } from '../utils/AuthContext';
 import { projectId, publicAnonKey } from '../utils/supabase/info';
+
+// Helper function to safely parse JSON from a response
+async function safeJsonParse(response: Response): Promise<{ data: any; error: string | null }> {
+  const text = await response.text();
+  
+  if (!text || text.trim() === '') {
+    return { data: null, error: 'Empty response from server' };
+  }
+  
+  try {
+    const data = JSON.parse(text);
+    return { data, error: null };
+  } catch (e) {
+    console.error('JSON parse error:', e, 'Response text:', text);
+    return { data: null, error: 'Invalid response from server. Please try again.' };
+  }
+}
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -22,6 +39,23 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  
+  // Ref for the message area to scroll to when messages appear
+  const messageRef = useRef<HTMLDivElement>(null);
+  
+  // Function to scroll to message area
+  const scrollToMessage = () => {
+    if (messageRef.current) {
+      messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  };
+  
+  // Effect to scroll to message when error or success message changes
+  useEffect(() => {
+    if (error || successMessage) {
+      scrollToMessage();
+    }
+  }, [error, successMessage]);
 
   // Kid signup state
   const [showAdultAssistance, setShowAdultAssistance] = useState(false);
@@ -164,10 +198,14 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const data = await response.json();
+      const { data, error: parseError } = await safeJsonParse(response);
+      
+      if (parseError) {
+        throw new Error(parseError);
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
+        throw new Error(data?.error || 'Login failed');
       }
 
       login(data.user);
@@ -219,10 +257,14 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const data = await response.json();
+      const { data, error: parseError } = await safeJsonParse(response);
+      
+      if (parseError) {
+        throw new Error(parseError);
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Signup failed');
+        throw new Error(data?.error || 'Signup failed');
       }
 
       setSuccessMessage(data.message);
@@ -259,10 +301,14 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const data = await response.json();
+      const { data, error: parseError } = await safeJsonParse(response);
+      
+      if (parseError) {
+        throw new Error(parseError);
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
+        throw new Error(data?.error || 'Login failed');
       }
 
       login(data.user);
@@ -341,10 +387,14 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const data = await response.json();
+      const { data, error: parseError } = await safeJsonParse(response);
+      
+      if (parseError) {
+        throw new Error(parseError);
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Signup failed');
+        throw new Error(data?.error || 'Signup failed');
       }
 
       // Auto-login after successful signup
@@ -385,10 +435,14 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const data = await response.json();
+      const { data, error: parseError } = await safeJsonParse(response);
+      
+      if (parseError) {
+        throw new Error(parseError);
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Verification failed');
+        throw new Error(data?.error || 'Verification failed');
       }
 
       setSuccessMessage(data.message);
@@ -419,10 +473,14 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const data = await response.json();
+      const { data, error: parseError } = await safeJsonParse(response);
+      
+      if (parseError) {
+        throw new Error(parseError);
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Request failed');
+        throw new Error(data?.error || 'Request failed');
       }
 
       setSuccessMessage(data.message);
@@ -467,10 +525,14 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const data = await response.json();
+      const { data, error: parseError } = await safeJsonParse(response);
+      
+      if (parseError) {
+        throw new Error(parseError);
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Reset failed');
+        throw new Error(data?.error || 'Reset failed');
       }
 
       setSuccessMessage(data.message);
@@ -505,20 +567,23 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
         {/* Content */}
         <div className="p-6">
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-              <p className="text-red-700">{error}</p>
-            </div>
-          )}
+          {/* Message Area - ref for scrolling */}
+          <div ref={messageRef}>
+            {/* Error Message */}
+            {error && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                <p className="text-red-700">{error}</p>
+              </div>
+            )}
 
-          {/* Success Message */}
-          {successMessage && (
-            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-xl">
-              <p className="text-green-700 text-center">{successMessage}</p>
-            </div>
-          )}
+            {/* Success Message */}
+            {successMessage && (
+              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-xl">
+                <p className="text-green-700 text-center">{successMessage}</p>
+              </div>
+            )}
+          </div>
 
           {/* User Type Selection */}
           {authMode === 'select' && (
