@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, User, Users, BookOpen, AlertCircle } from 'lucide-react';
+import { X, User, Users, BookOpen, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { KidspirationLogo } from './KidspirationLogo';
 import { useAuth } from '../utils/AuthContext';
 import { projectId, publicAnonKey } from '../utils/supabase/info';
@@ -85,6 +85,13 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   });
   const [resetStep, setResetStep] = useState<'email' | 'otp'>('email');
 
+  // Password visibility state
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showSignupConfirmPassword, setShowSignupConfirmPassword] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [showResetConfirmPassword, setShowResetConfirmPassword] = useState(false);
+
   useEffect(() => {
     if (!isOpen) {
       resetState();
@@ -119,6 +126,12 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setOtpForm({ email: '', otp: '' });
     setResetForm({ email: '', otp: '', newPassword: '', confirmPassword: '' });
     setResetStep('email');
+    // Reset password visibility states
+    setShowLoginPassword(false);
+    setShowSignupPassword(false);
+    setShowSignupConfirmPassword(false);
+    setShowResetPassword(false);
+    setShowResetConfirmPassword(false);
   };
 
   const playAdultAssistanceAudio = () => {
@@ -759,12 +772,21 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
               <div>
                 <label className="block text-sm text-gray-700 mb-2">Password</label>
-                <input
-                  type="password"
-                  value={loginForm.password}
-                  onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#A78BFA] focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showLoginPassword ? "text" : "password"}
+                    value={loginForm.password}
+                    onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                    className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:border-[#A78BFA] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showLoginPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
 
               <button
@@ -889,22 +911,40 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
               <div>
                 <label className="block text-sm text-gray-700 mb-2">Password</label>
-                <input
-                  type="password"
-                  value={adultForm.password}
-                  onChange={(e) => setAdultForm({ ...adultForm, password: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#A78BFA] focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showSignupPassword ? "text" : "password"}
+                    value={adultForm.password}
+                    onChange={(e) => setAdultForm({ ...adultForm, password: e.target.value })}
+                    className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:border-[#A78BFA] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignupPassword(!showSignupPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showSignupPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm text-gray-700 mb-2">Confirm Password</label>
-                <input
-                  type="password"
-                  value={adultForm.confirmPassword}
-                  onChange={(e) => setAdultForm({ ...adultForm, confirmPassword: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#A78BFA] focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showSignupConfirmPassword ? "text" : "password"}
+                    value={adultForm.confirmPassword}
+                    onChange={(e) => setAdultForm({ ...adultForm, confirmPassword: e.target.value })}
+                    className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:border-[#A78BFA] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignupConfirmPassword(!showSignupConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showSignupConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -1093,22 +1133,40 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
                   <div>
                     <label className="block text-sm text-gray-700 mb-2">New Password</label>
-                    <input
-                      type="password"
-                      value={resetForm.newPassword}
-                      onChange={(e) => setResetForm({ ...resetForm, newPassword: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#4ECDC4] focus:outline-none"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showResetPassword ? "text" : "password"}
+                        value={resetForm.newPassword}
+                        onChange={(e) => setResetForm({ ...resetForm, newPassword: e.target.value })}
+                        className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:border-[#4ECDC4] focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowResetPassword(!showResetPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                      >
+                        {showResetPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-sm text-gray-700 mb-2">Confirm New Password</label>
-                    <input
-                      type="password"
-                      value={resetForm.confirmPassword}
-                      onChange={(e) => setResetForm({ ...resetForm, confirmPassword: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#4ECDC4] focus:outline-none"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showResetConfirmPassword ? "text" : "password"}
+                        value={resetForm.confirmPassword}
+                        onChange={(e) => setResetForm({ ...resetForm, confirmPassword: e.target.value })}
+                        className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:border-[#4ECDC4] focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowResetConfirmPassword(!showResetConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                      >
+                        {showResetConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
                   </div>
 
                   <button
