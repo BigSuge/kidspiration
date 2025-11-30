@@ -26,13 +26,10 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
   };
 
   const handleSponsorClick = (tierId: string, type: 'parent' | 'kid') => {
-    if (!isAuthenticated) {
-      onAuthClick?.();
-    } else {
-      setSelectedTierId(tierId);
-      setSponsorshipType(type);
-      setShowSponsorshipModal(true);
-    }
+    // Sponsorship is now accessible without login
+    setSelectedTierId(tierId);
+    setSponsorshipType(type);
+    setShowSponsorshipModal(true);
   };
 
   const completeStrategies = [
