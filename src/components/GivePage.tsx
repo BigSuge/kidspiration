@@ -270,14 +270,14 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <Heart className="w-12 h-12 text-pink-500" />
-            <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-5xl sm:text-6xl font-extrabold">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6">
+            <Heart className="w-8 h-8 sm:w-12 sm:h-12 text-pink-500" />
+            <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-3xl sm:text-5xl md:text-6xl font-extrabold">
               Give & Sponsor
             </h1>
-            <Gift className="w-12 h-12 text-purple-500" />
+            <Gift className="w-8 h-8 sm:w-12 sm:h-12 text-purple-500" />
           </div>
-          <p className="text-gray-700 max-w-3xl mx-auto leading-relaxed text-xl">
+          <p className="text-gray-700 max-w-3xl mx-auto leading-relaxed text-base sm:text-lg md:text-xl px-2">
             Support our mission to reach every child with the Gospel. Choose from our various sponsorship options below.
           </p>
         </motion.div>
@@ -290,18 +290,18 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
           className="mb-16"
         >
           <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-200">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <Sparkles className="w-8 h-8 text-purple-500" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center">
                 HTTN Magazine Sponsorship
               </h2>
-              <Sparkles className="w-8 h-8 text-pink-500" />
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-pink-500" />
             </div>
-            <p className="text-gray-600 text-center mb-8 text-lg">
+            <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
               Sponsor Healing to the Nations Magazine to reach children with God's Word
             </p>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               {httnSponsorships.map((tier, index) => (
                 <motion.div
                   key={tier.id}
@@ -351,21 +351,21 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
           className="mb-16"
         >
           <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-blue-200">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <Target className="w-8 h-8 text-blue-500" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
+              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center">
                 ER100 Initiative
               </h2>
-              <Target className="w-8 h-8 text-cyan-500" />
+              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-500" />
             </div>
-            <p className="text-gray-600 text-center mb-8 text-lg">
+            <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
               Each One Reach 100 - Help children reach 100 others with God's Word
             </p>
 
             {/* Parent/Teacher Sponsorship */}
             <div className="mb-10">
-              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">Parents/Teachers Sponsorship</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 text-center">Parents/Teachers Sponsorship</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 {er100ParentSponsorships.map((tier, index) => (
                   <motion.div
                     key={tier.id}
@@ -404,8 +404,8 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
 
             {/* Kids CHAMP Sponsorship */}
             <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">Kids CHAMP Sponsorship</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 text-center">Kids CHAMP Sponsorship</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 {er100KidSponsorships.map((tier, index) => (
                   <motion.div
                     key={tier.id}
@@ -418,12 +418,12 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
                       {tier.emoji}
                     </div>
                     <h4 className="text-sm sm:text-base font-bold text-gray-900 text-center mb-2">{tier.title}</h4>
-                    <p className={`text-center font-bold mb-1 bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text text-sm`}>
+                    <p className={`text-center font-bold mb-1 bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text text-xs sm:text-sm`}>
                       {tier.copies}
                     </p>
                     <button
                       onClick={() => handleER100Click(tier.id, 'kid')}
-                      className={`w-full px-4 py-2 mt-4 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-sm transform hover:scale-105`}
+                      className={`w-full px-3 sm:px-4 py-2 mt-4 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-xs sm:text-sm transform hover:scale-105`}
                     >
                       Sponsor Now
                     </button>
@@ -435,7 +435,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
             <div className="text-center mt-6">
               <button
                 onClick={() => onNavigate?.('er100')}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full hover:shadow-xl transition-all font-bold transform hover:scale-105"
+                className="px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full hover:shadow-xl transition-all font-bold text-sm sm:text-base transform hover:scale-105"
               >
                 Learn More About ER100
               </button>
@@ -452,18 +452,18 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
             className="mb-16"
           >
             <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-500">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <Sparkles className="w-8 h-8 text-yellow-400" />
-                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
+                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center">
                   Glowfest 2025 Sponsorship
                 </h2>
-                <Sparkles className="w-8 h-8 text-yellow-400" />
+                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
               </div>
-              <p className="text-gray-600 text-center mb-8 text-lg">
+              <p className="text-gray-300 text-center mb-8 text-base sm:text-lg px-2">
                 Partner with us to reach children worldwide through Glowfest
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 {glowfestSponsorships.map((tier, index) => (
                   <motion.div
                     key={tier.id}
@@ -472,17 +472,17 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
                     transition={{ delay: 0.4 + index * 0.05 }}
                     className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-gray-200 hover:shadow-xl transition-all"
                   >
-                    <div className={`w-14 h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg`}>
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mb-4 shadow-lg`}>
                       {tier.emoji}
                     </div>
                     <h4 className="text-xs sm:text-sm font-bold text-[#FF1F8E] text-center mb-2">{tier.name}</h4>
-                    <p className={`text-center font-bold mb-1 text-gray-900`}>
+                    <p className={`text-center font-bold mb-1 text-gray-900 text-sm sm:text-base`}>
                       {tier.espees}
                     </p>
                     <p className="text-gray-600 text-xs text-center mb-4">{tier.description}</p>
                     <button
                       onClick={() => handleGlowfestClick(tier.id)}
-                      className={`w-full px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-sm transform hover:scale-105`}
+                      className={`w-full px-3 sm:px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-xs sm:text-sm transform hover:scale-105`}
                     >
                       Sponsor Now
                     </button>
@@ -493,7 +493,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
               <div className="text-center mt-6">
                 <button
                   onClick={() => onNavigate?.('glowfest')}
-                  className="px-6 py-3 bg-purple text-white rounded-full hover:shadow-xl transition-all font-bold transform hover:scale-105"
+                  className="px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[#9B4DFF] to-[#C77DFF] text-white rounded-full hover:shadow-xl transition-all font-bold text-sm sm:text-base transform hover:scale-105"
                 >
                   Learn More About Glowfest
                 </button>
@@ -511,23 +511,23 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
             className="mb-16"
           >
             <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-pink-200">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <PartyPopper className="w-8 h-8 text-pink-500" />
-                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
+                <PartyPopper className="w-6 h-6 sm:w-8 sm:h-8 text-pink-500" />
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center">
                   Kidspiration Party Initiative
                 </h2>
-                <Cake className="w-8 h-8 text-purple-500" />
+                <Cake className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
               </div>
-              <p className="text-gray-600 text-center mb-8 text-lg">
+              <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
                 Celebrate children who may have never had a birthday party before
               </p>
 
               {/* Full Party & Outreach */}
               <div className="mb-10">
-                <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 mb-4 text-center">
+                <h3 className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500 mb-4 text-center">
                   🎉 Full Party & Outreach
                 </h3>
-                <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
                   {fullPartyTiers.map((tier, index) => (
                     <motion.div
                       key={tier.id}
@@ -536,17 +536,17 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
                       transition={{ delay: 0.5 + index * 0.05 }}
                       className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-pink-200 hover:border-pink-400 hover:shadow-xl transition-all"
                     >
-                      <div className={`w-14 h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg`}>
+                      <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mb-4 shadow-lg`}>
                         {tier.icon}
                       </div>
-                      <h4 className="text-base font-bold text-gray-900 text-center mb-2">{tier.children}</h4>
+                      <h4 className="text-sm sm:text-base font-bold text-gray-900 text-center mb-2">{tier.children}</h4>
                       <p className="text-gray-600 text-xs sm:text-sm text-center mb-2">{tier.description}</p>
-                      <p className={`text-center font-bold mb-4 bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text`}>
+                      <p className={`text-center font-bold mb-4 bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text text-sm sm:text-base`}>
                         {tier.espees}
                       </p>
                       <button
                         onClick={() => handlePartyClick(tier.id, 'full-party')}
-                        className={`w-full px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-sm transform hover:scale-105`}
+                        className={`w-full px-3 sm:px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-xs sm:text-sm transform hover:scale-105`}
                       >
                         Sponsor Now
                       </button>
@@ -557,10 +557,10 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
 
               {/* Spread Love */}
               <div>
-                <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500 mb-4 text-center">
+                <h3 className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500 mb-4 text-center">
                   💝 Spread Love
                 </h3>
-                <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
                   {spreadLoveTiers.map((tier, index) => (
                     <motion.div
                       key={tier.id}
@@ -569,17 +569,17 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
                       transition={{ delay: 0.6 + index * 0.05 }}
                       className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-pink-200 hover:border-pink-400 hover:shadow-xl transition-all"
                     >
-                      <div className={`w-14 h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg`}>
+                      <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mb-4 shadow-lg`}>
                         {tier.icon}
                       </div>
-                      <h4 className="text-base font-bold text-gray-900 text-center mb-2">{tier.children}</h4>
+                      <h4 className="text-sm sm:text-base font-bold text-gray-900 text-center mb-2">{tier.children}</h4>
                       <p className="text-gray-600 text-xs sm:text-sm text-center mb-2">{tier.description}</p>
-                      <p className={`text-center font-bold mb-4 bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text`}>
+                      <p className={`text-center font-bold mb-4 bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text text-sm sm:text-base`}>
                         {tier.espees}
                       </p>
                       <button
                         onClick={() => handlePartyClick(tier.id, 'spread-love')}
-                        className={`w-full px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-sm transform hover:scale-105`}
+                        className={`w-full px-3 sm:px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-xs sm:text-sm transform hover:scale-105`}
                       >
                         Sponsor Now
                       </button>
@@ -591,7 +591,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
               <div className="text-center mt-6">
                 <button
                   onClick={() => onNavigate?.('party')}
-                  className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full hover:shadow-xl transition-all font-bold transform hover:scale-105"
+                  className="px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full hover:shadow-xl transition-all font-bold text-sm sm:text-base transform hover:scale-105"
                 >
                   Learn More About Party Initiative
                 </button>
@@ -605,14 +605,14 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-3xl p-8 sm:p-12 text-center text-white shadow-2xl"
+          className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-3xl p-6 sm:p-8 md:p-12 text-center text-white shadow-2xl"
         >
-          <Heart className="w-16 h-16 mx-auto mb-6" />
-          <h2 className="text-4xl sm:text-5xl mb-6 font-bold">Thank You for Your Support! 💖</h2>
-          <p className="text-xl text-white/90 max-w-3xl mx-auto mb-8">
+          <Heart className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6" />
+          <h2 className="text-2xl sm:text-4xl md:text-5xl mb-4 sm:mb-6 font-bold px-2">Thank You for Your Support! 💖</h2>
+          <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-6 sm:mb-8 px-2">
             Your generous sponsorship helps us reach millions of children around the world with God's love. Together, we're making a difference that will last for eternity! 🌍✨
           </p>
-          <div className="flex flex-wrap justify-center gap-4 text-4xl">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-2xl sm:text-4xl">
             <span>🎉</span>
             <span>❤️</span>
             <span>⛪</span>
