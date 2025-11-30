@@ -454,12 +454,12 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
             <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-500">
               <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
                 <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center">
                   Glowfest 2025 Sponsorship
                 </h2>
                 <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
               </div>
-              <p className="text-gray-300 text-center mb-8 text-base sm:text-lg px-2">
+              <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
                 Partner with us to reach children worldwide through Glowfest
               </p>
 
