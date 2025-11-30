@@ -4,19 +4,70 @@ import { KidspirationLogo } from './KidspirationLogo';
 import { useAuth } from '../utils/AuthContext';
 import { projectId, publicAnonKey } from '../utils/supabase/info';
 
+// Interface for user data returned from the API
+interface ApiUser {
+  id: string;
+  type: 'kid' | 'parent' | 'leader' | 'admin';
+  firstName: string;
+  lastName: string;
+  username: string;
+  email?: string;
+  age?: number;
+  birthday?: string;
+  title?: string;
+  country?: string;
+  visitCount?: number;
+  lastVisit?: string;
+  createdAt?: string;
+}
+
+// Interface for API response
+interface AuthApiResponse {
+  success?: boolean;
+  user?: ApiUser;
+  message?: string;
+  error?: string;
+  autoLogin?: boolean;
+}
+
 // Helper function to safely parse JSON from a response
-async function safeJsonParse<T = Record<string, unknown>>(response: Response): Promise<{ data: T | null; error: string | null }> {
-  const text = await response.text();
+async function safeJsonParse<T = AuthApiResponse>(response: Response): Promise<{ data: T | null; error: string | null }> {
+  // Check content type to provide better error messages
+  const contentType = response.headers.get('content-type') || '';
+  
+  let text: string;
+  try {
+    text = await response.text();
+  } catch (e) {
+    console.error('Failed to read response body:', e);
+    return { data: null, error: 'Failed to read server response. Please check your connection.' };
+  }
   
   if (!text || text.trim() === '') {
     return { data: null, error: 'Empty response from server' };
+  }
+  
+  // If content type is not JSON and response isn't ok, provide helpful message
+  if (!contentType.includes('application/json') && !response.ok) {
+    console.error('Non-JSON error response:', response.status, text.substring(0, 500));
+    if (response.status === 404) {
+      return { data: null, error: 'Service not found. Please try again later.' };
+    }
+    if (response.status >= 500) {
+      return { data: null, error: 'Server error. Please try again later.' };
+    }
+    return { data: null, error: `Request failed (${response.status}). Please try again.` };
   }
   
   try {
     const data = JSON.parse(text) as T;
     return { data, error: null };
   } catch (e) {
-    console.error('JSON parse error:', e, 'Response text:', text);
+    console.error('JSON parse error:', e, 'Response text:', text.substring(0, 500));
+    // Provide more helpful message based on what we received
+    if (text.startsWith('<!DOCTYPE') || text.startsWith('<html')) {
+      return { data: null, error: 'Server returned an error page. Please try again later.' };
+    }
     return { data: null, error: 'Invalid response from server. Please try again.' };
   }
 }
@@ -198,7 +249,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const { data, error: parseError } = await safeJsonParse(response);
+      const { data, error: parseError } = await safeJsonParse<AuthApiResponse>(response);
       
       if (parseError) {
         throw new Error(parseError);
@@ -208,14 +259,19 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         throw new Error(data?.error || 'Login failed');
       }
 
+      if (!data?.user) {
+        throw new Error('Invalid response: missing user data');
+      }
+
       login(data.user);
-      setSuccessMessage(data.message);
+      setSuccessMessage(data.message || 'Login successful!');
       setTimeout(() => {
         onSuccess?.();
         onClose();
       }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -257,7 +313,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const { data, error: parseError } = await safeJsonParse(response);
+      const { data, error: parseError } = await safeJsonParse<AuthApiResponse>(response);
       
       if (parseError) {
         throw new Error(parseError);
@@ -267,14 +323,15 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         throw new Error(data?.error || 'Signup failed');
       }
 
-      setSuccessMessage(data.message);
+      setSuccessMessage(data?.message || 'Signup successful!');
       setTimeout(() => {
         setAuthMode('login');
         setShowAdultAssistance(false);
         setAdultConfirmed(false);
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || 'Signup failed');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Signup failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -301,7 +358,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const { data, error: parseError } = await safeJsonParse(response);
+      const { data, error: parseError } = await safeJsonParse<AuthApiResponse>(response);
       
       if (parseError) {
         throw new Error(parseError);
@@ -311,14 +368,19 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         throw new Error(data?.error || 'Login failed');
       }
 
+      if (!data?.user) {
+        throw new Error('Invalid response: missing user data');
+      }
+
       login(data.user);
-      setSuccessMessage(data.message);
+      setSuccessMessage(data.message || 'Login successful!');
       setTimeout(() => {
         onSuccess?.();
         onClose();
       }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -387,7 +449,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const { data, error: parseError } = await safeJsonParse(response);
+      const { data, error: parseError } = await safeJsonParse<AuthApiResponse>(response);
       
       if (parseError) {
         throw new Error(parseError);
@@ -396,11 +458,11 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
       if (!response.ok) {
         throw new Error(data?.error || 'Signup failed');
       }
-
+      
       // Auto-login after successful signup
-      if (data.autoLogin && data.user) {
+      if (data?.autoLogin && data?.user) {
         login(data.user);
-        setSuccessMessage(data.message);
+        setSuccessMessage(data.message || 'Signup successful!');
         setTimeout(() => {
           onSuccess?.();
           onClose();
@@ -409,10 +471,11 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         // Fallback to OTP flow if needed
         setOtpForm({ email: adultForm.email, otp: '' });
         setAuthMode('verify-otp');
-        setSuccessMessage(data.message);
+        setSuccessMessage(data?.message || 'Please verify your email');
       }
-    } catch (err: any) {
-      setError(err.message || 'Signup failed');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Signup failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -435,7 +498,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const { data, error: parseError } = await safeJsonParse(response);
+      const { data, error: parseError } = await safeJsonParse<AuthApiResponse>(response);
       
       if (parseError) {
         throw new Error(parseError);
@@ -445,12 +508,13 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         throw new Error(data?.error || 'Verification failed');
       }
 
-      setSuccessMessage(data.message);
+      setSuccessMessage(data?.message || 'Verification successful!');
       setTimeout(() => {
         setAuthMode('login');
       }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'Verification failed');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Verification failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -473,7 +537,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const { data, error: parseError } = await safeJsonParse(response);
+      const { data, error: parseError } = await safeJsonParse<AuthApiResponse>(response);
       
       if (parseError) {
         throw new Error(parseError);
@@ -483,10 +547,11 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         throw new Error(data?.error || 'Request failed');
       }
 
-      setSuccessMessage(data.message);
+      setSuccessMessage(data?.message || 'Reset code sent!');
       setResetStep('otp');
-    } catch (err: any) {
-      setError(err.message || 'Request failed');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Request failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -525,7 +590,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }
       );
 
-      const { data, error: parseError } = await safeJsonParse(response);
+      const { data, error: parseError } = await safeJsonParse<AuthApiResponse>(response);
       
       if (parseError) {
         throw new Error(parseError);
@@ -535,13 +600,14 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         throw new Error(data?.error || 'Reset failed');
       }
 
-      setSuccessMessage(data.message);
+      setSuccessMessage(data?.message || 'Password reset successful!');
       setTimeout(() => {
         setAuthMode('login');
         setResetStep('email');
       }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'Reset failed');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Reset failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
