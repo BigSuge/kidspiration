@@ -62,17 +62,7 @@ export function GlowfestPage({ onBack, onAuthClick }: GlowfestPageProps) {
       return;
     }
 
-    // Adults must be logged in
-    if (!isAuthenticated) {
-      toast.info("Please login to complete your Glowfest sponsorship", {
-        description: "You'll need to create an account or sign in to continue",
-        duration: 4000,
-      });
-      onAuthClick?.();
-      return;
-    }
-
-    // Open modal with selected sponsorship type
+    // Sponsorship is now accessible without login
     setSelectedTier(sponsorshipType);
     setIsModalOpen(true);
   };

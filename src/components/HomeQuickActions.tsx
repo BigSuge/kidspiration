@@ -85,7 +85,7 @@ export const HomeQuickActions: React.FC<HomeQuickActionsProps> = ({ onNavigate, 
             description: "Support our mission to reach every child with the Gospel.",
             icon: Gift,
             gradient: "from-[#EC4899] to-[#EF4444]", // Pink to Red gradient
-            onClick: () => onNavigate('er100'),
+            onClick: () => onNavigate('give'),
             buttonText: "Sponsor Now"
         },
         {

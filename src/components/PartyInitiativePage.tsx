@@ -26,17 +26,7 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
       return;
     }
 
-    // Adults must be logged in
-    if (!isAuthenticated) {
-      toast.info("Please login to sponsor a Kidspiration Party", {
-        description: "You'll need to create an account or sign in to continue",
-        duration: 4000,
-      });
-      onAuthClick?.();
-      return;
-    }
-
-    // Open modal with selected tier and program type
+    // Sponsorship is now accessible without login
     setProgramType(type);
     setSelectedTier(tierId);
     setIsModalOpen(true);

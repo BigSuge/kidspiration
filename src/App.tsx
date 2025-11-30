@@ -17,6 +17,7 @@ import { TranslatorsNetworkPage } from './components/TranslatorsNetworkPage';
 import { PartyInitiativePage } from './components/PartyInitiativePage';
 import { MarketplacePage } from './components/MarketplacePage';
 import { AboutPage } from './components/AboutPage';
+import { GivePage } from './components/GivePage';
 import { ColorMeGame } from './components/games/ColorMeGame';
 import { PuzzleGame } from './components/games/PuzzleGame';
 import { CrosswordGame } from './components/games/CrosswordGame';
@@ -299,6 +300,9 @@ function AppContent() {
 
       case 'marketplace':
         return <MarketplacePage onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
+
+      case 'give':
+        return <GivePage onBack={() => handleNavigate('home')} onNavigate={handleNavigate} />;
 
       default:
         return null;
