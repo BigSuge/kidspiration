@@ -454,12 +454,12 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
             <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-500">
               <div className="flex items-center justify-center gap-3 mb-6">
                 <Sparkles className="w-8 h-8 text-yellow-400" />
-                <h2 className="text-3xl sm:text-4xl font-bold text-white text-center">
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center">
                   Glowfest 2025 Sponsorship
                 </h2>
                 <Sparkles className="w-8 h-8 text-yellow-400" />
               </div>
-              <p className="text-white/90 text-center mb-8 text-lg">
+              <p className="text-gray-600 text-center mb-8 text-lg">
                 Partner with us to reach children worldwide through Glowfest
               </p>
 
@@ -493,7 +493,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
               <div className="text-center mt-6">
                 <button
                   onClick={() => onNavigate?.('glowfest')}
-                  className="px-6 py-3 bg-white text-purple-600 rounded-full hover:shadow-xl transition-all font-bold transform hover:scale-105"
+                  className="px-6 py-3 bg-gradient-to-l ${tier.gradient} text-white rounded-full hover:shadow-xl transition-all font-bold transform hover:scale-105"
                 >
                   Learn More About Glowfest
                 </button>
