@@ -22,6 +22,7 @@ export function Navigation({ currentPage = 'home', onNavigate, onAuthClick }: Na
     { label: 'Explore', page: 'explore' },
     { label: 'Live TV', page: 'live-tv' },
     { label: 'Impact Stories', page: 'impact-stories' },
+    { label: 'Sponsor', page: 'give' },
   ];
 
   const handleNavClick = (page: string) => {
