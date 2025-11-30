@@ -493,7 +493,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
               <div className="text-center mt-6">
                 <button
                   onClick={() => onNavigate?.('glowfest')}
-                  className="px-6 py-3 bg-gradient-to-l ${tier.gradient} text-white rounded-full hover:shadow-xl transition-all font-bold transform hover:scale-105"
+                  className="px-6 py-3 bg-purple text-white rounded-full hover:shadow-xl transition-all font-bold transform hover:scale-105"
                 >
                   Learn More About Glowfest
                 </button>
