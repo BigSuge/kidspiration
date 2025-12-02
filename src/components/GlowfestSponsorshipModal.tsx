@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Heart, ArrowRight, CheckCircle } from "lucide-react";
+import { X, ArrowRight, CheckCircle } from "lucide-react";
 import { useAuth } from "../utils/AuthContext";
+import confetti from "canvas-confetti";
 
 const createEmptyGlowfestForm = () => ({ name: "", email: "", phone: "" });
 
@@ -100,6 +101,11 @@ export function GlowfestSponsorshipModal({
     });
 
     // For now, show success and close
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
     alert("Thank you for your Glowfest sponsorship! Redirecting to payment...");
     onClose();
   };
@@ -118,7 +124,7 @@ export function GlowfestSponsorshipModal({
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto pt-20 sm:pt-6">
+          <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto pt-20 sm:pt-28">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -205,11 +211,10 @@ export function GlowfestSponsorshipModal({
                           onClick={() => onTierSelect(tier.id)}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className={`bg-white rounded-2xl p-5 sm:p-6 border-3 ${
-                            isSelected
-                              ? "border-[#FF1F8E] ring-4 ring-[#FF1F8E]/30"
-                              : "border-gray-300"
-                          } shadow-lg transition-all relative text-left`}
+                          className={`bg-white rounded-2xl p-5 sm:p-6 border-3 ${isSelected
+                            ? "border-[#FF1F8E] ring-4 ring-[#FF1F8E]/30"
+                            : "border-gray-300"
+                            } shadow-lg transition-all relative text-left`}
                         >
                           {isSelected && (
                             <div className="absolute -top-2 -right-2 w-7 h-7 bg-[#FF1F8E] rounded-full flex items-center justify-center">

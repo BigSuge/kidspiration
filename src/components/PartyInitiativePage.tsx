@@ -38,8 +38,8 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
     {
       id: "party-50",
       children: "50 Children",
-      espees: "1,000 ESPEES",
-      amount: "1,000",
+      espees: "2,000 ESPEES",
+      amount: "2,000",
       icon: "🎉",
       gradient: "from-[#FF6B9D] to-[#F472B6]",
       description: "Full party package for 50 amazing kids",
@@ -47,8 +47,8 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
     {
       id: "party-100",
       children: "100 Children",
-      espees: "2,000 ESPEES",
-      amount: "2,000",
+      espees: "4,000 ESPEES",
+      amount: "4,000",
       icon: "🎊",
       gradient: "from-[#9B4DFF] to-[#C77DFF]",
       description: "Celebrate 100 children with joy and love",
@@ -56,8 +56,8 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
     {
       id: "party-150",
       children: "150 Children",
-      espees: "3,000 ESPEES",
-      amount: "3,000",
+      espees: "6,000 ESPEES",
+      amount: "6,000",
       icon: "🎈",
       gradient: "from-[#4ECDC4] to-[#00D4FF]",
       description: "Host a mega party for 150 kids",
@@ -65,11 +65,20 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
     {
       id: "party-200",
       children: "200 Children",
-      espees: "4,000 ESPEES",
-      amount: "4,000",
+      espees: "8,000 ESPEES",
+      amount: "8,000",
       icon: "✨",
       gradient: "from-[#FFA500] to-[#FFD41F]",
       description: "Ultimate celebration for 200 children",
+    },
+    {
+      id: "party-250",
+      children: "250 Children",
+      espees: "10,000 ESPEES",
+      amount: "10,000",
+      icon: "🌟",
+      gradient: "from-[#FF6B9D] to-[#FFD41F]",
+      description: "Grand celebration for 250 children",
     },
   ];
 
@@ -77,38 +86,47 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
     {
       id: "love-50",
       children: "50 Children",
-      espees: "500 ESPEES",
-      amount: "500",
+      espees: "1,000 ESPEES",
+      amount: "1,000",
       icon: "💝",
       gradient: "from-[#FF6B9D] to-[#F472B6]",
-      description: "Gift packages with HTTN Magazine",
+      description: "Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant's birthday",
     },
     {
       id: "love-100",
       children: "100 Children",
-      espees: "1,000 ESPEES",
-      amount: "1,000",
+      espees: "2,000 ESPEES",
+      amount: "2,000",
       icon: "💖",
       gradient: "from-[#9B4DFF] to-[#C77DFF]",
-      description: "Spread love to 100 kids on birthdays",
+      description: "Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant's birthday",
     },
     {
       id: "love-150",
       children: "150 Children",
-      espees: "2,000 ESPEES",
-      amount: "2,000",
+      espees: "3,000 ESPEES",
+      amount: "3,000",
       icon: "💗",
       gradient: "from-[#4ECDC4] to-[#00D4FF]",
-      description: "Share eternal treats with 150 children",
+      description: "Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant's birthday",
     },
     {
       id: "love-200",
       children: "200 Children",
-      espees: "3,000 ESPEES",
-      amount: "3,000",
+      espees: "4,000 ESPEES",
+      amount: "4,000",
       icon: "💕",
       gradient: "from-[#FFA500] to-[#FFD41F]",
-      description: "Maximum impact for 200 kids",
+      description: "Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant's birthday",
+    },
+    {
+      id: "love-250",
+      children: "250 Children",
+      espees: "5,000 ESPEES",
+      amount: "5,000",
+      icon: "🎁",
+      gradient: "from-[#FF6B9D] to-[#FFD41F]",
+      description: "Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant's birthday",
     },
   ];
 
@@ -176,7 +194,7 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
             <Cake className="w-12 h-12 text-purple-500" />
           </div>
           <p className="text-gray-700 max-w-3xl mx-auto leading-relaxed text-2xl text-[20px]">
-            Celebrating children who may have never had a birthday party before. Spreading love, joy, and the message of God's love to every child.
+            An outreach program designed to celebrate children who may have never experienced a birthday celebration before—while also reaching out to other children within the community.
           </p>
         </motion.div>
 
@@ -303,25 +321,24 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
                 <div className={`w-16 h-16 bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center mb-4 text-3xl shadow-lg`}>
                   {tier.icon}
                 </div>
-                
+
                 <h3 className="text-gray-900 mb-2 font-bold text-xl">
                   {tier.children}
                 </h3>
-                
+
                 <p className="text-gray-600 text-sm mb-3 flex-grow">
                   {tier.description}
                 </p>
-                
+
                 <div className={`text-center mb-4 px-4 py-2 bg-gradient-to-r ${tier.gradient} rounded-full shadow-md`}>
                   <p className="text-white font-bold">{tier.espees}</p>
                 </div>
-                
+
                 <button
                   onClick={() => handleSponsorClick('full-party', tier.id)}
                   disabled={isDisabled}
-                  className={`w-full px-4 py-3 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-xl transition-all font-bold text-center ${
-                    isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
-                  }`}
+                  className={`w-full px-4 py-3 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-xl transition-all font-bold text-center ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+                    }`}
                 >
                   Sponsor Now
                 </button>
@@ -342,7 +359,7 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
               💝 Spread Love
             </h2>
             <p className="text-gray-700 text-xl max-w-2xl mx-auto text-[20px]">
-              Gift packages with HTTN Magazine shared during celebrant's birthdays - eternal treats for eternal impact!
+              Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant's birthday
             </p>
           </div>
 
@@ -358,25 +375,24 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
                 <div className={`w-16 h-16 bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center mb-4 text-3xl shadow-lg`}>
                   {tier.icon}
                 </div>
-                
+
                 <h3 className="text-gray-900 mb-2 font-bold text-xl">
                   {tier.children}
                 </h3>
-                
+
                 <p className="text-gray-600 text-sm mb-3 flex-grow">
                   {tier.description}
                 </p>
-                
+
                 <div className={`text-center mb-4 px-4 py-2 bg-gradient-to-r ${tier.gradient} rounded-full shadow-md`}>
                   <p className="text-white font-bold">{tier.espees}</p>
                 </div>
-                
+
                 <button
                   onClick={() => handleSponsorClick('spread-love', tier.id)}
                   disabled={isDisabled}
-                  className={`w-full px-4 py-3 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-xl transition-all font-bold text-center ${
-                    isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
-                  }`}
+                  className={`w-full px-4 py-3 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-xl transition-all font-bold text-center ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+                    }`}
                 >
                   Sponsor Now
                 </button>
@@ -444,7 +460,7 @@ export function PartyInitiativePage({ onAuthClick, onBack }: PartyInitiativePage
           <Heart className="w-16 h-16 mx-auto mb-6" />
           <h2 className="text-5xl mb-6 font-bold text-[40px]">Be the Reason a Child Smiles</h2>
           <p className="mb-8 text-white/90 max-w-3xl mx-auto leading-relaxed text-[20px]">
-            {user?.type === 'kid' 
+            {user?.type === 'kid'
               ? '👋 Hey Champion! Tell your parents or teachers about Kidspiration Party and help bring joy to children around the world!'
               : 'Join us in celebrating children who deserve to feel loved and special. Your sponsorship can change a life forever! 🌟'}
           </p>

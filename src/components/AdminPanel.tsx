@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Users, Activity, TrendingUp, Eye, ChevronLeft, ChevronRight, Search } from 'lucide-react';
-import { projectId, publicAnonKey } from '../utils/supabase/info';
+import { projectId, publicAnonKey, functionName } from '../utils/supabase/info';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export function AdminPanel() {
@@ -25,7 +25,7 @@ export function AdminPanel() {
   const loadAnalytics = async () => {
     try {
       const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/analytics/dashboard`,
+        `https://${projectId}.supabase.co/functions/v1/${functionName}/analytics/dashboard`,
         {
           headers: {
             'Authorization': `Bearer ${publicAnonKey}`,
@@ -46,7 +46,7 @@ export function AdminPanel() {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/admin/users?page=${currentPage}&limit=20&type=${filterType}`,
+        `https://${projectId}.supabase.co/functions/v1/${functionName}/admin/users?page=${currentPage}&limit=20&type=${filterType}`,
         {
           headers: {
             'Authorization': `Bearer ${publicAnonKey}`,
@@ -161,21 +161,21 @@ export function AdminPanel() {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#A78BFA" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#A78BFA" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorLogins" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4ECDC4" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#4ECDC4" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#4ECDC4" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#4ECDC4" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis 
-                  dataKey="month" 
+                <XAxis
+                  dataKey="month"
                   stroke="#6B7280"
                   tick={{ fill: '#6B7280' }}
                 />
-                <YAxis 
+                <YAxis
                   stroke="#6B7280"
                   tick={{ fill: '#6B7280' }}
                 />
@@ -187,23 +187,23 @@ export function AdminPanel() {
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                   }}
                 />
-                <Legend 
+                <Legend
                   wrapperStyle={{ paddingTop: '20px' }}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="visits" 
-                  stroke="#A78BFA" 
-                  fillOpacity={1} 
+                <Area
+                  type="monotone"
+                  dataKey="visits"
+                  stroke="#A78BFA"
+                  fillOpacity={1}
                   fill="url(#colorVisits)"
                   name="Page Visits"
                   strokeWidth={2}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="logins" 
-                  stroke="#4ECDC4" 
-                  fillOpacity={1} 
+                <Area
+                  type="monotone"
+                  dataKey="logins"
+                  stroke="#4ECDC4"
+                  fillOpacity={1}
                   fill="url(#colorLogins)"
                   name="Logins"
                   strokeWidth={2}
@@ -391,13 +391,12 @@ export function AdminPanel() {
                       </td>
                       <td className="py-3 px-4 text-gray-600">{user.username}</td>
                       <td className="py-3 px-4">
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          user.type === 'kid'
-                            ? 'bg-[#FF6B9D]/10 text-[#FF6B9D]'
-                            : user.type === 'parent'
+                        <span className={`px-2 py-1 rounded-full text-xs ${user.type === 'kid'
+                          ? 'bg-[#FF6B9D]/10 text-[#FF6B9D]'
+                          : user.type === 'parent'
                             ? 'bg-[#A78BFA]/10 text-[#A78BFA]'
                             : 'bg-[#4ECDC4]/10 text-[#4ECDC4]'
-                        }`}>
+                          }`}>
                           {user.type}
                         </span>
                       </td>

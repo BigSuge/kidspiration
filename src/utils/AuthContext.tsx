@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { projectId, publicAnonKey } from './supabase/info';
+import { projectId, publicAnonKey, functionName } from './supabase/info';
 
 interface User {
   id: string;
@@ -56,10 +56,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const trackPageVisit = async (page: string) => {
     if (!user) return;
-    
+
     try {
       await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/analytics/page-visit`,
+        `https://${projectId}.supabase.co/functions/v1/${functionName}/analytics/page-visit`,
         {
           method: 'POST',
           headers: {

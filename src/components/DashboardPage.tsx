@@ -7,16 +7,16 @@ import {
   Heart,
   Trophy,
   Sparkles,
-  
-  
+
+
   Star,
   Crown,
   Zap,
-  
+
   Newspaper,
   PartyPopper,
   ArrowRight,
-  
+
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { ParentDashboard } from './ParentDashboard';
@@ -82,10 +82,10 @@ function HTTNCarousel() {
                 alt={slide.title}
                 className="w-full h-full object-cover opacity-90"
               />
-              
+
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              
+
               {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
                 <motion.div
@@ -123,11 +123,10 @@ function HTTNCarousel() {
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all ${
-              currentSlide === index
-                ? 'bg-white w-8'
-                : 'bg-white/50 hover:bg-white/75'
-            }`}
+            className={`w-3 h-3 rounded-full transition-all ${currentSlide === index
+              ? 'bg-white w-8'
+              : 'bg-white/50 hover:bg-white/75'
+              }`}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
@@ -162,6 +161,12 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   // Parent/Teacher and Pastor/Leader Dashboard (same experience)
   if (user.type === 'parent' || user.type === 'leader' || (user as any).type === 'pastor') {
     return <ParentDashboard onNavigate={onNavigate} />;
+  }
+
+  // Admin Dashboard (redirect to admin panel)
+  if (user.type === 'admin') {
+    onNavigate?.('admin');
+    return null;
   }
 
   // Kids Dashboard
@@ -246,11 +251,11 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
             >
               <div className="text-6xl">👋</div>
             </motion.div>
-            
+
             <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B9D] via-[#A78BFA] to-[#4ECDC4] mb-4 text-5xl font-extrabold text-[40px]">
               Welcome back, {user.title || ''} {user.firstName}!
             </h1>
-            
+
             <p className="text-gray-600 max-w-2xl mx-auto text-[24px]">
               What would you like to do today? Pick an adventure below! 🌟
             </p>
@@ -638,7 +643,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 >
                   {/* Glow effect on hover */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} rounded-3xl blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-300`} />
-                  
+
                   <div className="relative bg-gradient-to-br from-[#EC4899] to-[#A78BFA] rounded-3xl p-[3px]">
                     <div className="bg-gradient-to-br bg-gradient-to-br from-[#EC4899] via-[#D946EF] to-[#A78BFA] rounded-3xl p-6 h-full">
                       {/* Large Letter */}
@@ -701,7 +706,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
               {/* Animated background elements */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
-              
+
               {/* Floating book emojis */}
               {[...Array(5)].map((_, i) => (
                 <motion.div
@@ -810,7 +815,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                   <h3 className="text-white text-2xl sm:text-3xl font-extrabold text-center mb-8 text-[32px]">
                     Look How We're Sharing HTTN Everywhere! 🎉
                   </h3>
-                  
+
                   <HTTNCarousel />
                 </motion.div>
 
@@ -1086,7 +1091,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => onNavigate?.('home')}
+                    onClick={() => onNavigate?.('glowfest')}
                     className="px-6 sm:px-12 py-4 sm:py-6 bg-gradient-to-r from-[#FF6B9D] via-[#EC4899] to-[#D946EF] text-white rounded-full shadow-2xl hover:shadow-3xl transition-all group relative overflow-hidden"
                   >
                     {/* Animated shimmer effect */}
@@ -1161,7 +1166,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   if (user.type === 'parent' || user.type === 'leader' || (user as any).type === 'pastor') {
     return <ParentDashboard onNavigate={onNavigate} />;
   }
-  
+
 
   return null;
 }

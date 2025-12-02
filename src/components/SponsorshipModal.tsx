@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Heart, ArrowRight, CheckCircle } from "lucide-react";
+import { X, ArrowRight, CheckCircle } from "lucide-react";
 import { useAuth } from "../utils/AuthContext";
+import confetti from "canvas-confetti";
 
 const createEmptySponsorForm = () => ({ name: "", email: "", phone: "" });
 
@@ -138,6 +139,11 @@ export function SponsorshipModal({
     });
 
     // For now, show success and close
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
     alert("Thank you for your sponsorship! Redirecting to payment...");
     onClose();
   };
@@ -156,7 +162,7 @@ export function SponsorshipModal({
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto pt-20 sm:pt-6">
+          <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto pt-20 sm:pt-28">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -244,11 +250,10 @@ export function SponsorshipModal({
                           onClick={() => onTierSelect(tier.id)}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.98 }}
-                          className={`${tier.color} rounded-xl sm:rounded-2xl p-3 sm:p-4 border-3 ${
-                            isSelected
-                              ? "border-[#FF1F8E] ring-4 ring-[#FF1F8E]/30"
-                              : tier.borderColor
-                          } shadow-lg transition-all relative`}
+                          className={`${tier.color} rounded-xl sm:rounded-2xl p-3 sm:p-4 border-3 ${isSelected
+                            ? "border-[#FF1F8E] ring-4 ring-[#FF1F8E]/30"
+                            : tier.borderColor
+                            } shadow-lg transition-all relative`}
                         >
                           {isSelected && (
                             <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-7 sm:h-7 bg-[#FF1F8E] rounded-full flex items-center justify-center">
@@ -258,9 +263,8 @@ export function SponsorshipModal({
                           <div className="text-center">
                             <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">{tier.emoji}</div>
                             <p
-                              className={`text-[10px] sm:text-xs mb-1 sm:mb-2 leading-tight ${
-                                isGradient ? "text-white" : "text-[#FF1F8E]"
-                              }`}
+                              className={`text-[10px] sm:text-xs mb-1 sm:mb-2 leading-tight ${isGradient ? "text-white" : "text-[#FF1F8E]"
+                                }`}
                             >
                               {tier.name}
                             </p>
@@ -268,9 +272,8 @@ export function SponsorshipModal({
                               {tier.espees}
                             </p>
                             <p
-                              className={`text-[10px] sm:text-xs ${
-                                isGradient ? "text-white/90" : "text-gray-600"
-                              }`}
+                              className={`text-[10px] sm:text-xs ${isGradient ? "text-white/90" : "text-gray-600"
+                                }`}
                             >
                               {tier.reach}
                             </p>

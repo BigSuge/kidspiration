@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Heart, Gift, Sparkles, ArrowLeft, Target, PartyPopper, Cake } from 'lucide-react';
+import { Heart, Gift, Sparkles, ArrowLeft, Target, PartyPopper, Cake, Plus, Minus } from 'lucide-react';
 import { useAuth } from '../utils/AuthContext';
-import { SponsorshipModal } from './SponsorshipModal';
 import { ER100SponsorshipModal } from './ER100SponsorshipModal';
 import { GlowfestSponsorshipModal } from './GlowfestSponsorshipModal';
 import { PartyInitiativeSponsorshipModal } from './PartyInitiativeSponsorshipModal';
@@ -14,61 +13,33 @@ interface GivePageProps {
 
 export function GivePage({ onBack, onNavigate }: GivePageProps) {
   const { user } = useAuth();
-  
+
   // Modal states
-  const [showSponsorshipModal, setShowSponsorshipModal] = useState(false);
   const [showER100Modal, setShowER100Modal] = useState(false);
   const [showGlowfestModal, setShowGlowfestModal] = useState(false);
   const [showPartyModal, setShowPartyModal] = useState(false);
-  
+
   // Selected tier states
-  const [selectedSponsorshipTier, setSelectedSponsorshipTier] = useState<string | null>(null);
   const [selectedER100Tier, setSelectedER100Tier] = useState<string | null>(null);
   const [selectedGlowfestTier, setSelectedGlowfestTier] = useState<string | null>(null);
   const [selectedPartyTier, setSelectedPartyTier] = useState<string | null>(null);
-  
+
   // Sponsorship type states
   const [er100SponsorshipType, setER100SponsorshipType] = useState<'parent' | 'kid'>('parent');
   const [partyProgramType, setPartyProgramType] = useState<'full-party' | 'spread-love' | null>(null);
+  const [selectedCopies, setSelectedCopies] = useState<Record<string, number>>({});
+  const [customAmount, setCustomAmount] = useState<string>("");
+  const [customCopies, setCustomCopies] = useState<number>(0);
+
+  const handleCopyChange = (tierId: string, value: number, min: number, max: number) => {
+    const newValue = Math.max(min, Math.min(max, value));
+    setSelectedCopies(prev => ({
+      ...prev,
+      [tierId]: newValue
+    }));
+  };
 
   const isKid = user?.type === 'kid';
-
-  // HTTN Magazine Sponsorship Tiers
-  const httnSponsorships = [
-    {
-      id: 'starter',
-      name: 'STARTER',
-      emoji: '⭐',
-      espees: '10 ESPEES',
-      reach: '10 children',
-      gradient: 'from-[#60A5FA] to-[#93C5FD]',
-    },
-    {
-      id: 'house',
-      name: 'MEMBER OF HOUSE',
-      emoji: '🏠',
-      espees: '50 ESPEES',
-      reach: '50 children',
-      gradient: 'from-[#A78BFA] to-[#C4B5FD]',
-    },
-    {
-      id: 'prince',
-      name: 'PRINCE/PRINCESS',
-      emoji: '👑',
-      espees: '100 ESPEES',
-      reach: '100 children',
-      gradient: 'from-[#F472B6] to-[#FBCFE8]',
-    },
-    {
-      id: 'duke',
-      name: 'DUKE/DUCHESS',
-      emoji: '💎',
-      espees: '200 ESPEES',
-      reach: '200 children',
-      gradient: 'from-[#34D399] to-[#6EE7B7]',
-    },
-  ];
-
   // ER100 Parent Sponsorship Tiers
   const er100ParentSponsorships = [
     {
@@ -112,6 +83,8 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
       title: 'A Mighty Champ',
       emoji: '💪',
       copies: '100 - 200 Copies',
+      min: 100,
+      max: 200,
       gradient: 'from-[#3B82F6] to-[#60A5FA]',
     },
     {
@@ -119,6 +92,8 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
       title: 'A Noble Champ',
       emoji: '🎖️',
       copies: '201 - 400 Copies',
+      min: 201,
+      max: 400,
       gradient: 'from-[#8B5CF6] to-[#A78BFA]',
     },
     {
@@ -126,6 +101,8 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
       title: 'A Royal Champ',
       emoji: '👑',
       copies: '401 - 700 Copies',
+      min: 401,
+      max: 700,
       gradient: 'from-[#EC4899] to-[#F472B6]',
     },
     {
@@ -133,6 +110,8 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
       title: 'A Diamond Champ',
       emoji: '💎',
       copies: '701 - 999 Copies',
+      min: 701,
+      max: 999,
       gradient: 'from-[#06B6D4] to-[#22D3EE]',
     },
   ];
@@ -178,7 +157,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
     {
       id: 'party-50',
       children: '50 Children',
-      espees: '1,000 ESPEES',
+      espees: '2,000 ESPEES',
       icon: '🎉',
       gradient: 'from-[#FF6B9D] to-[#F472B6]',
       description: 'Full party package for 50 amazing kids',
@@ -186,10 +165,34 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
     {
       id: 'party-100',
       children: '100 Children',
-      espees: '2,000 ESPEES',
+      espees: '4,000 ESPEES',
       icon: '🎊',
       gradient: 'from-[#9B4DFF] to-[#C77DFF]',
       description: 'Celebrate 100 children with joy and love',
+    },
+    {
+      id: 'party-150',
+      children: '150 Children',
+      espees: '6,000 ESPEES',
+      icon: '🎈',
+      gradient: 'from-[#4ECDC4] to-[#00D4FF]',
+      description: 'Host a mega party for 150 kids',
+    },
+    {
+      id: 'party-200',
+      children: '200 Children',
+      espees: '8,000 ESPEES',
+      icon: '✨',
+      gradient: 'from-[#FFA500] to-[#FFD41F]',
+      description: 'Ultimate celebration for 200 children',
+    },
+    {
+      id: 'party-250',
+      children: '250 Children',
+      espees: '10,000 ESPEES',
+      icon: '🌟',
+      gradient: 'from-[#FF6B9D] to-[#FFD41F]',
+      description: 'Grand celebration for 250 children',
     },
   ];
 
@@ -198,29 +201,49 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
     {
       id: 'love-50',
       children: '50 Children',
-      espees: '500 ESPEES',
+      espees: '1,000 ESPEES',
       icon: '💝',
       gradient: 'from-[#FF6B9D] to-[#F472B6]',
-      description: 'Gift packages with HTTN Magazine',
+      description: 'Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant\'s birthday',
     },
     {
       id: 'love-100',
       children: '100 Children',
-      espees: '1,000 ESPEES',
+      espees: '2,000 ESPEES',
       icon: '💖',
       gradient: 'from-[#9B4DFF] to-[#C77DFF]',
-      description: 'Spread love to 100 kids on birthdays',
+      description: 'Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant\'s birthday',
+    },
+    {
+      id: 'love-150',
+      children: '150 Children',
+      espees: '3,000 ESPEES',
+      icon: '💗',
+      gradient: 'from-[#4ECDC4] to-[#00D4FF]',
+      description: 'Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant\'s birthday',
+    },
+    {
+      id: 'love-200',
+      children: '200 Children',
+      espees: '4,000 ESPEES',
+      icon: '💕',
+      gradient: 'from-[#FFA500] to-[#FFD41F]',
+      description: 'Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant\'s birthday',
+    },
+    {
+      id: 'love-250',
+      children: '250 Children',
+      espees: '5,000 ESPEES',
+      icon: '🎁',
+      gradient: 'from-[#FF6B9D] to-[#FFD41F]',
+      description: 'Gift packages with the Healing To The Nations Magazine for kids shared during a celebrant\'s birthday',
     },
   ];
-
-  const handleHTTNSponsorClick = (tierId: string) => {
-    setSelectedSponsorshipTier(tierId);
-    setShowSponsorshipModal(true);
-  };
-
-  const handleER100Click = (tierId: string, type: 'parent' | 'kid') => {
+  const handleER100Click = (tierId: string, type: 'parent' | 'kid', amount?: string, copies?: number) => {
     setSelectedER100Tier(tierId);
     setER100SponsorshipType(type);
+    if (amount) setCustomAmount(amount);
+    if (copies) setCustomCopies(copies);
     setShowER100Modal(true);
   };
 
@@ -282,66 +305,64 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
           </p>
         </motion.div>
 
-        {/* HTTN Magazine Sponsorship Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-16"
-        >
-          <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-200">
-            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
-              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center">
-                HTTN Magazine Sponsorship
-              </h2>
-              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-pink-500" />
-            </div>
-            <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
-              Sponsor Healing to the Nations Magazine to reach children with God's Word
-            </p>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-              {httnSponsorships.map((tier, index) => (
-                <motion.div
-                  key={tier.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + index * 0.05 }}
-                  className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-gray-200 hover:border-purple-400 hover:shadow-xl transition-all"
-                >
-                  <div className={`w-14 h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg`}>
-                    {tier.emoji}
-                  </div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 text-center mb-2">{tier.name}</h3>
-                  <p className={`text-center font-bold mb-1 bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text`}>
-                    {tier.espees}
-                  </p>
-                  <p className="text-gray-600 text-xs sm:text-sm text-center mb-4">Reach: {tier.reach}</p>
-                  <button
-                    onClick={() => handleHTTNSponsorClick(tier.id)}
-                    className={`w-full px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-sm transform hover:scale-105`}
+        {/* Glowfest Sponsorship Section */}
+        {!isKid && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mb-16"
+          >
+            <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-500">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
+                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center">
+                  Glowfest 2025 Sponsorship
+                </h2>
+                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+              </div>
+              <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
+                Partner with us to reach children worldwide through Glowfest
+              </p>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                {glowfestSponsorships.map((tier, index) => (
+                  <motion.div
+                    key={tier.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 + index * 0.05 }}
+                    className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-gray-200 hover:shadow-xl transition-all"
                   >
-                    Sponsor Now
-                  </button>
-                </motion.div>
-              ))}
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mb-4 shadow-lg`}>
+                      {tier.emoji}
+                    </div>
+                    <h4 className="text-xs sm:text-sm font-bold text-[#FF1F8E] text-center mb-2">{tier.name}</h4>
+                    <p className={`text-center font-bold mb-1 text-gray-900 text-sm sm:text-base`}>
+                      {tier.espees}
+                    </p>
+                    <p className="text-gray-600 text-xs text-center mb-4">{tier.description}</p>
+                    <button
+                      onClick={() => handleGlowfestClick(tier.id)}
+                      className={`w-full px-3 sm:px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-xs sm:text-sm transform hover:scale-105`}
+                    >
+                      Sponsor Now
+                    </button>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="text-center mt-6">
+                <button
+                  onClick={() => onNavigate?.('glowfest')}
+                  className="px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[#9B4DFF] to-[#C77DFF] text-white rounded-full hover:shadow-xl transition-all font-bold text-sm sm:text-base transform hover:scale-105"
+                >
+                  Learn More About Glowfest
+                </button>
+              </div>
             </div>
-            
-            <div className="text-center mt-6">
-              <button
-                onClick={() => {
-                  setSelectedSponsorshipTier(null);
-                  setShowSponsorshipModal(true);
-                }}
-                className="text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2 mx-auto group"
-              >
-                <span>View All Sponsorship Tiers</span>
-                <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              </button>
-            </div>
-          </div>
-        </motion.section>
+          </motion.section>
+        )}
 
         {/* ER100 Initiative Section */}
         <motion.section
@@ -359,7 +380,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
               <Target className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-500" />
             </div>
             <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
-              Each One Reach 100 - Help children reach 100 others with God's Word
+              This is a campaign to reach 3 Billion Children with the message of faith,healing and hope through the C.O.M.P.L.E.T.E Mandate while distributing the instrument of faith - the Healing to the Nations Magazine for kids.
             </p>
 
             {/* Parent/Teacher Sponsorship */}
@@ -406,29 +427,68 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
             <div>
               <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 text-center">Kids CHAMP Sponsorship</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                {er100KidSponsorships.map((tier, index) => (
-                  <motion.div
-                    key={tier.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + index * 0.05 }}
-                    className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-gray-200 hover:border-purple-400 hover:shadow-xl transition-all"
-                  >
-                    <div className={`w-14 h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg`}>
-                      {tier.emoji}
-                    </div>
-                    <h4 className="text-sm sm:text-base font-bold text-gray-900 text-center mb-2">{tier.title}</h4>
-                    <p className={`text-center font-bold mb-1 bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text text-xs sm:text-sm`}>
-                      {tier.copies}
-                    </p>
-                    <button
-                      onClick={() => handleER100Click(tier.id, 'kid')}
-                      className={`w-full px-3 sm:px-4 py-2 mt-4 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-xs sm:text-sm transform hover:scale-105`}
+                {er100KidSponsorships.map((tier, index) => {
+                  const currentCopies = selectedCopies[tier.id] || tier.min!;
+                  const calculatedAmount = (currentCopies * 0.3).toFixed(2);
+
+                  return (
+                    <motion.div
+                      key={tier.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 + index * 0.05 }}
+                      className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-gray-200 hover:border-purple-400 hover:shadow-xl transition-all"
                     >
-                      Sponsor Now
-                    </button>
-                  </motion.div>
-                ))}
+                      <div className={`w-14 h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg`}>
+                        {tier.emoji}
+                      </div>
+                      <h4 className="text-sm sm:text-base font-bold text-gray-900 text-center mb-2">{tier.title}</h4>
+                      <p className={`text-center font-bold mb-1 bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text text-xs sm:text-sm`}>
+                        {tier.copies}
+                      </p>
+
+                      {/* Quantity Selector */}
+                      <div className="flex items-center justify-center gap-2 mb-4 mt-2">
+                        <button
+                          onClick={() => handleCopyChange(tier.id, currentCopies - 1, tier.min!, tier.max!)}
+                          className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+                          disabled={currentCopies <= tier.min!}
+                        >
+                          <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
+                        </button>
+                        <input
+                          type="number"
+                          value={currentCopies}
+                          onChange={(e) => handleCopyChange(tier.id, parseInt(e.target.value) || tier.min!, tier.min!, tier.max!)}
+                          className="w-16 sm:w-20 text-center border border-gray-300 rounded-lg py-1 px-1 text-xs sm:text-sm font-bold"
+                          min={tier.min}
+                          max={tier.max}
+                        />
+                        <button
+                          onClick={() => handleCopyChange(tier.id, currentCopies + 1, tier.min!, tier.max!)}
+                          className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+                          disabled={currentCopies >= tier.max!}
+                        >
+                          <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                        </button>
+                      </div>
+
+                      <div className="text-center mb-4">
+                        <p className="text-[10px] sm:text-xs text-gray-500 uppercase font-bold tracking-wider">Total Amount</p>
+                        <p className={`text-sm sm:text-lg font-bold bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text`}>
+                          {calculatedAmount} ESPEES
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => handleER100Click(tier.id, 'kid', `${calculatedAmount} ESPEES`, currentCopies)}
+                        className={`w-full px-3 sm:px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-xs sm:text-sm transform hover:scale-105`}
+                      >
+                        Sponsor Now
+                      </button>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
 
@@ -443,71 +503,12 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
           </div>
         </motion.section>
 
-        {/* Glowfest Sponsorship Section */}
-        {!isKid && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mb-16"
-          >
-            <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-500">
-              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
-                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center">
-                  Glowfest 2025 Sponsorship
-                </h2>
-                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
-              </div>
-              <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
-                Partner with us to reach children worldwide through Glowfest
-              </p>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                {glowfestSponsorships.map((tier, index) => (
-                  <motion.div
-                    key={tier.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + index * 0.05 }}
-                    className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-gray-200 hover:shadow-xl transition-all"
-                  >
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mb-4 shadow-lg`}>
-                      {tier.emoji}
-                    </div>
-                    <h4 className="text-xs sm:text-sm font-bold text-[#FF1F8E] text-center mb-2">{tier.name}</h4>
-                    <p className={`text-center font-bold mb-1 text-gray-900 text-sm sm:text-base`}>
-                      {tier.espees}
-                    </p>
-                    <p className="text-gray-600 text-xs text-center mb-4">{tier.description}</p>
-                    <button
-                      onClick={() => handleGlowfestClick(tier.id)}
-                      className={`w-full px-3 sm:px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-xs sm:text-sm transform hover:scale-105`}
-                    >
-                      Sponsor Now
-                    </button>
-                  </motion.div>
-                ))}
-              </div>
-
-              <div className="text-center mt-6">
-                <button
-                  onClick={() => onNavigate?.('glowfest')}
-                  className="px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[#9B4DFF] to-[#C77DFF] text-white rounded-full hover:shadow-xl transition-all font-bold text-sm sm:text-base transform hover:scale-105"
-                >
-                  Learn More About Glowfest
-                </button>
-              </div>
-            </div>
-          </motion.section>
-        )}
-
         {/* Party Initiative Section */}
         {!isKid && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.3 }}
             className="mb-16"
           >
             <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-pink-200">
@@ -519,7 +520,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
                 <Cake className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500" />
               </div>
               <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
-                Celebrate children who may have never had a birthday party before
+                An outreach program designed to celebrate children who may have never experienced a birthday celebration before—while also reaching out to other children within the community.
               </p>
 
               {/* Full Party & Outreach */}
@@ -599,7 +600,6 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
             </div>
           </motion.section>
         )}
-
         {/* Thank You Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -624,16 +624,6 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
       </div>
 
       {/* Sponsorship Modals */}
-      <SponsorshipModal
-        isOpen={showSponsorshipModal}
-        onClose={() => {
-          setShowSponsorshipModal(false);
-          setSelectedSponsorshipTier(null);
-        }}
-        selectedTierId={selectedSponsorshipTier}
-        onTierSelect={setSelectedSponsorshipTier}
-      />
-
       <ER100SponsorshipModal
         isOpen={showER100Modal}
         onClose={() => {
@@ -643,6 +633,8 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
         selectedTierId={selectedER100Tier}
         onTierSelect={setSelectedER100Tier}
         sponsorshipType={er100SponsorshipType}
+        customAmount={customAmount}
+        customCopies={customCopies}
       />
 
       <GlowfestSponsorshipModal

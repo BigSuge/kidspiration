@@ -240,7 +240,7 @@ export function GlowfestPage({ onBack, onAuthClick }: GlowfestPageProps) {
             <h2 className="text-white text-4xl text-center font-bold">What is Glowfest?</h2>
             <div className="space-y-4 text-gray-300 text-lg leading-relaxed text-center max-w-3xl mx-auto">
               <p>
-               Glowfest is a global move to celebrate faith instead of fear, praying for children around the world; while distributing eternal verities with the Healing to the Nations Magazine for kids.
+                Glowfest is a global move to celebrate faith instead of fear, praying for children around the world; while distributing eternal verities with the Healing to the Nations Magazine for kids.
               </p>
             </div>
           </motion.div>
@@ -272,126 +272,132 @@ export function GlowfestPage({ onBack, onAuthClick }: GlowfestPageProps) {
 
               {/* Action Cards - Right Side */}
               <div className="lg:w-3/5 grid md:grid-cols-2 gap-6">
-              {/* Step 1 */}
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#FF6B9D] to-[#A78BFA] rounded-full flex items-center justify-center mb-4">
-                  <span className="text-white text-xl font-bold">1</span>
+                {/* Step 1 */}
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#FF6B9D] to-[#A78BFA] rounded-full flex items-center justify-center mb-4">
+                    <span className="text-white text-xl font-bold">1</span>
+                  </div>
+                  <h3 className="text-white mb-3">Log On</h3>
+                  <p className="text-gray-300 text-sm">
+                    Visit www.kidspiration.org to register and connect to the global Glowfest.
+                  </p>
                 </div>
-                <h3 className="text-white mb-3">Log On</h3>
-                <p className="text-gray-300 text-sm">
-                  Visit www.kidspiration.org to register and connect to the global Glowfest.
-                </p>
-              </div>
 
-              {/* Step 2 */}
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all flex flex-col">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#A78BFA] to-[#4ECDC4] rounded-full flex items-center justify-center mb-4 font-bold">
-                  <span className="text-white text-xl">2</span>
+                {/* Step 2 */}
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all flex flex-col">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#A78BFA] to-[#4ECDC4] rounded-full flex items-center justify-center mb-4 font-bold">
+                    <span className="text-white text-xl">2</span>
+                  </div>
+                  <h3 className="text-white mb-3 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5" />
+                    Order or Sponsor
+                  </h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Order or sponsor Healing to the Nations magazine for kids to reach children.
+                  </p>
+                  <div className="mt-auto flex gap-3">
+                    <button
+                      onClick={() => handleSponsorClick("")}
+                      disabled={isDisabled}
+                      className={`flex-1 px-3 py-2 bg-gradient-to-r from-[#A78BFA] to-[#4ECDC4] text-white rounded-full hover:shadow-lg transition-all text-center text-sm font-bold ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+                        }`}
+                    >
+                      Sponsor
+                    </button>
+                    <button
+                      onClick={() => window.open("https://httnmagazine.org/kids", "_blank")}
+                      disabled={isDisabled}
+                      className={`flex-1 px-3 py-2 bg-white text-[#4ECDC4] border-2 border-[#4ECDC4] rounded-full hover:shadow-lg transition-all text-center text-sm font-bold ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105 hover:bg-gray-50"
+                        }`}
+                    >
+                      Order
+                    </button>
+                  </div>
                 </div>
-                <h3 className="text-white mb-3 flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  Order or Sponsor
-                </h3>
-                <p className="text-gray-300 text-sm mb-4">
-                  Order or sponsor Healing to the Nations magazine for kids to reach children.
-                </p>
-                <button
-                  onClick={() => handleActionClick("sponsor")}
-                  disabled={isDisabled}
-                  className={`mt-auto px-4 py-2 bg-gradient-to-r from-[#A78BFA] to-[#4ECDC4] text-white rounded-full hover:shadow-lg transition-all text-center ${
-                    isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
-                  }`}
-                >
-                  Sponsor Now!
-                </button>
-              </div>
 
-              {/* Step 3 */}
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all flex flex-col">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B9D] rounded-full flex items-center justify-center mb-4">
-                  <span className="text-white text-xl font-bold">3</span>
+                {/* Step 3 */}
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all flex flex-col">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#4ECDC4] to-[#FF6B9D] rounded-full flex items-center justify-center mb-4">
+                    <span className="text-white text-xl font-bold">3</span>
+                  </div>
+                  <h3 className="text-white mb-3 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5" />
+                    Pray Fervently
+                  </h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Join the global morning prayer every Wednesday and Friday from October 31 to
+                    November 30 at 6am GMT+1 for 30 minutes to intercede for children worldwide.
+                  </p>
+                  <button
+                    onClick={() => window.open("https://prayerclouds.org/app/kidspiration", "_blank")}
+                    disabled={isDisabled}
+                    className={`mt-auto px-4 py-2 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B9D] text-white rounded-full hover:shadow-lg transition-all text-center ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+                      }`}
+                  >
+                    Join Prayers
+                  </button>
                 </div>
-                <h3 className="text-white mb-3 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5" />
-                  Pray Fervently
-                </h3>
-                <p className="text-gray-300 text-sm mb-4">
-                  Join the global morning prayer every Wednesday and Friday from October 31 to
-                  November 30 at 6am GMT+1 for 30 minutes to intercede for children worldwide.
-                </p>
-                <button
-                  onClick={() => window.open("https://prayerclouds.org/app/kidspiration", "_blank")}
-                  disabled={isDisabled}
-                  className={`mt-auto px-4 py-2 bg-gradient-to-r from-[#4ECDC4] to-[#FF6B9D] text-white rounded-full hover:shadow-lg transition-all text-center ${
-                    isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
-                  }`}
-                >
-                  Join Prayers
-                </button>
-              </div>
 
-              {/* Step 4 */}
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all">
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center mb-4">
-                  <span className="text-white text-xl font-bold">4</span>
+                {/* Step 4 */}
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all">
+                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center mb-4">
+                    <span className="text-white text-xl font-bold">4</span>
+                  </div>
+                  <h3 className="text-white mb-3 flex items-center gap-2">
+                    <Shirt className="w-5 h-5" />
+                    Distribute
+                  </h3>
+                  <p className="text-gray-300 text-sm">
+                    Distribute Healing to the Nations magazine for kids. Reach every child in your
+                    community with God's word of faith and healing power, wearing the branded t-shirt
+                    with bold declarations (download from the website).
+                  </p>
                 </div>
-                <h3 className="text-white mb-3 flex items-center gap-2">
-                  <Shirt className="w-5 h-5" />
-                  Distribute
-                </h3>
-                <p className="text-gray-300 text-sm">
-                  Distribute Healing to the Nations magazine for kids. Reach every child in your
-                  community with God's word of faith and healing power, wearing the branded t-shirt
-                  with bold declarations (download from the website).
-                </p>
-              </div>
 
-              {/* Step 5 */}
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all flex flex-col">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
-                  <span className="text-white text-xl font-bold">5</span>
+                {/* Step 5 */}
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all flex flex-col">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
+                    <span className="text-white text-xl font-bold">5</span>
+                  </div>
+                  <h3 className="text-white mb-3 flex items-center gap-2">
+                    <MapPin className="w-5 h-5" />
+                    Host Crusades
+                  </h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Host Healing to the Nations Crusades for kids, outreaches, and mission trips.
+                    Spread the message of faith and healing everywhere!
+                  </p>
+                  <button
+                    onClick={() => handleActionClick("crusade")}
+                    disabled={isDisabled}
+                    className={`mt-auto px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full hover:shadow-lg transition-all text-center ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+                      }`}
+                  >
+                    Host a Crusade
+                  </button>
                 </div>
-                <h3 className="text-white mb-3 flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
-                  Host Crusades
-                </h3>
-                <p className="text-gray-300 text-sm mb-4">
-                  Host Healing to the Nations Crusades for kids, outreaches, and mission trips.
-                  Spread the message of faith and healing everywhere!
-                </p>
-                <button
-                  onClick={() => handleActionClick("crusade")}
-                  disabled={isDisabled}
-                  className={`mt-auto px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full hover:shadow-lg transition-all text-center ${
-                    isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
-                  }`}
-                >
-                  Host a Crusade
-                </button>
-              </div>
 
-              {/* Step 6 */}
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all flex flex-col">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-teal-400 rounded-full flex items-center justify-center mb-4">
-                  <span className="text-white text-xl font-bold">6</span>
+                {/* Step 6 */}
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all flex flex-col">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-teal-400 rounded-full flex items-center justify-center mb-4">
+                    <span className="text-white text-xl font-bold">6</span>
+                  </div>
+                  <h3 className="text-white mb-3 flex items-center gap-2">
+                    <Share2 className="w-5 h-5" />
+                    Share Your Impact
+                  </h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Share your pictures of distribution and testimonies with the world!
+                  </p>
+                  <button
+                    onClick={() => handleActionClick("testimony")}
+                    disabled={isDisabled}
+                    className={`mt-auto px-4 py-2 bg-gradient-to-r from-green-400 to-teal-400 text-white rounded-full hover:shadow-lg transition-all text-center ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+                      }`}
+                  >
+                    Share Testimony
+                  </button>
                 </div>
-                <h3 className="text-white mb-3 flex items-center gap-2">
-                  <Share2 className="w-5 h-5" />
-                  Share Your Impact
-                </h3>
-                <p className="text-gray-300 text-sm mb-4">
-                  Share your pictures of distribution and testimonies with the world!
-                </p>
-                <button
-                  onClick={() => handleActionClick("testimony")}
-                  disabled={isDisabled}
-                  className={`mt-auto px-4 py-2 bg-gradient-to-r from-green-400 to-teal-400 text-white rounded-full hover:shadow-lg transition-all text-center ${
-                    isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
-                  }`}
-                >
-                  Share Testimony
-                </button>
-              </div>
               </div>
             </div>
           </motion.div>
@@ -422,25 +428,24 @@ export function GlowfestPage({ onBack, onAuthClick }: GlowfestPageProps) {
                   <div className={`w-16 h-16 bg-gradient-to-br ${sponsorship.gradient} rounded-2xl flex items-center justify-center mb-4 text-3xl`}>
                     {sponsorship.icon}
                   </div>
-                  
+
                   <h3 className="text-gray-900 mb-2 font-bold">
                     {sponsorship.name}
                   </h3>
-                  
+
                   <p className="text-gray-600 text-sm mb-3 flex-grow">
                     {sponsorship.description}
                   </p>
-                  
+
                   <div className={`text-center mb-4 px-4 py-2 bg-gradient-to-r ${sponsorship.gradient} rounded-full`}>
                     <p className="text-white font-bold">{sponsorship.espees}</p>
                   </div>
-                  
+
                   <button
                     onClick={() => handleSponsorClick(sponsorship.id)}
                     disabled={isDisabled}
-                    className={`w-full px-4 py-2 bg-gradient-to-r ${sponsorship.gradient} text-white rounded-full hover:shadow-xl transition-all font-bold text-center ${
-                      isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
-                    }`}
+                    className={`w-full px-4 py-2 bg-gradient-to-r ${sponsorship.gradient} text-white rounded-full hover:shadow-xl transition-all font-bold text-center ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+                      }`}
                   >
                     Sponsor Now
                   </button>
@@ -459,7 +464,7 @@ export function GlowfestPage({ onBack, onAuthClick }: GlowfestPageProps) {
             <h2 className="text-white text-4xl text-center mb-6 font-bold">
               Resources
             </h2>
-            
+
             {/* Info Banner */}
             <div className="mb-8 bg-blue-500/20 border border-blue-400/30 rounded-xl p-4 backdrop-blur-sm">
               <div className="flex items-center justify-center gap-3">
@@ -487,7 +492,7 @@ export function GlowfestPage({ onBack, onAuthClick }: GlowfestPageProps) {
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                   </div>
-                  
+
                   {/* Card Content */}
                   <div className="p-5 flex flex-col flex-grow bg-white">
                     <h3 className="text-gray-900 mb-2 font-bold text-lg">
@@ -546,7 +551,7 @@ export function GlowfestPage({ onBack, onAuthClick }: GlowfestPageProps) {
 
                 {/* Floating decorative elements */}
                 <motion.div
-                  animate={{ 
+                  animate={{
                     y: [0, -15, 0],
                     rotate: [0, 10, 0],
                     scale: [1, 1.1, 1]
@@ -556,9 +561,9 @@ export function GlowfestPage({ onBack, onAuthClick }: GlowfestPageProps) {
                 >
                   <span className="text-4xl">🌟</span>
                 </motion.div>
-                
+
                 <motion.div
-                  animate={{ 
+                  animate={{
                     y: [0, 15, 0],
                     rotate: [0, -10, 0],
                     scale: [1, 1.1, 1]
@@ -570,7 +575,7 @@ export function GlowfestPage({ onBack, onAuthClick }: GlowfestPageProps) {
                 </motion.div>
 
                 <motion.div
-                  animate={{ 
+                  animate={{
                     y: [0, -10, 0],
                     scale: [1, 1.15, 1]
                   }}

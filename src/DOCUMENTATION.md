@@ -685,7 +685,7 @@ Find and replace pattern:
 ```typescript
 // OLD:
 const response = await fetch(
-  `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/route`,
+  `https://${projectId}.supabase.co/functions/v1/${functionName}/route`,
   {
     headers: { Authorization: `Bearer ${publicAnonKey}` },
   }

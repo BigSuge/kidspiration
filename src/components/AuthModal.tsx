@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, User, Users, BookOpen, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { KidspirationLogo } from './KidspirationLogo';
 import { useAuth } from '../utils/AuthContext';
-import { projectId, publicAnonKey } from '../utils/supabase/info';
+import { projectId, publicAnonKey, functionName } from '../utils/supabase/info';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -92,11 +92,22 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [showResetPassword, setShowResetPassword] = useState(false);
   const [showResetConfirmPassword, setShowResetConfirmPassword] = useState(false);
 
+
+  // Ref for scrolling to top
+  const modalContentRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!isOpen) {
       resetState();
     }
   }, [isOpen]);
+
+  // Scroll to top when error or success message appears
+  useEffect(() => {
+    if ((error || successMessage) && modalContentRef.current) {
+      modalContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [error, successMessage]);
 
   const resetState = () => {
     setUserType(null);
@@ -153,7 +164,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
     try {
       const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/auth/kid/login`,
+        `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/kid/login`,
         {
           method: 'POST',
           headers: {
@@ -208,7 +219,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
     try {
       const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/auth/kid/signup`,
+        `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/kid/signup`,
         {
           method: 'POST',
           headers: {
@@ -244,7 +255,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
     try {
       const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/auth/adult/login`,
+        `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/adult/login`,
         {
           method: 'POST',
           headers: {
@@ -283,8 +294,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setLoading(true);
 
     // Validate
-    if (!adultForm.title || !adultForm.firstName || !adultForm.lastName || !adultForm.username || 
-        !adultForm.birthday || !adultForm.email || !adultForm.password || !adultForm.confirmPassword || !adultForm.country || !adultForm.occupation) {
+    if (!adultForm.title || !adultForm.firstName || !adultForm.lastName || !adultForm.username ||
+      !adultForm.birthday || !adultForm.email || !adultForm.password || !adultForm.confirmPassword || !adultForm.country || !adultForm.occupation) {
       setError('Please fill in all fields');
       setLoading(false);
       return;
@@ -326,7 +337,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
     try {
       const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/auth/adult/signup`,
+        `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/adult/signup`,
         {
           method: 'POST',
           headers: {
@@ -374,7 +385,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
     try {
       const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/auth/adult/verify-otp`,
+        `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/adult/verify-otp`,
         {
           method: 'POST',
           headers: {
@@ -408,7 +419,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
     try {
       const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/auth/forgot-password`,
+        `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/forgot-password`,
         {
           method: 'POST',
           headers: {
@@ -452,7 +463,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
     try {
       const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-17ebb09b/auth/reset-password`,
+        `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/reset-password`,
         {
           method: 'POST',
           headers: {
@@ -489,7 +500,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4 pt-20 sm:pt-4 overflow-y-auto">
-      <div className={`bg-white rounded-3xl shadow-2xl w-full max-h-[85vh] overflow-y-auto my-4 sm:my-8 ${authMode === 'select' ? 'max-w-5xl' : 'max-w-md'}`}>
+      <div ref={modalContentRef} className={`bg-white rounded-3xl shadow-2xl w-full max-h-[85vh] overflow-y-auto my-4 sm:my-8 ${authMode === 'select' ? 'max-w-5xl' : 'max-w-md'}`}>
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-[#FF6B9D] via-[#A78BFA] to-[#4ECDC4] p-6 rounded-t-3xl z-10">
           <div className="flex items-center justify-between">
@@ -527,7 +538,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                 <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF1493] to-[#FF69B4] mb-2 font-extrabold text-[32px]">Who Are You?</h2>
                 <p className="text-gray-500 text-lg">Choose your role and start your Kidspiration journey!</p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <button
                   onClick={() => handleUserTypeSelect('kid')}
@@ -544,7 +555,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                   className="w-full p-8 bg-[#F0F9FF] rounded-3xl border-4 border-[#00BCD4] hover:shadow-xl transition-all transform hover:scale-105 group"
                 >
                   <div className="text-6xl mb-4 text-center">👨‍👩‍👧‍👦</div>
-                  <h3 className="text-[#2D1B69] mb-2 text-[24px] font-extrabold text-center">I'm a<br/>Parent/Teacher</h3>
+                  <h3 className="text-[#2D1B69] mb-2 text-[24px] font-extrabold text-center">I'm a<br />Parent/Teacher</h3>
                   <p className="text-gray-500 text-center text-sm mt-1">Guide & Mentor</p>
                   <p className="text-gray-500 text-center text-sm">Organize Events!</p>
                 </button>
@@ -554,7 +565,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                   className="w-full p-8 bg-[#F3F0FF] rounded-3xl border-4 border-[#9333EA] hover:shadow-xl transition-all transform hover:scale-105 group"
                 >
                   <div className="text-6xl mb-4 text-center">📖</div>
-                  <h3 className="text-[#2D1B69] mb-2 text-[24px] font-extrabold text-center">I'm a<br/>Pastor/Leader</h3>
+                  <h3 className="text-[#2D1B69] mb-2 text-[24px] font-extrabold text-center">I'm a<br />Pastor/Leader</h3>
                   <p className="text-gray-500 text-center text-sm mt-1">Ministry Leader</p>
                   <p className="text-gray-500 text-center text-sm">Lead the Vision!</p>
                 </button>
@@ -566,7 +577,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           {authMode === 'login' && userType === 'kid' && !showAdultAssistance && (
             <div className="space-y-4">
               <h2 className="text-center text-gray-900 mb-6 text-[24px] font-bold">Welcome Back, Champion! 🌟</h2>
-              
+
               <div>
                 <label className="block text-sm text-gray-700 mb-2">Username</label>
                 <input
@@ -657,7 +668,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           {authMode === 'signup' && userType === 'kid' && (
             <div className="space-y-4">
               <h2 className="text-center text-gray-900 mb-6 text-[24px] font-bold">Create Your Account 🎉</h2>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm text-gray-700 mb-2">First Name</label>
@@ -759,7 +770,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
               <h2 className="text-center text-gray-900 mb-6 text-[24px] font-bold text-[20px]">
                 {userType === 'parent' ? 'Parent/Teacher Login' : 'Pastor/Leader Login'}
               </h2>
-              
+
               <div>
                 <label className="block text-sm text-gray-700 mb-2">Username</label>
                 <input
@@ -825,7 +836,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           {authMode === 'signup' && (userType === 'parent' || userType === 'leader') && (
             <div className="space-y-4">
               <h2 className="text-center text-gray-900 mb-6 text-[24px] font-bold">Create Account</h2>
-              
+
               <div>
                 <label className="block text-sm text-gray-700 mb-2">Title</label>
                 <select
@@ -1097,7 +1108,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           {authMode === 'forgot-password' && (
             <div className="space-y-4">
               <h2 className="text-center text-gray-900 mb-6 text-[24px] font-bold">Reset Password</h2>
-              
+
               {resetStep === 'email' ? (
                 <>
                   <div>

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Target, Church, Users, MapPin, Languages, Tv, Radio, MessageSquare, ArrowLeft, Heart, Sparkles, Crown, Trophy } from 'lucide-react';
+import { Target, Church, Users, MapPin, Languages, Tv, Radio, MessageSquare, ArrowLeft, Heart, Sparkles, Crown, Trophy, Plus, Minus } from 'lucide-react';
 import parentsCardImage from 'figma:asset/97488369eb863ef80a9fac78969757b23e65a5ac.png';
 import kidsCardImage from 'figma:asset/afc22e2c90f34863a76ade54ca7f86a3d7e486db.png';
 import { useAuth } from '../utils/AuthContext';
@@ -16,6 +16,9 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
   const [showSponsorshipModal, setShowSponsorshipModal] = useState(false);
   const [selectedTierId, setSelectedTierId] = useState<string | null>(null);
   const [sponsorshipType, setSponsorshipType] = useState<'parent' | 'kid'>('parent');
+  const [selectedCopies, setSelectedCopies] = useState<Record<string, number>>({});
+  const [customAmount, setCustomAmount] = useState<string>("");
+  const [customCopies, setCustomCopies] = useState<number>(0);
 
   const handleJoin = () => {
     if (!isAuthenticated) {
@@ -25,11 +28,21 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
     }
   };
 
-  const handleSponsorClick = (tierId: string, type: 'parent' | 'kid') => {
+  const handleSponsorClick = (tierId: string, type: 'parent' | 'kid', amount?: string, copies?: number) => {
     // Sponsorship is now accessible without login
     setSelectedTierId(tierId);
     setSponsorshipType(type);
+    if (amount) setCustomAmount(amount);
+    if (copies) setCustomCopies(copies);
     setShowSponsorshipModal(true);
+  };
+
+  const handleCopyChange = (tierId: string, value: number, min: number, max: number) => {
+    const newValue = Math.max(min, Math.min(max, value));
+    setSelectedCopies(prev => ({
+      ...prev,
+      [tierId]: newValue
+    }));
   };
 
   const completeStrategies = [
@@ -148,6 +161,8 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
       title: 'A Mighty Champ',
       emoji: '💪',
       copies: '100 - 200 Copies',
+      min: 100,
+      max: 200,
       gradient: 'from-[#3B82F6] to-[#60A5FA]',
     },
     {
@@ -155,6 +170,8 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
       title: 'A Noble Champ',
       emoji: '🎖️',
       copies: '201 - 400 Copies',
+      min: 201,
+      max: 400,
       gradient: 'from-[#8B5CF6] to-[#A78BFA]',
     },
     {
@@ -162,6 +179,8 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
       title: 'A Royal Champ',
       emoji: '👑',
       copies: '401 - 700 Copies',
+      min: 401,
+      max: 700,
       gradient: 'from-[#EC4899] to-[#F472B6]',
     },
     {
@@ -169,6 +188,8 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
       title: 'A Diamond Champ',
       emoji: '💎',
       copies: '701 - 999 Copies',
+      min: 701,
+      max: 999,
       gradient: 'from-[#06B6D4] to-[#22D3EE]',
     },
     {
@@ -176,6 +197,8 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
       title: 'A Global Champ',
       emoji: '🌍',
       copies: '1,000 Copies & Above',
+      min: 1000,
+      max: 1000000, // High enough limit
       gradient: 'from-[#10B981] to-[#34D399]',
     },
   ];
@@ -214,7 +237,7 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
             Each One Reach 100 Children
           </p>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            A bold initiative to impact 100 children through strategic and complete outreach
+            This is a campaign to reach 3 Billion Children with the message of faith,healing and hope through the C.O.M.P.L.E.T.E Mandate while distributing the instrument of faith - the Healing to the Nations Magazine for kids.
           </p>
         </motion.div>
 
@@ -447,32 +470,71 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
 
           {/* Kids Sponsorship Tiers */}
           <div className="grid md:grid-cols-5 gap-6 max-w-6xl mx-auto">
-            {kidSponsorships.map((tier, index) => (
-              <motion.div
-                key={tier.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all border border-gray-200"
-              >
-                <div className={`bg-gradient-to-r ${tier.gradient} p-6 text-white text-center`}>
-                  <div className="text-5xl mb-3">{tier.emoji}</div>
-                  <h4 className="text-xl font-bold mb-2">{tier.title}</h4>
-                </div>
-                <div className="p-4">
-                  <p className="text-gray-700 mb-4 text-center font-semibold text-sm">
-                    {tier.copies}
-                  </p>
-                  <button
-                    onClick={() => handleSponsorClick(tier.id, 'kid')}
-                    className={`w-full px-4 py-3 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-xl transition-all font-bold transform hover:scale-105 text-center text-sm`}
-                  >
-                    Sponsor Now
-                  </button>
-                </div>
-              </motion.div>
-            ))}
+            {kidSponsorships.map((tier, index) => {
+              const currentCopies = selectedCopies[tier.id] || tier.min!;
+              const calculatedAmount = (currentCopies * 0.3).toFixed(2);
+
+              return (
+                <motion.div
+                  key={tier.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all border border-gray-200"
+                >
+                  <div className={`bg-gradient-to-r ${tier.gradient} p-6 text-white text-center`}>
+                    <div className="text-5xl mb-3">{tier.emoji}</div>
+                    <h4 className="text-xl font-bold mb-2">{tier.title}</h4>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-gray-700 mb-2 text-center font-semibold text-sm">
+                      {tier.copies}
+                    </p>
+
+                    {/* Quantity Selector */}
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <button
+                        onClick={() => handleCopyChange(tier.id, currentCopies - 1, tier.min!, tier.max!)}
+                        className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+                        disabled={currentCopies <= tier.min!}
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <input
+                        type="number"
+                        value={currentCopies}
+                        onChange={(e) => handleCopyChange(tier.id, parseInt(e.target.value) || tier.min!, tier.min!, tier.max!)}
+                        className="w-20 text-center border border-gray-300 rounded-lg py-1 px-2 text-sm font-bold"
+                        min={tier.min}
+                        max={tier.max}
+                      />
+                      <button
+                        onClick={() => handleCopyChange(tier.id, currentCopies + 1, tier.min!, tier.max!)}
+                        className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+                        disabled={currentCopies >= tier.max!}
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="text-center mb-4">
+                      <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Total Amount</p>
+                      <p className={`text-lg font-bold bg-gradient-to-r ${tier.gradient} text-transparent bg-clip-text`}>
+                        {calculatedAmount} ESPEES
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => handleSponsorClick(tier.id, 'kid', `${calculatedAmount} ESPEES`, currentCopies)}
+                      className={`w-full px-4 py-3 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-xl transition-all font-bold transform hover:scale-105 text-center text-sm`}
+                    >
+                      Sponsor Now
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
 
@@ -508,6 +570,8 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
         selectedTierId={selectedTierId}
         onTierSelect={setSelectedTierId}
         sponsorshipType={sponsorshipType}
+        customAmount={customAmount}
+        customCopies={customCopies}
       />
     </section>
   );

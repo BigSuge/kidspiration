@@ -183,6 +183,11 @@ function AppContent() {
         toast.success(welcomeMessage, {
           duration: 4000,
         });
+
+        // Redirect admin to admin panel
+        if (user.type === 'admin') {
+          handleNavigate('admin');
+        }
       }
     }
   };

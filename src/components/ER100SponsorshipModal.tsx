@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Heart, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
+import { X, Heart, ArrowRight, AlertCircle } from "lucide-react";
 import { useAuth } from "../utils/AuthContext";
+import confetti from "canvas-confetti";
 
 const createEmptyERForm = () => ({
   name: "",
@@ -16,6 +17,8 @@ interface ER100SponsorshipModalProps {
   selectedTierId?: string | null;
   onTierSelect: (tierId: string) => void;
   sponsorshipType?: 'parent' | 'kid';
+  customAmount?: string;
+  customCopies?: number;
 }
 
 export function ER100SponsorshipModal({
@@ -24,11 +27,13 @@ export function ER100SponsorshipModal({
   selectedTierId,
   onTierSelect,
   sponsorshipType = 'parent',
+  customAmount,
+  customCopies,
 }: ER100SponsorshipModalProps) {
   const { user } = useAuth();
   const [formData, setFormData] = useState(createEmptyERForm);
 
-  const isKid = user?.type === "kid";
+
 
   const parentSponsorshipTiers = [
     {
@@ -199,17 +204,28 @@ export function ER100SponsorshipModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (sponsorshipType === 'kid' && !formData.hasAdultSupport) {
       alert("Please make sure you have an adult or parent to help you complete the sponsorship!");
       return;
     }
 
     // Here you would integrate with payment processing
-    console.log("Sponsorship submission:", { ...formData, tierId: selectedTierId, type: sponsorshipType });
-    
+    console.log("Sponsorship submission:", {
+      ...formData,
+      tierId: selectedTierId,
+      type: sponsorshipType,
+      amount: customAmount,
+      copies: customCopies
+    });
+
     // Show success message
     const tierName = sponsorshipTiers.find(t => t.id === selectedTierId)?.name;
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
     alert(`Thank you for sponsoring the ER100 Campaign! Your ${tierName} sponsorship will make a huge difference!`);
     onClose();
   };
@@ -220,7 +236,7 @@ export function ER100SponsorshipModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-4 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-28 overflow-y-auto">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -254,8 +270,8 @@ export function ER100SponsorshipModal({
               </h2>
             </div>
             <p className="text-center text-base sm:text-lg md:text-xl text-white/90">
-              {sponsorshipType === 'kid' 
-                ? 'Become a CHAMP and sponsor HTTN Magazine copies for other kids!' 
+              {sponsorshipType === 'kid'
+                ? 'Become a CHAMP and sponsor HTTN Magazine copies for other kids!'
                 : 'Help children reach 100 others with God\'s Word'}
             </p>
           </div>
@@ -268,7 +284,7 @@ export function ER100SponsorshipModal({
                 <h3 className="text-xl sm:text-2xl text-gray-900 mb-4 sm:mb-6 text-center font-bold">
                   Choose Your Sponsorship Level
                 </h3>
-                
+
                 {sponsorshipType === 'kid' && (
                   <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-blue-50 border-2 border-blue-300 rounded-xl flex items-start gap-2 sm:gap-3">
                     <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 flex-shrink-0 mt-1" />
@@ -380,7 +396,10 @@ export function ER100SponsorshipModal({
                       <div className="min-w-0 flex-1">
                         <h3 className="text-lg sm:text-xl md:text-2xl font-bold">{selectedTier?.name}</h3>
                         <p className="text-xl sm:text-2xl md:text-3xl font-bold">
-                          {sponsorshipType === 'kid' ? (selectedTier as any)?.copies : (selectedTier as any)?.espees}
+                          {sponsorshipType === 'kid'
+                            ? (customCopies ? `${customCopies} Copies` : (selectedTier as any)?.copies)
+                            : (customAmount || (selectedTier as any)?.espees)
+                          }
                         </p>
                       </div>
                     </div>
