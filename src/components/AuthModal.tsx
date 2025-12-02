@@ -718,29 +718,29 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                   onChange={(e) => setKidForm({ ...kidForm, country: e.target.value })}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FF6B9D] focus:outline-none"
                 >
-                  <option value="">Select your country</option>
-                  <option value="United States">United States</option>
-                  <option value="United Kingdom">United Kingdom</option>
-                  <option value="Canada">Canada</option>
-                  <option value="Australia">Australia</option>
-                  <option value="Nigeria">Nigeria</option>
-                  <option value="South Africa">South Africa</option>
-                  <option value="Kenya">Kenya</option>
-                  <option value="Ghana">Ghana</option>
-                  <option value="India">India</option>
-                  <option value="Philippines">Philippines</option>
-                  <option value="Singapore">Singapore</option>
-                  <option value="Malaysia">Malaysia</option>
-                  <option value="Brazil">Brazil</option>
-                  <option value="Mexico">Mexico</option>
-                  <option value="Germany">Germany</option>
-                  <option value="France">France</option>
-                  <option value="Spain">Spain</option>
-                  <option value="Italy">Italy</option>
-                  <option value="Netherlands">Netherlands</option>
-                  <option value="Jamaica">Jamaica</option>
-                  <option value="Trinidad and Tobago">Trinidad and Tobago</option>
-                  <option value="Other">Other</option>
+<option value="">Select your country</option>
+<option value="Australia">Australia</option>
+<option value="Brazil">Brazil</option>
+<option value="Canada">Canada</option>
+<option value="France">France</option>
+<option value="Germany">Germany</option>
+<option value="Ghana">Ghana</option>
+<option value="India">India</option>
+<option value="Italy">Italy</option>
+<option value="Jamaica">Jamaica</option>
+<option value="Kenya">Kenya</option>
+<option value="Malaysia">Malaysia</option>
+<option value="Mexico">Mexico</option>
+<option value="Netherlands">Netherlands</option>
+<option value="Nigeria">Nigeria</option>
+<option value="Philippines">Philippines</option>
+<option value="Singapore">Singapore</option>
+<option value="South Africa">South Africa</option>
+<option value="Spain">Spain</option>
+<option value="Trinidad and Tobago">Trinidad and Tobago</option>
+<option value="United Kingdom">United Kingdom</option>
+<option value="United States">United States</option>
+<option value="Other">Other</option>
                 </select>
               </div>
 
