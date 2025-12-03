@@ -224,8 +224,7 @@ export function ER100SponsorshipModal({
     }
 
     // Validate copies for kid sponsorship
-    if (sponsorshipType === 'kid' && selectedTierId) {
-      const range = getTierRange(selectedTierId);
+    if (sponsorshipType === 'kid' && selectedTierRange) {
       const copiesNum = parseInt(formData.copies);
       
       if (!formData.copies || isNaN(copiesNum)) {
@@ -233,8 +232,8 @@ export function ER100SponsorshipModal({
         return;
       }
       
-      if (range && (copiesNum < range.min || copiesNum > range.max)) {
-        alert(`For this CHAMP level, please enter a number between ${range.min} and ${range.max === UNLIMITED_MAX ? '∞' : range.max} copies.`);
+      if (copiesNum < selectedTierRange.min || copiesNum > selectedTierRange.max) {
+        alert(`For this CHAMP level, please enter a number between ${selectedTierRange.min} and ${selectedTierRange.max === UNLIMITED_MAX ? '∞' : selectedTierRange.max} copies.`);
         return;
       }
     }
@@ -250,6 +249,7 @@ export function ER100SponsorshipModal({
   };
 
   const selectedTier = sponsorshipTiers.find((tier) => tier.id === selectedTierId);
+  const selectedTierRange = selectedTierId ? getTierRange(selectedTierId) : null;
 
   if (!isOpen) return null;
 
@@ -476,12 +476,9 @@ export function ER100SponsorshipModal({
                     />
                   </div>
 
-                  {sponsorshipType === 'kid' && selectedTierId && (() => {
-                    const tierRange = getTierRange(selectedTierId);
-                    if (!tierRange) return null;
-                    
-                    const isUnlimited = tierRange.max === UNLIMITED_MAX;
-                    const maxDisplay = isUnlimited ? '∞' : tierRange.max;
+                  {sponsorshipType === 'kid' && selectedTierRange && (() => {
+                    const isUnlimited = selectedTierRange.max === UNLIMITED_MAX;
+                    const maxDisplay = isUnlimited ? '∞' : selectedTierRange.max;
                     
                     return (
                       <div>
@@ -494,13 +491,13 @@ export function ER100SponsorshipModal({
                           required
                           value={formData.copies}
                           onChange={handleInputChange}
-                          min={tierRange.min}
-                          max={isUnlimited ? undefined : tierRange.max}
+                          min={selectedTierRange.min}
+                          max={isUnlimited ? undefined : selectedTierRange.max}
                           className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-sm sm:text-base"
-                          placeholder={`Enter ${tierRange.min}-${maxDisplay} copies`}
+                          placeholder={`Enter ${selectedTierRange.min}-${maxDisplay} copies`}
                         />
                         <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                          For {selectedTier?.name}, you can sponsor between {tierRange.min} and {isUnlimited ? 'unlimited' : tierRange.max} copies
+                          For {selectedTier?.name}, you can sponsor between {selectedTierRange.min} and {isUnlimited ? 'unlimited' : selectedTierRange.max} copies
                         </p>
                       </div>
                     );
