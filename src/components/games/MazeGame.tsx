@@ -308,7 +308,7 @@ export function MazeGame({ onBack }: MazeGameProps) {
             <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
               <div className="text-6xl mb-4">🎉</div>
               <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B9D] to-[#A78BFA] text-[28px] mb-4">
-                You Made It to Jesus!
+                You Made It to our Lord Jesus!
               </h2>
               <div className="space-y-2 mb-6 text-gray-600">
                 <p>⏱️ Time: {formatTime(time)}</p>
@@ -391,7 +391,7 @@ export function MazeGame({ onBack }: MazeGameProps) {
               <div className="p-4 bg-gradient-to-r from-[#4ECDC4]/10 to-[#A78BFA]/10 rounded-xl">
                 <h3 className="text-sm font-semibold mb-2 text-gray-700 font-bold">How to Play</h3>
                 <div className="text-sm text-gray-600 space-y-1">
-                  <p>🐑 Guide the sheep to Jesus</p>
+                  <p>🐑 Guide the sheep to our Lord Jesus</p>
                   <p>⌨️ Use arrow keys or WASD</p>
                   <p>👆 Or click/tap adjacent cells</p>
                   <p>🎯 Reach the goal to win!</p>
@@ -467,7 +467,7 @@ export function MazeGame({ onBack }: MazeGameProps) {
                   <div className="w-px h-6 bg-gray-300" />
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">✝️</span>
-                    <span className="text-sm text-gray-600">Jesus</span>
+                    <span className="text-sm text-gray-600">Our Lord Jesus</span>
                   </div>
                 </div>
               </div>
