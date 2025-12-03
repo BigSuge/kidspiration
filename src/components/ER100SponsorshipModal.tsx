@@ -266,7 +266,7 @@ export function ER100SponsorshipModal({
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <Heart className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center sm:text-left font-bold">
-                {sponsorshipType === 'kid' ? 'Kids CHAMP Sponsorship' : 'Parent/Teacher Sponsorship'}
+                {sponsorshipType === 'kid' ? 'Kids CHAMP Sponsorship' : 'Parents/Teachers/Leaders Sponsorship'}
               </h2>
             </div>
             <p className="text-center text-base sm:text-lg md:text-xl text-white/90">
