@@ -848,8 +848,8 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                   </div>
                   <Button
                     onClick={() => {
-                      setIsComplete(false);
                       setShowDifficultySelector(true);
+                      setIsComplete(false);
                     }}
                     className="bg-white text-cyan-600 rounded-full px-6 sm:px-8 py-2.5 sm:py-3 shadow-lg hover:shadow-xl hover:scale-105 transition-all text-sm sm:text-base"
                   >
