@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, Grid3x3, Lightbulb, RotateCcw, Trophy, Sparkles } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -72,12 +72,12 @@ const WORD_SETS: Record<Difficulty, Word[]> = {
     { word: 'ZACCHAEUS', clue: 'Tax collector in a tree', startRow: 0, startCol: 7, direction: 'down', number: 7 },
   ],
   master: [
-    { word: 'TRANSFIGURATION', clue: 'Jesus shone on the mountain', startRow: 0, startCol: 0, direction: 'across', number: 1 },
-    { word: 'PENTECOST', clue: 'Holy Spirit descended on disciples', startRow: 2, startCol: 1, direction: 'across', number: 2 },
-    { word: 'ASCENSION', clue: 'Jesus rose into heaven', startRow: 3, startCol: 0, direction: 'across', number: 3 },
-    { word: 'SANHEDRIN', clue: 'Jewish ruling council', startRow: 4, startCol: 2, direction: 'across', number: 4 },
-    { word: 'RESURRECTION', clue: 'Jesus rose from the dead', startRow: 5, startCol: 0, direction: 'across', number: 5 },
-    { word: 'TABERNACLE', clue: 'Dwelling place of God', startRow: 0, startCol: 5, direction: 'down', number: 6 },
+    { word: 'PENTECOST', clue: 'Holy Spirit descended on disciples', startRow: 0, startCol: 0, direction: 'across', number: 1 },
+    { word: 'ASCENSION', clue: 'Jesus rose into heaven', startRow: 2, startCol: 1, direction: 'across', number: 2 },
+    { word: 'SANHEDRIN', clue: 'Jewish ruling council', startRow: 3, startCol: 0, direction: 'across', number: 3 },
+    { word: 'GOLGOTHA', clue: 'Place of the skull', startRow: 4, startCol: 2, direction: 'across', number: 4 },
+    { word: 'GETHSEMANE', clue: 'Garden where Jesus prayed', startRow: 5, startCol: 0, direction: 'across', number: 5 },
+    { word: 'PHARISEE', clue: 'Religious group Jesus debated', startRow: 0, startCol: 5, direction: 'down', number: 6 },
     { word: 'APOSTLE', clue: 'Sent one with authority', startRow: 1, startCol: 8, direction: 'down', number: 7 },
   ],
 };
@@ -112,16 +112,16 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     }
   }, [userGrid]);
 
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showDifficultySelector) {
-        setShowDifficultySelector(false);
-      }
-    };
+  const handleEscape = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Escape' && showDifficultySelector) {
+      setShowDifficultySelector(false);
+    }
+  }, [showDifficultySelector]);
 
+  useEffect(() => {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
-  }, [showDifficultySelector]);
+  }, [handleEscape]);
 
   const initializeGrid = () => {
     const newGrid: string[][] = Array(BOARD_SIZE)
@@ -559,7 +559,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
               <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ECDC4] to-[#06B6D4] font-bold">
                 Crossword Puzzle
               </h1>
-              <p className="text-sm sm:text-base text-gray-600">Find the 12 Disciples of Jesus! · {DIFFICULTY_CONFIG[difficulty].name}</p>
+              <p className="text-sm sm:text-base text-gray-600">Biblical Words Challenge · {DIFFICULTY_CONFIG[difficulty].name}</p>
             </div>
           </div>
         </motion.div>
