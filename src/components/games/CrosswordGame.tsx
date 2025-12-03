@@ -472,11 +472,11 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                       <div className="flex items-center justify-between gap-2 sm:gap-3">
                         <div className="flex-1 min-w-0">
                           <p className="font-bold text-gray-800 text-xs sm:text-sm md:text-base">{DIFFICULTY_CONFIG[diff].name}</p>
-                          <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 line-clamp-1">{DIFFICULTY_CONFIG[diff].description}</p>
+                          <p className="text-xs sm:text-sm md:text-base text-gray-600 line-clamp-1">{DIFFICULTY_CONFIG[diff].description}</p>
                         </div>
                         <div className="text-right flex-shrink-0">
                           <p className="text-lg sm:text-xl md:text-2xl font-bold text-cyan-600">{DIFFICULTY_CONFIG[diff].hints}</p>
-                          <p className="text-[10px] sm:text-xs text-gray-500">hints</p>
+                          <p className="text-xs text-gray-500">hints</p>
                         </div>
                       </div>
                     </button>
@@ -544,7 +544,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-6">
               <div className="flex gap-2 sm:gap-3">
                 <div className="bg-white rounded-lg sm:rounded-xl md:rounded-2xl px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 shadow">
-                  <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 font-bold">Hints Left</p>
+                  <p className="text-xs sm:text-sm text-gray-600 font-bold">Hints Left</p>
                   <p className="text-lg sm:text-xl md:text-2xl text-cyan-600 text-center">{hints}</p>
                 </div>
               </div>
@@ -627,7 +627,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
               <div className="mt-3 sm:mt-4 md:mt-6 bg-white rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 shadow-lg">
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4 items-start sm:items-center">
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] sm:text-xs md:text-sm text-gray-500 uppercase">Active Word</p>
+                    <p className="text-xs sm:text-sm text-gray-500 uppercase">Active Word</p>
                     <p className="text-base sm:text-lg md:text-xl text-gray-900 font-semibold">
                       #{activeWord.number} · {activeWord.direction.toUpperCase()}
                     </p>
@@ -639,7 +639,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                         <button
                           key={wordKey(word)}
                           onClick={() => focusWord(word, false)}
-                          className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold border ${
+                          className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-semibold border ${
                             activeWord && wordKey(word) === wordKey(activeWord)
                               ? 'bg-cyan-100 border-cyan-300 text-cyan-700'
                               : 'bg-gray-100 border-gray-200 text-gray-500'
