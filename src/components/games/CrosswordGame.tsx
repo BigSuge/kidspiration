@@ -84,7 +84,7 @@ const WORD_SETS: Record<Difficulty, Word[]> = {
 
 export function CrosswordGame({ onBack }: CrosswordGameProps) {
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
-  const [words, setWords] = useState<Word[]>(WORD_SETS.medium);
+  const [words, setWords] = useState<Word[]>(() => WORD_SETS[difficulty]);
   const [grid, setGrid] = useState<string[][]>([]);
   const [userGrid, setUserGrid] = useState<string[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
@@ -518,7 +518,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex-1 min-w-0">
                           <p className="font-bold text-gray-800 text-sm sm:text-base">{DIFFICULTY_CONFIG[diff].name}</p>
-                          <p className="text-xs sm:text-sm text-gray-600 truncate">{DIFFICULTY_CONFIG[diff].description}</p>
+                          <p className="text-xs sm:text-sm text-gray-600">{DIFFICULTY_CONFIG[diff].description}</p>
                         </div>
                         <div className="text-right flex-shrink-0">
                           <p className="text-xl sm:text-2xl font-bold text-cyan-600">{DIFFICULTY_CONFIG[diff].hints}</p>
