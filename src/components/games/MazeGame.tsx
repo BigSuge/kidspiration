@@ -31,12 +31,20 @@ const difficulties = {
 };
 
 type Difficulty = keyof typeof difficulties;
+type Direction = 'up' | 'down' | 'left' | 'right';
+
+const DIRECTION_ROTATION: Record<Direction, number> = {
+  right: 0,
+  down: 90,
+  left: 180,
+  up: 270
+};
 
 export function MazeGame({ onBack }: MazeGameProps) {
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [maze, setMaze] = useState<number[][]>([]);
   const [playerPos, setPlayerPos] = useState<Position>({ row: 0, col: 0 });
-  const [playerDirection, setPlayerDirection] = useState<'up' | 'down' | 'left' | 'right'>('right');
+  const [playerDirection, setPlayerDirection] = useState<Direction>('right');
   const [endPos, setEndPos] = useState<Position>({ row: 0, col: 0 });
   const [gameWon, setGameWon] = useState(false);
   const [moves, setMoves] = useState(0);
@@ -220,7 +228,7 @@ export function MazeGame({ onBack }: MazeGameProps) {
 
     let newRow = playerPos.row;
     let newCol = playerPos.col;
-    let direction: 'up' | 'down' | 'left' | 'right' = playerDirection;
+    let direction: Direction = playerDirection;
 
     switch (e.key) {
       case 'ArrowUp':
@@ -282,7 +290,7 @@ export function MazeGame({ onBack }: MazeGameProps) {
     const colDiff = col - playerPos.col;
 
     if ((Math.abs(rowDiff) === 1 && colDiff === 0) || (rowDiff === 0 && Math.abs(colDiff) === 1)) {
-      let direction: 'up' | 'down' | 'left' | 'right' = playerDirection;
+      let direction: Direction = playerDirection;
       
       if (rowDiff === -1) direction = 'up';
       else if (rowDiff === 1) direction = 'down';
@@ -447,10 +455,7 @@ export function MazeGame({ onBack }: MazeGameProps) {
                                 initial={{ scale: 0 }}
                                 animate={{ 
                                   scale: 1,
-                                  rotate: playerDirection === 'right' ? 0 : 
-                                          playerDirection === 'down' ? 90 :
-                                          playerDirection === 'left' ? 180 :
-                                          playerDirection === 'up' ? 270 : 0
+                                  rotate: DIRECTION_ROTATION[playerDirection]
                                 }}
                                 transition={{ duration: 0.2 }}
                                 className="text-sm sm:text-base md:text-xl lg:text-2xl"
