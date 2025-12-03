@@ -40,8 +40,13 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
   };
 
   const handleInputChange = (tierId: string, value: string, min: number, max: number) => {
-    // Allow empty string or any numeric input while typing
-    const numValue = value === '' ? min : parseInt(value);
+    // Allow any numeric input while typing, without validation
+    if (value === '') {
+      // User cleared the field - don't update state yet
+      // The blur handler will set it to min when they finish
+      return;
+    }
+    const numValue = parseInt(value);
     if (!isNaN(numValue)) {
       setSelectedCopies(prev => ({
         ...prev,
@@ -53,7 +58,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
   const handleInputBlur = (tierId: string, min: number, max: number) => {
     // Validate and clamp the value when user finishes editing
     const currentValue = selectedCopies[tierId];
-    if (currentValue === undefined || isNaN(currentValue) || currentValue < min) {
+    if (currentValue === undefined || currentValue < min) {
       setSelectedCopies(prev => ({
         ...prev,
         [tierId]: min
