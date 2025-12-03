@@ -8,6 +8,7 @@ const createEmptyERForm = () => ({
   email: "",
   phone: "",
   hasAdultSupport: false,
+  copies: "",
 });
 
 interface ER100SponsorshipModalProps {
@@ -171,6 +172,21 @@ export function ER100SponsorshipModal({
 
   const sponsorshipTiers = sponsorshipType === 'kid' ? kidSponsorshipTiers : parentSponsorshipTiers;
 
+  // Get the range limits for a kid sponsorship tier
+  const getTierRange = (tierId: string): { min: number; max: number } | null => {
+    if (sponsorshipType !== 'kid') return null;
+    
+    const ranges: Record<string, { min: number; max: number }> = {
+      'kid-mighty': { min: 100, max: 200 },
+      'kid-noble': { min: 201, max: 400 },
+      'kid-royal': { min: 401, max: 700 },
+      'kid-diamond': { min: 701, max: 999 },
+      'kid-global': { min: 1000, max: 999999 }, // No upper limit
+    };
+    
+    return ranges[tierId] || null;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -205,12 +221,29 @@ export function ER100SponsorshipModal({
       return;
     }
 
+    // Validate copies for kid sponsorship
+    if (sponsorshipType === 'kid' && selectedTierId) {
+      const range = getTierRange(selectedTierId);
+      const copiesNum = parseInt(formData.copies);
+      
+      if (!formData.copies || isNaN(copiesNum)) {
+        alert("Please enter the number of copies you want to sponsor!");
+        return;
+      }
+      
+      if (range && (copiesNum < range.min || copiesNum > range.max)) {
+        alert(`For this CHAMP level, please enter a number between ${range.min} and ${range.max === 999999 ? '∞' : range.max} copies.`);
+        return;
+      }
+    }
+
     // Here you would integrate with payment processing
     console.log("Sponsorship submission:", { ...formData, tierId: selectedTierId, type: sponsorshipType });
     
     // Show success message
     const tierName = sponsorshipTiers.find(t => t.id === selectedTierId)?.name;
-    alert(`Thank you for sponsoring the ER100 Campaign! Your ${tierName} sponsorship will make a huge difference!`);
+    const copiesMsg = sponsorshipType === 'kid' && formData.copies ? ` for ${formData.copies} copies` : '';
+    alert(`Thank you for sponsoring the ER100 Campaign! Your ${tierName} sponsorship${copiesMsg} will make a huge difference!`);
     onClose();
   };
 
@@ -440,6 +473,28 @@ export function ER100SponsorshipModal({
                       placeholder="+1 (555) 123-4567"
                     />
                   </div>
+
+                  {sponsorshipType === 'kid' && selectedTierId && (
+                    <div>
+                      <label className="block text-gray-700 mb-2 font-semibold text-sm sm:text-base">
+                        Number of Copies *
+                      </label>
+                      <input
+                        type="number"
+                        name="copies"
+                        required
+                        value={formData.copies}
+                        onChange={handleInputChange}
+                        min={getTierRange(selectedTierId)?.min}
+                        max={getTierRange(selectedTierId)?.max === 999999 ? undefined : getTierRange(selectedTierId)?.max}
+                        className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-sm sm:text-base"
+                        placeholder={`Enter ${getTierRange(selectedTierId)?.min}-${getTierRange(selectedTierId)?.max === 999999 ? '∞' : getTierRange(selectedTierId)?.max} copies`}
+                      />
+                      <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                        For {selectedTier?.name}, you can sponsor between {getTierRange(selectedTierId)?.min} and {getTierRange(selectedTierId)?.max === 999999 ? 'unlimited' : getTierRange(selectedTierId)?.max} copies
+                      </p>
+                    </div>
+                  )}
 
                   {sponsorshipType === 'kid' && (
                     <div className="p-3 sm:p-4 bg-yellow-50 border-2 border-yellow-300 rounded-xl">
