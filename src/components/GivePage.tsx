@@ -305,64 +305,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
           </p>
         </motion.div>
 
-        {/* Glowfest Sponsorship Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-16"
-        >
-          <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-500">
-            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
-              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center">
-                Glowfest 2025 Sponsorship
-              </h2>
-              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
-            </div>
-            <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
-              Partner with us to reach children worldwide through Glowfest
-            </p>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                {glowfestSponsorships.map((tier, index) => (
-                  <motion.div
-                    key={tier.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 + index * 0.05 }}
-                    className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-gray-200 hover:shadow-xl transition-all"
-                  >
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mb-4 shadow-lg`}>
-                      {tier.emoji}
-                    </div>
-                    <h4 className="text-xs sm:text-sm font-bold text-[#FF1F8E] text-center mb-2">{tier.name}</h4>
-                    <p className={`text-center font-bold mb-1 text-gray-900 text-sm sm:text-base`}>
-                      {tier.espees}
-                    </p>
-                    <p className="text-gray-600 text-xs text-center mb-4">{tier.description}</p>
-                    <button
-                      onClick={() => handleGlowfestClick(tier.id)}
-                      className={`w-full px-3 sm:px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-xs sm:text-sm transform hover:scale-105`}
-                    >
-                      Sponsor Now
-                    </button>
-                  </motion.div>
-                ))}
-              </div>
-
-              <div className="text-center mt-6">
-                <button
-                  onClick={() => onNavigate?.('glowfest')}
-                  className="px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[#9B4DFF] to-[#C77DFF] text-white rounded-full hover:shadow-xl transition-all font-bold text-sm sm:text-base transform hover:scale-105"
-                >
-                  Learn More About Glowfest
-                </button>
-              </div>
-            </div>
-          </motion.section>
-
-        {/* ER100 Initiative Section */}
+                {/* ER100 Initiative Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -500,6 +443,63 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
             </div>
           </div>
         </motion.section>
+
+        {/* Glowfest Sponsorship Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-16"
+        >
+          <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-500">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center">
+                Glowfest 2025 Sponsorship
+              </h2>
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+            </div>
+            <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
+              Partner with us to reach children worldwide through Glowfest
+            </p>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                {glowfestSponsorships.map((tier, index) => (
+                  <motion.div
+                    key={tier.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 + index * 0.05 }}
+                    className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-gray-200 hover:shadow-xl transition-all"
+                  >
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-br ${tier.gradient} rounded-2xl flex items-center justify-center text-2xl sm:text-3xl mb-4 shadow-lg`}>
+                      {tier.emoji}
+                    </div>
+                    <h4 className="text-xs sm:text-sm font-bold text-[#FF1F8E] text-center mb-2">{tier.name}</h4>
+                    <p className={`text-center font-bold mb-1 text-gray-900 text-sm sm:text-base`}>
+                      {tier.espees}
+                    </p>
+                    <p className="text-gray-600 text-xs text-center mb-4">{tier.description}</p>
+                    <button
+                      onClick={() => handleGlowfestClick(tier.id)}
+                      className={`w-full px-3 sm:px-4 py-2 bg-gradient-to-r ${tier.gradient} text-white rounded-full hover:shadow-lg transition-all font-bold text-xs sm:text-sm transform hover:scale-105`}
+                    >
+                      Sponsor Now
+                    </button>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="text-center mt-6">
+                <button
+                  onClick={() => onNavigate?.('glowfest')}
+                  className="px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[#9B4DFF] to-[#C77DFF] text-white rounded-full hover:shadow-xl transition-all font-bold text-sm sm:text-base transform hover:scale-105"
+                >
+                  Learn More About Glowfest
+                </button>
+              </div>
+            </div>
+          </motion.section>
 
         {/* Party Initiative Section */}
         <motion.section
