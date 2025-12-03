@@ -592,7 +592,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                           className={`w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center transition-all rounded-[4px] sm:rounded-[6px] relative ${getCellClass(rowIndex, colIndex)}`}
                         >
                           {cellNumber && (
-                            <span className="absolute top-0 left-0.5 text-[8px] sm:text-[9px] md:text-[10px] font-normal text-gray-500 leading-none pointer-events-none z-10">
+                            <span className="absolute top-0 left-0.5 text-[5px] sm:text-[6px] md:text-[7px] font-normal text-gray-500 leading-none pointer-events-none z-10">
                               {cellNumber}
                             </span>
                           )}
