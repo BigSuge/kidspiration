@@ -24,6 +24,16 @@ type CellPointer = {
   direction: 'across' | 'down';
 };
 
+type Difficulty = 'easy' | 'medium' | 'hard' | 'expert' | 'master';
+
+const DIFFICULTY_CONFIG = {
+  easy: { name: 'Easy', hints: 5, description: 'Perfect for beginners!' },
+  medium: { name: 'Medium', hints: 3, description: 'A balanced challenge' },
+  hard: { name: 'Hard', hints: 2, description: 'Test your knowledge' },
+  expert: { name: 'Expert', hints: 1, description: 'For true disciples!' },
+  master: { name: 'Master', hints: 0, description: 'No hints at all!' }
+};
+
 export function CrosswordGame({ onBack }: CrosswordGameProps) {
   const words: Word[] = [
     { word: 'JAMES', clue: 'Son of Zebedee (brother of John)', startRow: 0, startCol: 5, direction: 'across', number: 1 },
@@ -35,12 +45,15 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     { word: 'ANDREW', clue: "Peter's brother", startRow: 0, startCol: 6, direction: 'down', number: 7 },
   ];
 
+  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [grid, setGrid] = useState<string[][]>([]);
   const [userGrid, setUserGrid] = useState<string[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
-  const [hints, setHints] = useState<number>(3);
+  const [hints, setHints] = useState<number>(DIFFICULTY_CONFIG.medium.hints);
+  const [maxHints, setMaxHints] = useState<number>(DIFFICULTY_CONFIG.medium.hints);
   const [isComplete, setIsComplete] = useState(false);
   const [activeWord, setActiveWord] = useState<Word | null>(null);
+  const [showDifficultySelector, setShowDifficultySelector] = useState(true);
   const cellRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const wordKey = (word: Word) => `${word.number}-${word.direction}`;
@@ -81,7 +94,9 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     cellRefs.current = {};
     setGrid(newGrid);
     setUserGrid(newUserGrid);
-    setHints(3);
+    const hintsForDifficulty = DIFFICULTY_CONFIG[difficulty].hints;
+    setHints(hintsForDifficulty);
+    setMaxHints(hintsForDifficulty);
     setIsComplete(false);
     setSelectedCell(null);
     setActiveWord(null);
@@ -404,9 +419,74 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     }
   };
 
+  const startGame = (selectedDifficulty: Difficulty) => {
+    setDifficulty(selectedDifficulty);
+    const hintsForDifficulty = DIFFICULTY_CONFIG[selectedDifficulty].hints;
+    setHints(hintsForDifficulty);
+    setMaxHints(hintsForDifficulty);
+    setShowDifficultySelector(false);
+  };
+
   return (
     <div className="pt-20 min-h-screen pb-20 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8">
+        {/* Difficulty Selector Modal */}
+        <AnimatePresence>
+          {showDifficultySelector && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl"
+              >
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#4ECDC4] to-[#06B6D4] rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-4">
+                    <Grid3x3 className="w-8 h-8 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose Difficulty</h2>
+                  <p className="text-gray-600">Select how many hints you'd like</p>
+                </div>
+
+                <div className="space-y-3">
+                  {(Object.keys(DIFFICULTY_CONFIG) as Difficulty[]).map((diff) => (
+                    <button
+                      key={diff}
+                      onClick={() => startGame(diff)}
+                      className="w-full text-left p-4 rounded-2xl bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 transition-all border-2 border-transparent hover:border-cyan-300"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-bold text-gray-800">{DIFFICULTY_CONFIG[diff].name}</p>
+                          <p className="text-sm text-gray-600">{DIFFICULTY_CONFIG[diff].description}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-cyan-600">{DIFFICULTY_CONFIG[diff].hints}</p>
+                          <p className="text-xs text-gray-500">hints</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                <Button
+                  onClick={onBack}
+                  variant="ghost"
+                  className="w-full mt-4 hover:bg-gray-100"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Games
+                </Button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Header */}
         <motion.div
           initial={{ y: -50, opacity: 0 }}
@@ -426,7 +506,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
               <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ECDC4] to-[#06B6D4] font-bold">
                 Crossword Puzzle
               </h1>
-              <p className="text-sm sm:text-base text-gray-600">Find the 12 Disciples of Jesus!</p>
+              <p className="text-sm sm:text-base text-gray-600">Find the 12 Disciples of Jesus! · {DIFFICULTY_CONFIG[difficulty].name}</p>
             </div>
           </div>
         </motion.div>
@@ -489,7 +569,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                           className={`w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center transition-all rounded-[6px] relative ${getCellClass(rowIndex, colIndex)}`}
                         >
                           {cellNumber && (
-                            <span className="absolute top-0 left-0.5 text-[8px] sm:text-[9px] font-bold text-gray-600 leading-none pointer-events-none z-10">
+                            <span className="absolute top-0 left-0.5 text-[7px] sm:text-[8px] font-normal text-gray-500 leading-none pointer-events-none z-10">
                               {cellNumber}
                             </span>
                           )}
@@ -705,14 +785,17 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                 <div className="mt-6 sm:mt-8">
                   <h2 className="text-white mb-3 sm:mb-4">🎉 Amazing! 🎉</h2>
                   <p className="text-white/90 text-lg sm:text-xl mb-3 sm:mb-4">You completed the crossword!</p>
-                  <div className="bg-white/20 backdrop-blur rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6">
+                  <div className="bg-white/20 backdrop-blur rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6 space-y-2">
                     <p className="text-white text-sm sm:text-base">
-                      Hints Used: <span className="text-xl sm:text-2xl">{3 - hints}</span>
+                      Difficulty: <span className="text-xl sm:text-2xl font-bold">{DIFFICULTY_CONFIG[difficulty].name}</span>
+                    </p>
+                    <p className="text-white text-sm sm:text-base">
+                      Hints Used: <span className="text-xl sm:text-2xl">{maxHints - hints}</span> / {maxHints}
                     </p>
                   </div>
                   <Button
                     onClick={() => {
-                      initializeGrid();
+                      setShowDifficultySelector(true);
                       setIsComplete(false);
                     }}
                     className="bg-white text-cyan-600 rounded-full px-6 sm:px-8 py-2.5 sm:py-3 shadow-lg hover:shadow-xl hover:scale-105 transition-all text-sm sm:text-base"
