@@ -8,14 +8,7 @@ interface CrosswordGameProps {
   onBack?: () => void;
 }
 
-interface Word {
-  word: string;
-  clue: string;
-  startRow: number;
-  startCol: number;
-  direction: 'across' | 'down';
-  number: number;
-}
+type Word = GeneratedWord;
 
 const BOARD_SIZE = 15;
 

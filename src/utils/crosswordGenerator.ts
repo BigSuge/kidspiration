@@ -44,7 +44,7 @@ export const MEDIUM_WORDS: WordEntry[] = [
   { word: 'SOLOMON', clue: 'Wisest king of Israel', testament: 'old' },
   { word: 'SAMUEL', clue: 'Prophet who anointed kings', testament: 'old' },
   { word: 'JONAH', clue: 'Swallowed by a great fish', testament: 'old' },
-  { word: 'DANIEL', clue: 'Survived the lions den', testament: 'old' },
+  { word: 'DANIEL', clue: "Survived the lion's den", testament: 'old' },
   { word: 'ELIJAH', clue: 'Prophet taken up in a whirlwind', testament: 'old' },
 ];
 
@@ -305,11 +305,11 @@ export function generateCrossword(difficulty: 'easy' | 'medium' | 'hard' | 'expe
       for (let tryCount = 0; tryCount < 50 && !placed; tryCount++) {
         attempts++;
         const direction: 'across' | 'down' = Math.random() > 0.5 ? 'across' : 'down';
-        const maxRow = direction === 'across' ? boardSize : boardSize - currentWord.word.length;
-        const maxCol = direction === 'across' ? boardSize - currentWord.word.length : boardSize;
+        const maxRow = direction === 'across' ? boardSize - 1 : boardSize - currentWord.word.length;
+        const maxCol = direction === 'across' ? boardSize - currentWord.word.length : boardSize - 1;
         
-        const row = Math.floor(Math.random() * maxRow);
-        const col = Math.floor(Math.random() * maxCol);
+        const row = Math.floor(Math.random() * (maxRow + 1));
+        const col = Math.floor(Math.random() * (maxCol + 1));
         
         if (canPlaceWord(grid, currentWord.word, row, col, direction)) {
           placeWord(grid, currentWord.word, row, col, direction);
