@@ -39,6 +39,38 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
     }));
   };
 
+  const handleInputChange = (tierId: string, value: string, min: number, max: number) => {
+    // Allow any numeric input while typing, without validation
+    if (value === '') {
+      // User cleared the field - don't update state yet
+      // The blur handler will set it to min when they finish
+      return;
+    }
+    const numValue = parseInt(value);
+    if (!isNaN(numValue)) {
+      setSelectedCopies(prev => ({
+        ...prev,
+        [tierId]: numValue
+      }));
+    }
+  };
+
+  const handleInputBlur = (tierId: string, min: number, max: number) => {
+    // Validate and clamp the value when user finishes editing
+    const currentValue = selectedCopies[tierId];
+    if (currentValue === undefined || currentValue < min) {
+      setSelectedCopies(prev => ({
+        ...prev,
+        [tierId]: min
+      }));
+    } else if (currentValue > max) {
+      setSelectedCopies(prev => ({
+        ...prev,
+        [tierId]: max
+      }));
+    }
+  };
+
   const isKid = user?.type === 'kid';
   // ER100 Parent Sponsorship Tiers
   const er100ParentSponsorships = [
@@ -400,7 +432,8 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
                         <input
                           type="number"
                           value={currentCopies}
-                          onChange={(e) => handleCopyChange(tier.id, parseInt(e.target.value) || tier.min!, tier.min!, tier.max!)}
+                          onChange={(e) => handleInputChange(tier.id, e.target.value, tier.min!, tier.max!)}
+                          onBlur={() => handleInputBlur(tier.id, tier.min!, tier.max!)}
                           className="w-16 sm:w-20 text-center border border-gray-300 rounded-lg py-1 px-1 text-xs sm:text-sm font-bold"
                           min={tier.min}
                           max={tier.max}
