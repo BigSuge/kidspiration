@@ -3,6 +3,7 @@ import { X, User, Users, BookOpen, AlertCircle, Eye, EyeOff } from 'lucide-react
 import { KidspirationLogo } from './KidspirationLogo';
 import { useAuth } from '../utils/AuthContext';
 import { projectId, publicAnonKey, functionName } from '../utils/supabase/info';
+import { sanitizeInput, isValidEmail, validatePasswordStrength, sanitizeFormData } from '../utils/inputSanitization';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -162,6 +163,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setError('');
     setLoading(true);
 
+    // Sanitize username
+    const sanitizedUsername = sanitizeInput(loginForm.username);
+
     try {
       const response = await fetch(
         `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/kid/login`,
@@ -171,7 +175,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${publicAnonKey}`,
           },
-          body: JSON.stringify({ username: loginForm.username }),
+          body: JSON.stringify({ username: sanitizedUsername }),
         }
       );
 
@@ -203,14 +207,17 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setError('');
     setLoading(true);
 
+    // Sanitize all input fields
+    const sanitizedKidForm = sanitizeFormData(kidForm);
+
     // Validate
-    if (!kidForm.firstName || !kidForm.lastName || !kidForm.birthday || !kidForm.username || !kidForm.country) {
+    if (!sanitizedKidForm.firstName || !sanitizedKidForm.lastName || !sanitizedKidForm.birthday || !sanitizedKidForm.username || !sanitizedKidForm.country) {
       setError('Please fill in all fields');
       setLoading(false);
       return;
     }
 
-    const age = calculateAge(kidForm.birthday);
+    const age = calculateAge(sanitizedKidForm.birthday);
     if (age < 0 || age > 12) {
       setError('Age must be between 0 and 12');
       setLoading(false);
@@ -226,7 +233,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${publicAnonKey}`,
           },
-          body: JSON.stringify({ ...kidForm, age }),
+          body: JSON.stringify({ ...sanitizedKidForm, age }),
         }
       );
 
@@ -253,6 +260,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setError('');
     setLoading(true);
 
+    // Sanitize username but not password
+    const sanitizedUsername = sanitizeInput(loginForm.username);
+
     try {
       const response = await fetch(
         `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/adult/login`,
@@ -263,7 +273,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
             'Authorization': `Bearer ${publicAnonKey}`,
           },
           body: JSON.stringify({
-            username: loginForm.username,
+            username: sanitizedUsername,
             password: loginForm.password,
             type: userType,
           }),
@@ -293,44 +303,56 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setError('');
     setLoading(true);
 
+    // Sanitize all fields except passwords
+    const sanitizedAdultForm = sanitizeFormData(adultForm, ['password', 'confirmPassword']);
+
     // Validate
-    if (!adultForm.title || !adultForm.firstName || !adultForm.lastName || !adultForm.username ||
-      !adultForm.birthday || !adultForm.email || !adultForm.password || !adultForm.confirmPassword || !adultForm.country || !adultForm.occupation) {
+    if (!sanitizedAdultForm.title || !sanitizedAdultForm.firstName || !sanitizedAdultForm.lastName || !sanitizedAdultForm.username ||
+      !sanitizedAdultForm.birthday || !sanitizedAdultForm.email || !sanitizedAdultForm.password || !sanitizedAdultForm.confirmPassword || !sanitizedAdultForm.country || !sanitizedAdultForm.occupation) {
       setError('Please fill in all fields');
       setLoading(false);
       return;
     }
 
+    // Validate email format
+    if (!isValidEmail(sanitizedAdultForm.email)) {
+      setError('Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+
     if (userType === 'leader') {
-      if (!adultForm.churchAffiliation) {
+      if (!sanitizedAdultForm.churchAffiliation) {
         setError('Please select your church');
         setLoading(false);
         return;
       }
 
-      if (adultForm.churchAffiliation === 'christ-embassy' && !adultForm.churchBranch) {
+      if (sanitizedAdultForm.churchAffiliation === 'christ-embassy' && !sanitizedAdultForm.churchBranch) {
         setError('Please enter your Christ Embassy branch');
         setLoading(false);
         return;
       }
 
-      if (adultForm.churchAffiliation === 'other' && !adultForm.churchName) {
+      if (sanitizedAdultForm.churchAffiliation === 'other' && !sanitizedAdultForm.churchName) {
         setError('Please enter your church name');
         setLoading(false);
         return;
       }
     }
 
-    const age = calculateAge(adultForm.birthday);
+    const age = calculateAge(sanitizedAdultForm.birthday);
 
-    if (adultForm.password !== adultForm.confirmPassword) {
+    if (sanitizedAdultForm.password !== sanitizedAdultForm.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
       return;
     }
 
-    if (adultForm.password.length < 6) {
-      setError('Password must be at least 6 characters');
+    // Validate password strength
+    const passwordValidation = validatePasswordStrength(sanitizedAdultForm.password);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.message);
       setLoading(false);
       return;
     }
@@ -345,7 +367,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
             'Authorization': `Bearer ${publicAnonKey}`,
           },
           body: JSON.stringify({
-            ...adultForm,
+            ...sanitizedAdultForm,
             age,
             type: userType,
           }),
@@ -368,7 +390,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }, 2000);
       } else {
         // Fallback to OTP flow if needed
-        setOtpForm({ email: adultForm.email, otp: '' });
+        setOtpForm({ email: sanitizedAdultForm.email, otp: '' });
         setAuthMode('verify-otp');
         setSuccessMessage(data.message);
       }
@@ -383,6 +405,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setError('');
     setLoading(true);
 
+    // Sanitize email and OTP
+    const sanitizedOtpForm = sanitizeFormData(otpForm);
+
     try {
       const response = await fetch(
         `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/adult/verify-otp`,
@@ -392,7 +417,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${publicAnonKey}`,
           },
-          body: JSON.stringify(otpForm),
+          body: JSON.stringify(sanitizedOtpForm),
         }
       );
 
@@ -417,6 +442,15 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setError('');
     setLoading(true);
 
+    // Sanitize and validate email
+    const sanitizedEmail = sanitizeInput(resetForm.email);
+
+    if (!isValidEmail(sanitizedEmail)) {
+      setError('Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(
         `https://${projectId}.supabase.co/functions/v1/${functionName}/auth/forgot-password`,
@@ -426,7 +460,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${publicAnonKey}`,
           },
-          body: JSON.stringify({ email: resetForm.email }),
+          body: JSON.stringify({ email: sanitizedEmail }),
         }
       );
 
@@ -449,14 +483,20 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setError('');
     setLoading(true);
 
+    // Sanitize email and OTP, but not passwords
+    const sanitizedEmail = sanitizeInput(resetForm.email);
+    const sanitizedOtp = sanitizeInput(resetForm.otp);
+
     if (resetForm.newPassword !== resetForm.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
       return;
     }
 
-    if (resetForm.newPassword.length < 6) {
-      setError('Password must be at least 6 characters');
+    // Validate password strength
+    const passwordValidation = validatePasswordStrength(resetForm.newPassword);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.message);
       setLoading(false);
       return;
     }
@@ -471,8 +511,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
             'Authorization': `Bearer ${publicAnonKey}`,
           },
           body: JSON.stringify({
-            email: resetForm.email,
-            otp: resetForm.otp,
+            email: sanitizedEmail,
+            otp: sanitizedOtp,
             newPassword: resetForm.newPassword,
           }),
         }
@@ -937,6 +977,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     {showSignupPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters with uppercase, lowercase, and number</p>
               </div>
 
               <div>
@@ -1159,6 +1200,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                         {showResetPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
+                    <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters with uppercase, lowercase, and number</p>
                   </div>
 
                   <div>
