@@ -236,7 +236,7 @@ export function ER100SponsorshipModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-28 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -251,7 +251,7 @@ export function ER100SponsorshipModal({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-y-auto my-4 sm:my-8"
+          className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden my-8 flex flex-col"
         >
           {/* Close Button */}
           <button
@@ -262,7 +262,7 @@ export function ER100SponsorshipModal({
           </button>
 
           {/* Header */}
-          <div className={`${sponsorshipType === 'kid' ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500' : 'bg-gradient-to-r from-blue-500 to-cyan-500'} text-white pt-14 px-6 pb-6 sm:pt-16 sm:px-8 sm:pb-8 rounded-t-3xl`}>
+          <div className={`${sponsorshipType === 'kid' ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500' : 'bg-gradient-to-r from-blue-500 to-cyan-500'} text-white pt-14 px-6 pb-6 sm:pt-16 sm:px-8 sm:pb-8 rounded-t-3xl flex-shrink-0`}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <Heart className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center sm:text-left font-bold">
@@ -277,7 +277,7 @@ export function ER100SponsorshipModal({
           </div>
 
           {/* Content */}
-          <div className="p-4 sm:p-6 md:p-8">
+          <div className="p-4 sm:p-6 md:p-8 overflow-y-auto flex-1">
             {!selectedTierId ? (
               <>
                 {/* Tier Selection */}

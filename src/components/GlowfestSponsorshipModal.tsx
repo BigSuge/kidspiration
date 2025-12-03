@@ -124,12 +124,12 @@ export function GlowfestSponsorshipModal({
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto pt-20 sm:pt-28">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-y-auto my-4 sm:my-8"
+              className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden my-8 flex flex-col"
             >
               {/* Close Button */}
               <button
@@ -140,7 +140,7 @@ export function GlowfestSponsorshipModal({
               </button>
 
               {/* Header */}
-              <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-purple-700 pt-14 px-6 pb-6 sm:pt-16 sm:px-8 sm:pb-8 rounded-t-2xl sm:rounded-t-3xl">
+              <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-purple-700 pt-14 px-6 pb-6 sm:pt-16 sm:px-8 sm:pb-8 rounded-t-2xl sm:rounded-t-3xl flex-shrink-0">
                 <div className="text-center text-white">
                   <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">✨</div>
                   <h2 className="text-2xl sm:text-4xl mb-2 sm:mb-3 font-bold px-2">Glowfest Sponsorship</h2>
@@ -151,7 +151,7 @@ export function GlowfestSponsorshipModal({
               </div>
 
               {/* Content */}
-              <div className="p-5 sm:p-8">
+              <div className="p-5 sm:p-8 overflow-y-auto flex-1">
                 {/* Contact Information Form */}
                 <div className="mb-6 sm:mb-8">
                   <h3 className="text-xl sm:text-2xl text-gray-900 mb-4 sm:mb-6 font-bold">Your Information</h3>
