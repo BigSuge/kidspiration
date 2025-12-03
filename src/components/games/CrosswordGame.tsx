@@ -34,8 +34,17 @@ const DIFFICULTY_CONFIG = {
   master: { name: 'Master', hints: 0, description: 'No hints at all!' }
 };
 
-export function CrosswordGame({ onBack }: CrosswordGameProps) {
-  const words: Word[] = [
+// Word sets for each difficulty level
+const WORD_SETS: Record<Difficulty, Word[]> = {
+  easy: [
+    { word: 'JOHN', clue: 'The disciple whom Jesus loved', startRow: 0, startCol: 5, direction: 'across', number: 1 },
+    { word: 'MARK', clue: 'Wrote the second Gospel', startRow: 1, startCol: 4, direction: 'across', number: 2 },
+    { word: 'LUKE', clue: 'Doctor and Gospel writer', startRow: 2, startCol: 3, direction: 'across', number: 3 },
+    { word: 'PETER', clue: 'Walked on water toward Jesus', startRow: 3, startCol: 2, direction: 'across', number: 4 },
+    { word: 'PAUL', clue: 'Apostle to the Gentiles', startRow: 4, startCol: 5, direction: 'across', number: 5 },
+    { word: 'JAMES', clue: 'Son of Zebedee', startRow: 0, startCol: 6, direction: 'down', number: 6 },
+  ],
+  medium: [
     { word: 'JAMES', clue: 'Son of Zebedee (brother of John)', startRow: 0, startCol: 5, direction: 'across', number: 1 },
     { word: 'JOHN', clue: 'The disciple whom Jesus loved', startRow: 1, startCol: 3, direction: 'across', number: 2 },
     { word: 'JUDAS', clue: 'Betrayed Jesus for silver', startRow: 2, startCol: 4, direction: 'across', number: 3 },
@@ -43,9 +52,39 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     { word: 'THADDEUS', clue: 'Also called Jude', startRow: 4, startCol: 1, direction: 'across', number: 5 },
     { word: 'MATTHEW', clue: 'Former tax collector', startRow: 5, startCol: 0, direction: 'across', number: 6 },
     { word: 'ANDREW', clue: "Peter's brother", startRow: 0, startCol: 6, direction: 'down', number: 7 },
-  ];
+  ],
+  hard: [
+    { word: 'BARTHOLOMEW', clue: 'Also known as Nathanael', startRow: 0, startCol: 0, direction: 'across', number: 1 },
+    { word: 'THADDEUS', clue: 'Disciple also called Jude', startRow: 2, startCol: 1, direction: 'across', number: 2 },
+    { word: 'MATTHEW', clue: 'Tax collector who followed Jesus', startRow: 3, startCol: 2, direction: 'across', number: 3 },
+    { word: 'SIMON', clue: 'Called the Zealot', startRow: 4, startCol: 3, direction: 'across', number: 4 },
+    { word: 'PHILIP', clue: 'Brought Nathanael to Jesus', startRow: 5, startCol: 4, direction: 'across', number: 5 },
+    { word: 'BETHLEHEM', clue: 'City where Jesus was born', startRow: 0, startCol: 3, direction: 'down', number: 6 },
+    { word: 'THOMAS', clue: 'Doubted until he saw Jesus', startRow: 1, startCol: 5, direction: 'down', number: 7 },
+  ],
+  expert: [
+    { word: 'GETHSEMANE', clue: 'Garden where Jesus prayed', startRow: 0, startCol: 0, direction: 'across', number: 1 },
+    { word: 'NAZARETH', clue: 'Town where Jesus grew up', startRow: 2, startCol: 1, direction: 'across', number: 2 },
+    { word: 'PHARISEE', clue: 'Religious group Jesus debated', startRow: 3, startCol: 0, direction: 'across', number: 3 },
+    { word: 'CAESAREA', clue: 'City where Peter confessed Christ', startRow: 4, startCol: 2, direction: 'across', number: 4 },
+    { word: 'GALILEE', clue: 'Sea where Jesus walked on water', startRow: 5, startCol: 1, direction: 'across', number: 5 },
+    { word: 'GOLGOTHA', clue: 'Place of the skull', startRow: 0, startCol: 5, direction: 'down', number: 6 },
+    { word: 'ZACCHAEUS', clue: 'Tax collector in a tree', startRow: 0, startCol: 7, direction: 'down', number: 7 },
+  ],
+  master: [
+    { word: 'TRANSFIGURATION', clue: 'Jesus shone on the mountain', startRow: 0, startCol: 0, direction: 'across', number: 1 },
+    { word: 'PENTECOST', clue: 'Holy Spirit descended on disciples', startRow: 2, startCol: 1, direction: 'across', number: 2 },
+    { word: 'ASCENSION', clue: 'Jesus rose into heaven', startRow: 3, startCol: 0, direction: 'across', number: 3 },
+    { word: 'SANHEDRIN', clue: 'Jewish ruling council', startRow: 4, startCol: 2, direction: 'across', number: 4 },
+    { word: 'RESURRECTION', clue: 'Jesus rose from the dead', startRow: 5, startCol: 0, direction: 'across', number: 5 },
+    { word: 'TABERNACLE', clue: 'Dwelling place of God', startRow: 0, startCol: 5, direction: 'down', number: 6 },
+    { word: 'APOSTLE', clue: 'Sent one with authority', startRow: 1, startCol: 8, direction: 'down', number: 7 },
+  ],
+};
 
+export function CrosswordGame({ onBack }: CrosswordGameProps) {
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
+  const [words, setWords] = useState<Word[]>(WORD_SETS.medium);
   const [grid, setGrid] = useState<string[][]>([]);
   const [userGrid, setUserGrid] = useState<string[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
@@ -65,13 +104,24 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
 
   useEffect(() => {
     initializeGrid();
-  }, []);
+  }, [words]);
 
   useEffect(() => {
     if (userGrid.length > 0) {
       checkCompletion();
     }
   }, [userGrid]);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showDifficultySelector) {
+        setShowDifficultySelector(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [showDifficultySelector]);
 
   const initializeGrid = () => {
     const newGrid: string[][] = Array(BOARD_SIZE)
@@ -421,6 +471,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
 
   const startGame = (selectedDifficulty: Difficulty) => {
     setDifficulty(selectedDifficulty);
+    setWords(WORD_SETS[selectedDifficulty]);
     const hintsForDifficulty = DIFFICULTY_CONFIG[selectedDifficulty].hints;
     setHints(hintsForDifficulty);
     setMaxHints(hintsForDifficulty);
@@ -437,36 +488,38 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              onClick={() => setShowDifficultySelector(false)}
               className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
             >
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
-                className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
               >
-                <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#4ECDC4] to-[#06B6D4] rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-4">
-                    <Grid3x3 className="w-8 h-8 text-white" />
+                <div className="text-center mb-4 sm:mb-6">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-[#4ECDC4] to-[#06B6D4] rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-3 sm:mb-4">
+                    <Grid3x3 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose Difficulty</h2>
-                  <p className="text-gray-600">Select how many hints you'd like</p>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Choose Difficulty</h2>
+                  <p className="text-sm sm:text-base text-gray-600">Select your challenge level</p>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {(Object.keys(DIFFICULTY_CONFIG) as Difficulty[]).map((diff) => (
                     <button
                       key={diff}
                       onClick={() => startGame(diff)}
-                      className="w-full text-left p-4 rounded-2xl bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 transition-all border-2 border-transparent hover:border-cyan-300"
+                      className="w-full text-left p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 transition-all border-2 border-transparent hover:border-cyan-300"
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-bold text-gray-800">{DIFFICULTY_CONFIG[diff].name}</p>
-                          <p className="text-sm text-gray-600">{DIFFICULTY_CONFIG[diff].description}</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-gray-800 text-sm sm:text-base">{DIFFICULTY_CONFIG[diff].name}</p>
+                          <p className="text-xs sm:text-sm text-gray-600 truncate">{DIFFICULTY_CONFIG[diff].description}</p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-bold text-cyan-600">{DIFFICULTY_CONFIG[diff].hints}</p>
+                        <div className="text-right flex-shrink-0">
+                          <p className="text-xl sm:text-2xl font-bold text-cyan-600">{DIFFICULTY_CONFIG[diff].hints}</p>
                           <p className="text-xs text-gray-500">hints</p>
                         </div>
                       </div>
@@ -477,7 +530,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                 <Button
                   onClick={onBack}
                   variant="ghost"
-                  className="w-full mt-4 hover:bg-gray-100"
+                  className="w-full mt-3 sm:mt-4 hover:bg-gray-100 text-sm sm:text-base"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Games
@@ -795,8 +848,8 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                   </div>
                   <Button
                     onClick={() => {
-                      setShowDifficultySelector(true);
                       setIsComplete(false);
+                      setShowDifficultySelector(true);
                     }}
                     className="bg-white text-cyan-600 rounded-full px-6 sm:px-8 py-2.5 sm:py-3 shadow-lg hover:shadow-xl hover:scale-105 transition-all text-sm sm:text-base"
                   >
