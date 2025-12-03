@@ -472,7 +472,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                       <div className="flex items-center justify-between gap-2 sm:gap-3">
                         <div className="flex-1 min-w-0">
                           <p className="font-bold text-gray-800 text-xs sm:text-sm md:text-base">{DIFFICULTY_CONFIG[diff].name}</p>
-                          <p className="text-xs sm:text-sm md:text-base text-gray-600 line-clamp-1">{DIFFICULTY_CONFIG[diff].description}</p>
+                          <p className="text-xs sm:text-sm md:text-base text-gray-600 truncate">{DIFFICULTY_CONFIG[diff].description}</p>
                         </div>
                         <div className="text-right flex-shrink-0">
                           <p className="text-lg sm:text-xl md:text-2xl font-bold text-cyan-600">{DIFFICULTY_CONFIG[diff].hints}</p>
@@ -592,7 +592,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                           className={`w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center transition-all rounded-[4px] sm:rounded-[6px] relative ${getCellClass(rowIndex, colIndex)}`}
                         >
                           {cellNumber && (
-                            <span className="absolute top-0 left-0.5 text-[6px] sm:text-[7px] font-normal text-gray-500 leading-none pointer-events-none z-10">
+                            <span className="absolute top-0 left-0.5 text-[8px] sm:text-[9px] md:text-[10px] font-normal text-gray-500 leading-none pointer-events-none z-10">
                               {cellNumber}
                             </span>
                           )}
