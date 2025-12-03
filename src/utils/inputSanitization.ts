@@ -3,21 +3,24 @@
  */
 
 /**
- * Trims whitespace from the beginning and end of a string
+ * Sanitizes input by trimming whitespace and removing control characters
  * Should be used for all non-password inputs
+ * Note: Additional context-specific validation (e.g., for HTML contexts) should be 
+ * performed at the backend to prevent XSS and injection attacks
  */
 export const sanitizeInput = (value: string): string => {
-  return value.trim();
+  // Trim whitespace and remove control characters (except newlines/tabs if needed)
+  return value.trim().replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/g, '');
 };
 
 /**
- * Validates email format using a regex pattern
+ * Validates email format using a more comprehensive regex pattern
  * Returns true if email is valid, false otherwise
  */
 export const isValidEmail = (email: string): boolean => {
-  // Basic email validation regex
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  // More comprehensive email validation regex following RFC 5322 standards
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  return emailRegex.test(email.trim());
 };
 
 /**
@@ -53,7 +56,7 @@ export const validatePasswordStrength = (password: string): { isValid: boolean; 
  * @param data - The form data object
  * @param passwordFields - Array of field names that should not be trimmed (e.g., ['password', 'confirmPassword'])
  */
-export const sanitizeFormData = <T extends Record<string, any>>(
+export const sanitizeFormData = <T extends Record<string, string | number | boolean | Date>>(
   data: T,
   passwordFields: string[] = []
 ): T => {
@@ -61,7 +64,7 @@ export const sanitizeFormData = <T extends Record<string, any>>(
   
   for (const key in sanitized) {
     if (typeof sanitized[key] === 'string' && !passwordFields.includes(key)) {
-      sanitized[key] = sanitizeInput(sanitized[key]);
+      sanitized[key] = sanitizeInput(sanitized[key] as string) as T[Extract<keyof T, string>];
     }
   }
   
