@@ -440,7 +440,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
-                className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative"
+                className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-[95vw] sm:max-w-md w-full shadow-2xl relative mx-4"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Close button - only show if game has started */}
@@ -454,29 +454,29 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                   </button>
                 )}
 
-                <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#4ECDC4] to-[#06B6D4] rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-4">
-                    <Grid3x3 className="w-8 h-8 text-white" />
+                <div className="text-center mb-4 sm:mb-6">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-[#4ECDC4] to-[#06B6D4] rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-3 sm:mb-4">
+                    <Grid3x3 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose Difficulty</h2>
-                  <p className="text-gray-600 text-sm sm:text-base">Select your challenge level</p>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">Choose Difficulty</h2>
+                  <p className="text-gray-600 text-xs sm:text-sm md:text-base">Select your challenge level</p>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {(Object.keys(DIFFICULTY_CONFIG) as Difficulty[]).map((diff) => (
                     <button
                       key={diff}
                       onClick={() => startGame(diff)}
-                      className="w-full text-left p-4 rounded-2xl bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 transition-all border-2 border-transparent hover:border-cyan-300"
+                      className="w-full text-left p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 transition-all border-2 border-transparent hover:border-cyan-300"
                     >
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex-1">
-                          <p className="font-bold text-gray-800 text-sm sm:text-base">{DIFFICULTY_CONFIG[diff].name}</p>
-                          <p className="text-xs sm:text-sm text-gray-600">{DIFFICULTY_CONFIG[diff].description}</p>
+                      <div className="flex items-center justify-between gap-2 sm:gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-gray-800 text-xs sm:text-sm md:text-base">{DIFFICULTY_CONFIG[diff].name}</p>
+                          <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 line-clamp-1">{DIFFICULTY_CONFIG[diff].description}</p>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <p className="text-xl sm:text-2xl font-bold text-cyan-600">{DIFFICULTY_CONFIG[diff].hints}</p>
-                          <p className="text-xs text-gray-500">hints</p>
+                          <p className="text-lg sm:text-xl md:text-2xl font-bold text-cyan-600">{DIFFICULTY_CONFIG[diff].hints}</p>
+                          <p className="text-[10px] sm:text-xs text-gray-500">hints</p>
                         </div>
                       </div>
                     </button>
@@ -566,9 +566,9 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
               </div>
             </div>
 
-            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
-              <div className="inline-block bg-white sm:rounded-2xl p-2 sm:p-3 md:p-4 shadow-lg min-w-min rounded-[14px]">
-                <div className="grid gap-0.5 sm:gap-1" style={{ gridTemplateColumns: `repeat(${BOARD_SIZE}, minmax(28px, 40px))` }}>
+            <div className="overflow-x-auto -mx-4 sm:-mx-2 md:mx-0 px-4 sm:px-2 md:px-0">
+              <div className="inline-block bg-white rounded-lg sm:rounded-xl md:rounded-2xl p-1.5 sm:p-2 md:p-3 lg:p-4 shadow-lg min-w-min">
+                <div className="grid gap-[2px] sm:gap-0.5 md:gap-1" style={{ gridTemplateColumns: `repeat(${BOARD_SIZE}, minmax(24px, 40px))` }}>
                   {grid.map((row, rowIndex) =>
                     row.map((cell, colIndex) => {
                       const key = `${rowIndex}-${colIndex}`;
@@ -577,7 +577,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                         return (
                           <div
                             key={key}
-                            className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-gray-800 rounded-[6px]"
+                            className="w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 bg-gray-800 rounded-[4px] sm:rounded-[6px]"
                           />
                         );
                       }
@@ -588,10 +588,10 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                         <div
                           key={key}
                           onClick={() => handleCellClick(rowIndex, colIndex)}
-                          className={`w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center transition-all rounded-[6px] relative ${getCellClass(rowIndex, colIndex)}`}
+                          className={`w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center transition-all rounded-[4px] sm:rounded-[6px] relative ${getCellClass(rowIndex, colIndex)}`}
                         >
                           {cellNumber && (
-                            <span className="absolute top-0 left-0.5 text-[7px] sm:text-[6px] font-normal text-gray-500 leading-none pointer-events-none z-10">
+                            <span className="absolute top-0 left-0.5 text-[6px] sm:text-[7px] font-normal text-gray-500 leading-none pointer-events-none z-10">
                               {cellNumber}
                             </span>
                           )}
@@ -609,7 +609,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                             autoComplete="off"
                             autoCorrect="off"
                             inputMode="text"
-                            className="w-full h-full text-center text-sm sm:text-base md:text-lg uppercase bg-transparent focus:outline-none"
+                            className="w-full h-full text-center text-xs sm:text-sm md:text-base lg:text-lg uppercase bg-transparent focus:outline-none"
                             onChange={(event) => handleCellInputChange(rowIndex, colIndex, event.target.value)}
                             onKeyDown={(event) => handleCellKeyDown(event, rowIndex, colIndex)}
                             onFocus={() => selectCell(rowIndex, colIndex)}
@@ -794,25 +794,25 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                 animate={{ scale: 1, rotate: 0 }}
                 exit={{ scale: 0, rotate: 180 }}
                 transition={{ type: 'spring', duration: 0.6 }}
-                className="bg-gradient-to-br from-[#4ECDC4] via-[#A78BFA] to-[#FF6B9D] rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center relative"
+                className="bg-gradient-to-br from-[#4ECDC4] via-[#A78BFA] to-[#FF6B9D] rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 max-w-[95vw] sm:max-w-md w-full shadow-2xl text-center relative mx-4"
               >
                 <motion.div
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute -top-6 sm:-top-8 left-1/2 transform -translate-x-1/2"
+                  className="absolute -top-5 sm:-top-6 md:-top-8 left-1/2 transform -translate-x-1/2"
                 >
-                  <Trophy className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-400" />
+                  <Trophy className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-yellow-400" />
                 </motion.div>
 
-                <div className="mt-6 sm:mt-8">
-                  <h2 className="text-white mb-3 sm:mb-4">🎉 Amazing! 🎉</h2>
-                  <p className="text-white/90 text-lg sm:text-xl mb-3 sm:mb-4">You completed the crossword!</p>
-                  <div className="bg-white/20 backdrop-blur rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6 space-y-2">
-                    <p className="text-white text-sm sm:text-base">
-                      Difficulty: <span className="text-xl sm:text-2xl font-bold">{DIFFICULTY_CONFIG[difficulty].name}</span>
+                <div className="mt-5 sm:mt-6 md:mt-8">
+                  <h2 className="text-white mb-2 sm:mb-3 md:mb-4 text-xl sm:text-2xl md:text-3xl">🎉 Amazing! 🎉</h2>
+                  <p className="text-white/90 text-base sm:text-lg md:text-xl mb-3 sm:mb-4">You completed the crossword!</p>
+                  <div className="bg-white/20 backdrop-blur rounded-lg sm:rounded-xl md:rounded-2xl p-2.5 sm:p-3 md:p-4 mb-3 sm:mb-4 md:mb-6 space-y-1.5 sm:space-y-2">
+                    <p className="text-white text-xs sm:text-sm md:text-base">
+                      Difficulty: <span className="text-lg sm:text-xl md:text-2xl font-bold">{DIFFICULTY_CONFIG[difficulty].name}</span>
                     </p>
-                    <p className="text-white text-sm sm:text-base">
-                      Hints Used: <span className="text-xl sm:text-2xl">{maxHints - hints}</span> / {maxHints}
+                    <p className="text-white text-xs sm:text-sm md:text-base">
+                      Hints Used: <span className="text-lg sm:text-xl md:text-2xl">{maxHints - hints}</span> / {maxHints}
                     </p>
                   </div>
                   <Button
