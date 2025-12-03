@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, Grid3x3, Lightbulb, RotateCcw, Trophy, Sparkles } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -54,13 +54,13 @@ const WORD_SETS: Record<Difficulty, Word[]> = {
     { word: 'ANDREW', clue: "Peter's brother", startRow: 0, startCol: 6, direction: 'down', number: 7 },
   ],
   hard: [
-    { word: 'BARTHOLOMEW', clue: 'Also known as Nathanael', startRow: 0, startCol: 0, direction: 'across', number: 1 },
-    { word: 'THADDEUS', clue: 'Disciple also called Jude', startRow: 2, startCol: 1, direction: 'across', number: 2 },
-    { word: 'MATTHEW', clue: 'Tax collector who followed Jesus', startRow: 3, startCol: 2, direction: 'across', number: 3 },
-    { word: 'SIMON', clue: 'Called the Zealot', startRow: 4, startCol: 3, direction: 'across', number: 4 },
+    { word: 'THADDEUS', clue: 'Disciple also called Jude', startRow: 0, startCol: 1, direction: 'across', number: 1 },
+    { word: 'MATTHEW', clue: 'Tax collector who followed Jesus', startRow: 2, startCol: 2, direction: 'across', number: 2 },
+    { word: 'LAZARUS', clue: 'Raised from the dead by Jesus', startRow: 3, startCol: 0, direction: 'across', number: 3 },
+    { word: 'TIMOTHY', clue: 'Young disciple of Paul', startRow: 4, startCol: 3, direction: 'across', number: 4 },
     { word: 'PHILIP', clue: 'Brought Nathanael to Jesus', startRow: 5, startCol: 4, direction: 'across', number: 5 },
-    { word: 'BETHLEHEM', clue: 'City where Jesus was born', startRow: 0, startCol: 3, direction: 'down', number: 6 },
-    { word: 'THOMAS', clue: 'Doubted until he saw Jesus', startRow: 1, startCol: 5, direction: 'down', number: 7 },
+    { word: 'TEMPLE', clue: 'House of worship in Jerusalem', startRow: 0, startCol: 5, direction: 'down', number: 6 },
+    { word: 'THOMAS', clue: 'Doubted until he saw Jesus', startRow: 1, startCol: 7, direction: 'down', number: 7 },
   ],
   expert: [
     { word: 'GETHSEMANE', clue: 'Garden where Jesus prayed', startRow: 0, startCol: 0, direction: 'across', number: 1 },
@@ -112,16 +112,18 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     }
   }, [userGrid]);
 
-  const handleEscape = useCallback((event: KeyboardEvent) => {
-    if (event.key === 'Escape' && showDifficultySelector) {
-      setShowDifficultySelector(false);
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowDifficultySelector(false);
+      }
+    };
+
+    if (showDifficultySelector) {
+      window.addEventListener('keydown', handleEscape);
+      return () => window.removeEventListener('keydown', handleEscape);
     }
   }, [showDifficultySelector]);
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [handleEscape]);
 
   const initializeGrid = () => {
     const newGrid: string[][] = Array(BOARD_SIZE)
