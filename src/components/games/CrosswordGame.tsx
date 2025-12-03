@@ -107,6 +107,11 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
     return words.filter((word) => cellBelongsToWord(word, row, col));
   };
 
+  const getCellNumber = (row: number, col: number): number | null => {
+    const word = words.find((w) => w.startRow === row && w.startCol === col);
+    return word ? word.number : null;
+  };
+
   const getNextCellInWord = (word: Word | null, row: number, col: number): CellPointer | null => {
     if (!word) return null;
     const cells = getWordCells(word);
@@ -475,12 +480,19 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                         );
                       }
 
+                      const cellNumber = getCellNumber(rowIndex, colIndex);
+                      
                       return (
                         <div
                           key={key}
                           onClick={() => handleCellClick(rowIndex, colIndex)}
-                          className={`w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center transition-all rounded-[6px] ${getCellClass(rowIndex, colIndex)}`}
+                          className={`w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center transition-all rounded-[6px] relative ${getCellClass(rowIndex, colIndex)}`}
                         >
+                          {cellNumber && (
+                            <span className="absolute top-0 left-0.5 text-[8px] sm:text-[9px] font-bold text-gray-600 leading-none pointer-events-none z-10">
+                              {cellNumber}
+                            </span>
+                          )}
                           <input
                             ref={(el) => {
                               if (el) {

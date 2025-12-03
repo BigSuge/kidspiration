@@ -133,6 +133,12 @@ export function PartyInitiativeSponsorshipModal({
       return;
     }
 
+    // Get the selected tier details
+    const selectedTier = activeTiers.find(t => t.id === selectedTierId);
+    const tierName = selectedTier?.name || '';
+    const tierAmount = selectedTier?.espees || '';
+    const programTypeName = programType === 'full-party' ? 'Full Party & Outreach' : 'Spread Love';
+
     // In production, this would process the payment
     console.log("Processing Party Initiative sponsorship:", {
       ...formData,
@@ -146,7 +152,7 @@ export function PartyInitiativeSponsorshipModal({
       spread: 70,
       origin: { y: 0.6 }
     });
-    alert("Thank you for your Kidspiration Party sponsorship! Redirecting to payment...");
+    alert(`Thank you for your Kidspiration Party sponsorship!\n\n${programTypeName} - ${tierName}\nAmount: ${tierAmount}\n\nRedirecting to payment...`);
     onClose();
   };
 
@@ -172,12 +178,12 @@ export function PartyInitiativeSponsorshipModal({
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto pt-20 sm:pt-28">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-y-auto my-4 sm:my-8"
+              className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden my-8 flex flex-col"
             >
               {/* Close Button */}
               <button
@@ -188,7 +194,7 @@ export function PartyInitiativeSponsorshipModal({
               </button>
 
               {/* Header */}
-              <div className={`bg-gradient-to-br ${programType === 'full-party' ? 'from-pink-500 via-purple-500 to-blue-500' : 'from-pink-500 via-red-500 to-pink-600'} pt-14 px-6 pb-6 sm:pt-16 sm:px-8 sm:pb-8 rounded-t-2xl sm:rounded-t-3xl`}>
+              <div className={`bg-gradient-to-br ${programType === 'full-party' ? 'from-pink-500 via-purple-500 to-blue-500' : 'from-pink-500 via-red-500 to-pink-600'} pt-14 px-6 pb-6 sm:pt-16 sm:px-8 sm:pb-8 rounded-t-2xl sm:rounded-t-3xl flex-shrink-0`}>
                 <div className="text-center text-white">
                   <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">
                     {programType === 'full-party' ? '🎉' : '💝'}
@@ -201,7 +207,7 @@ export function PartyInitiativeSponsorshipModal({
               </div>
 
               {/* Content */}
-              <div className="p-5 sm:p-8">
+              <div className="p-5 sm:p-8 overflow-y-auto flex-1">
                 {/* Contact Information Form */}
                 <div className="mb-6 sm:mb-8">
                   <h3 className="text-xl sm:text-2xl text-gray-900 mb-4 sm:mb-6 font-bold">Your Information</h3>
