@@ -173,6 +173,8 @@ export function ER100SponsorshipModal({
   const sponsorshipTiers = sponsorshipType === 'kid' ? kidSponsorshipTiers : parentSponsorshipTiers;
 
   // Get the range limits for a kid sponsorship tier
+  const UNLIMITED_MAX = Number.MAX_SAFE_INTEGER;
+  
   const getTierRange = (tierId: string): { min: number; max: number } | null => {
     if (sponsorshipType !== 'kid') return null;
     
@@ -181,7 +183,7 @@ export function ER100SponsorshipModal({
       'kid-noble': { min: 201, max: 400 },
       'kid-royal': { min: 401, max: 700 },
       'kid-diamond': { min: 701, max: 999 },
-      'kid-global': { min: 1000, max: 999999 }, // No upper limit
+      'kid-global': { min: 1000, max: UNLIMITED_MAX }, // No upper limit
     };
     
     return ranges[tierId] || null;
@@ -232,7 +234,7 @@ export function ER100SponsorshipModal({
       }
       
       if (range && (copiesNum < range.min || copiesNum > range.max)) {
-        alert(`For this CHAMP level, please enter a number between ${range.min} and ${range.max === 999999 ? '∞' : range.max} copies.`);
+        alert(`For this CHAMP level, please enter a number between ${range.min} and ${range.max === UNLIMITED_MAX ? '∞' : range.max} copies.`);
         return;
       }
     }
@@ -474,27 +476,35 @@ export function ER100SponsorshipModal({
                     />
                   </div>
 
-                  {sponsorshipType === 'kid' && selectedTierId && (
-                    <div>
-                      <label className="block text-gray-700 mb-2 font-semibold text-sm sm:text-base">
-                        Number of Copies *
-                      </label>
-                      <input
-                        type="number"
-                        name="copies"
-                        required
-                        value={formData.copies}
-                        onChange={handleInputChange}
-                        min={getTierRange(selectedTierId)?.min}
-                        max={getTierRange(selectedTierId)?.max === 999999 ? undefined : getTierRange(selectedTierId)?.max}
-                        className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-sm sm:text-base"
-                        placeholder={`Enter ${getTierRange(selectedTierId)?.min}-${getTierRange(selectedTierId)?.max === 999999 ? '∞' : getTierRange(selectedTierId)?.max} copies`}
-                      />
-                      <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                        For {selectedTier?.name}, you can sponsor between {getTierRange(selectedTierId)?.min} and {getTierRange(selectedTierId)?.max === 999999 ? 'unlimited' : getTierRange(selectedTierId)?.max} copies
-                      </p>
-                    </div>
-                  )}
+                  {sponsorshipType === 'kid' && selectedTierId && (() => {
+                    const tierRange = getTierRange(selectedTierId);
+                    if (!tierRange) return null;
+                    
+                    const isUnlimited = tierRange.max === UNLIMITED_MAX;
+                    const maxDisplay = isUnlimited ? '∞' : tierRange.max;
+                    
+                    return (
+                      <div>
+                        <label className="block text-gray-700 mb-2 font-semibold text-sm sm:text-base">
+                          Number of Copies *
+                        </label>
+                        <input
+                          type="number"
+                          name="copies"
+                          required
+                          value={formData.copies}
+                          onChange={handleInputChange}
+                          min={tierRange.min}
+                          max={isUnlimited ? undefined : tierRange.max}
+                          className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-sm sm:text-base"
+                          placeholder={`Enter ${tierRange.min}-${maxDisplay} copies`}
+                        />
+                        <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                          For {selectedTier?.name}, you can sponsor between {tierRange.min} and {isUnlimited ? 'unlimited' : tierRange.max} copies
+                        </p>
+                      </div>
+                    );
+                  })()}
 
                   {sponsorshipType === 'kid' && (
                     <div className="p-3 sm:p-4 bg-yellow-50 border-2 border-yellow-300 rounded-xl">
