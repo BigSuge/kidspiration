@@ -356,7 +356,7 @@ export function ER100Section({ onAuthClick, onBack }: ER100SectionProps) {
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Heart className="w-12 h-12 text-blue-600" />
-              <h3 className="text-gray-900 text-[40px] font-bold">Parents/Teachers Sponsorship</h3>
+              <h3 className="text-gray-900 text-[40px] font-bold">Parents/Teachers/Leaders Sponsorship</h3>
               <Sparkles className="w-12 h-12 text-cyan-500" />
             </div>
             <p className="text-gray-600 text-xl max-w-3xl mx-auto mb-8">

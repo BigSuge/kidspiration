@@ -8,6 +8,7 @@ const createEmptyERForm = () => ({
   email: "",
   phone: "",
   hasAdultSupport: false,
+  copies: "",
 });
 
 interface ER100SponsorshipModalProps {
@@ -171,6 +172,23 @@ export function ER100SponsorshipModal({
 
   const sponsorshipTiers = sponsorshipType === 'kid' ? kidSponsorshipTiers : parentSponsorshipTiers;
 
+  // Get the range limits for a kid sponsorship tier
+  const UNLIMITED_MAX = Number.MAX_SAFE_INTEGER;
+  
+  const getTierRange = (tierId: string): { min: number; max: number } | null => {
+    if (sponsorshipType !== 'kid') return null;
+    
+    const ranges: Record<string, { min: number; max: number }> = {
+      'kid-mighty': { min: 100, max: 200 },
+      'kid-noble': { min: 201, max: 400 },
+      'kid-royal': { min: 401, max: 700 },
+      'kid-diamond': { min: 701, max: 999 },
+      'kid-global': { min: 1000, max: UNLIMITED_MAX }, // No upper limit
+    };
+    
+    return ranges[tierId] || null;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -205,16 +223,33 @@ export function ER100SponsorshipModal({
       return;
     }
 
+    // Validate copies for kid sponsorship
+    if (sponsorshipType === 'kid' && selectedTierRange) {
+      const copiesNum = parseInt(formData.copies);
+      
+      if (!formData.copies || isNaN(copiesNum)) {
+        alert("Please enter the number of copies you want to sponsor!");
+        return;
+      }
+      
+      if (copiesNum < selectedTierRange.min || copiesNum > selectedTierRange.max) {
+        alert(`For this CHAMP level, please enter a number between ${selectedTierRange.min} and ${selectedTierRange.max === UNLIMITED_MAX ? '∞' : selectedTierRange.max} copies.`);
+        return;
+      }
+    }
+
     // Here you would integrate with payment processing
     console.log("Sponsorship submission:", { ...formData, tierId: selectedTierId, type: sponsorshipType });
     
     // Show success message
     const tierName = sponsorshipTiers.find(t => t.id === selectedTierId)?.name;
-    alert(`Thank you for sponsoring the ER100 Campaign! Your ${tierName} sponsorship will make a huge difference!`);
+    const copiesMsg = sponsorshipType === 'kid' && formData.copies ? ` for ${formData.copies} copies` : '';
+    alert(`Thank you for sponsoring the ER100 Campaign! Your ${tierName} sponsorship${copiesMsg} will make a huge difference!`);
     onClose();
   };
 
   const selectedTier = sponsorshipTiers.find((tier) => tier.id === selectedTierId);
+  const selectedTierRange = selectedTierId ? getTierRange(selectedTierId) : null;
 
   if (!isOpen) return null;
 
@@ -440,6 +475,33 @@ export function ER100SponsorshipModal({
                       placeholder="+1 (555) 123-4567"
                     />
                   </div>
+
+                  {sponsorshipType === 'kid' && selectedTierRange && (() => {
+                    const isUnlimited = selectedTierRange.max === UNLIMITED_MAX;
+                    const maxDisplay = isUnlimited ? '∞' : selectedTierRange.max;
+                    
+                    return (
+                      <div>
+                        <label className="block text-gray-700 mb-2 font-semibold text-sm sm:text-base">
+                          Number of Copies *
+                        </label>
+                        <input
+                          type="number"
+                          name="copies"
+                          required
+                          value={formData.copies}
+                          onChange={handleInputChange}
+                          min={selectedTierRange.min}
+                          max={isUnlimited ? undefined : selectedTierRange.max}
+                          className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-sm sm:text-base"
+                          placeholder={`Enter ${selectedTierRange.min}-${maxDisplay} copies`}
+                        />
+                        <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                          For {selectedTier?.name}, you can sponsor between {selectedTierRange.min} and {isUnlimited ? 'unlimited' : selectedTierRange.max} copies
+                        </p>
+                      </div>
+                    );
+                  })()}
 
                   {sponsorshipType === 'kid' && (
                     <div className="p-3 sm:p-4 bg-yellow-50 border-2 border-yellow-300 rounded-xl">
