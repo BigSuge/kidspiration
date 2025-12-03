@@ -1,22 +1,16 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, Grid3x3, Lightbulb, RotateCcw, Trophy, Sparkles } from 'lucide-react';
+import { ArrowLeft, Grid3x3, Lightbulb, RotateCcw, Trophy, Sparkles, Settings, X } from 'lucide-react';
 import { Button } from '../ui/button';
+import { generateCrossword, GeneratedWord } from '../../utils/crosswordGenerator';
 
 interface CrosswordGameProps {
   onBack?: () => void;
 }
 
-interface Word {
-  word: string;
-  clue: string;
-  startRow: number;
-  startCol: number;
-  direction: 'across' | 'down';
-  number: number;
-}
+type Word = GeneratedWord;
 
-const BOARD_SIZE = 10;
+const BOARD_SIZE = 15;
 
 type CellPointer = {
   row: number;
@@ -27,25 +21,16 @@ type CellPointer = {
 type Difficulty = 'easy' | 'medium' | 'hard' | 'expert' | 'master';
 
 const DIFFICULTY_CONFIG = {
-  easy: { name: 'Easy', hints: 5, description: 'Perfect for beginners!' },
-  medium: { name: 'Medium', hints: 3, description: 'A balanced challenge' },
-  hard: { name: 'Hard', hints: 2, description: 'Test your knowledge' },
-  expert: { name: 'Expert', hints: 1, description: 'For true disciples!' },
-  master: { name: 'Master', hints: 0, description: 'No hints at all!' }
+  easy: { name: 'Easy', hints: 4, description: 'Perfect for beginners! Simple words.' },
+  medium: { name: 'Medium', hints: 3, description: 'A balanced challenge with more words' },
+  hard: { name: 'Hard', hints: 2, description: 'Test your knowledge with harder words' },
+  expert: { name: 'Expert', hints: 1, description: 'For true disciples! Very challenging.' },
+  master: { name: 'Master', hints: 0, description: 'No hints at all! Maximum difficulty.' }
 };
 
 export function CrosswordGame({ onBack }: CrosswordGameProps) {
-  const words: Word[] = [
-    { word: 'JAMES', clue: 'Son of Zebedee (brother of John)', startRow: 0, startCol: 5, direction: 'across', number: 1 },
-    { word: 'JOHN', clue: 'The disciple whom Jesus loved', startRow: 1, startCol: 3, direction: 'across', number: 2 },
-    { word: 'JUDAS', clue: 'Betrayed Jesus for silver', startRow: 2, startCol: 4, direction: 'across', number: 3 },
-    { word: 'PETER', clue: 'Walked on water toward Jesus', startRow: 3, startCol: 2, direction: 'across', number: 4 },
-    { word: 'THADDEUS', clue: 'Also called Jude', startRow: 4, startCol: 1, direction: 'across', number: 5 },
-    { word: 'MATTHEW', clue: 'Former tax collector', startRow: 5, startCol: 0, direction: 'across', number: 6 },
-    { word: 'ANDREW', clue: "Peter's brother", startRow: 0, startCol: 6, direction: 'down', number: 7 },
-  ];
-
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
+  const [words, setWords] = useState<Word[]>([]);
   const [grid, setGrid] = useState<string[][]>([]);
   const [userGrid, setUserGrid] = useState<string[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
@@ -64,8 +49,10 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
   }, []);
 
   useEffect(() => {
-    initializeGrid();
-  }, []);
+    if (!showDifficultySelector) {
+      initializeGrid();
+    }
+  }, [difficulty, showDifficultySelector]);
 
   useEffect(() => {
     if (userGrid.length > 0) {
@@ -74,6 +61,10 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
   }, [userGrid]);
 
   const initializeGrid = () => {
+    // Generate new puzzle
+    const puzzle = generateCrossword(difficulty);
+    setWords(puzzle.words);
+
     const newGrid: string[][] = Array(BOARD_SIZE)
       .fill(null)
       .map(() => Array(BOARD_SIZE).fill(''));
@@ -81,7 +72,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
       .fill(null)
       .map(() => Array(BOARD_SIZE).fill(''));
 
-    words.forEach((word) => {
+    puzzle.words.forEach((word) => {
       for (let i = 0; i < word.word.length; i++) {
         if (word.direction === 'across') {
           newGrid[word.startRow][word.startCol + i] = word.word[i];
@@ -438,19 +429,37 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+              onClick={(e) => {
+                // Only close if clicking the backdrop, not the modal content
+                if (e.target === e.currentTarget && !isComplete) {
+                  setShowDifficultySelector(false);
+                }
+              }}
             >
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
-                className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl"
+                className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative"
+                onClick={(e) => e.stopPropagation()}
               >
+                {/* Close button - only show if game has started */}
+                {words.length > 0 && !isComplete && (
+                  <button
+                    onClick={() => setShowDifficultySelector(false)}
+                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+                    aria-label="Close"
+                  >
+                    <X className="w-5 h-5 text-gray-600" />
+                  </button>
+                )}
+
                 <div className="text-center mb-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-[#4ECDC4] to-[#06B6D4] rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-4">
                     <Grid3x3 className="w-8 h-8 text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose Difficulty</h2>
-                  <p className="text-gray-600">Select how many hints you'd like</p>
+                  <p className="text-gray-600 text-sm sm:text-base">Select your challenge level</p>
                 </div>
 
                 <div className="space-y-3">
@@ -460,13 +469,13 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                       onClick={() => startGame(diff)}
                       className="w-full text-left p-4 rounded-2xl bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 transition-all border-2 border-transparent hover:border-cyan-300"
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-bold text-gray-800">{DIFFICULTY_CONFIG[diff].name}</p>
-                          <p className="text-sm text-gray-600">{DIFFICULTY_CONFIG[diff].description}</p>
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex-1">
+                          <p className="font-bold text-gray-800 text-sm sm:text-base">{DIFFICULTY_CONFIG[diff].name}</p>
+                          <p className="text-xs sm:text-sm text-gray-600">{DIFFICULTY_CONFIG[diff].description}</p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-bold text-cyan-600">{DIFFICULTY_CONFIG[diff].hints}</p>
+                        <div className="text-right flex-shrink-0">
+                          <p className="text-xl sm:text-2xl font-bold text-cyan-600">{DIFFICULTY_CONFIG[diff].hints}</p>
                           <p className="text-xs text-gray-500">hints</p>
                         </div>
                       </div>
@@ -474,14 +483,16 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                   ))}
                 </div>
 
-                <Button
-                  onClick={onBack}
-                  variant="ghost"
-                  className="w-full mt-4 hover:bg-gray-100"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Games
-                </Button>
+                {words.length === 0 && (
+                  <Button
+                    onClick={onBack}
+                    variant="ghost"
+                    className="w-full mt-4 hover:bg-gray-100"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Games
+                  </Button>
+                )}
               </motion.div>
             </motion.div>
           )}
@@ -498,16 +509,27 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
             Back to Games
           </Button>
 
-          <div className="flex items-center gap-3 sm:gap-4 mb-2">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-[#4ECDC4] to-[#06B6D4] rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
-              <Grid3x3 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+          <div className="flex items-center justify-between gap-3 sm:gap-4 mb-2">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-[#4ECDC4] to-[#06B6D4] rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+                <Grid3x3 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ECDC4] to-[#06B6D4] font-bold">
+                  Crossword Puzzle
+                </h1>
+                <p className="text-sm sm:text-base text-gray-600">Bible Words Challenge · {DIFFICULTY_CONFIG[difficulty].name}</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-[#4ECDC4] to-[#06B6D4] font-bold">
-                Crossword Puzzle
-              </h1>
-              <p className="text-sm sm:text-base text-gray-600">Find the 12 Disciples of Jesus! · {DIFFICULTY_CONFIG[difficulty].name}</p>
-            </div>
+            {words.length > 0 && (
+              <Button
+                onClick={() => setShowDifficultySelector(true)}
+                className="bg-gradient-to-r from-[#A78BFA] to-[#8B5CF6] text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2 text-sm px-3 py-2 sm:px-4 sm:py-2"
+              >
+                <Settings className="w-4 h-4" />
+                <span className="hidden sm:inline">Change</span>
+              </Button>
+            )}
           </div>
         </motion.div>
 
