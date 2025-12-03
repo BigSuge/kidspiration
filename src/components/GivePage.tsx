@@ -324,9 +324,9 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
               This is a campaign to reach 3 Billion Children with the message of faith,healing and hope through the C.O.M.P.L.E.T.E Mandate while distributing the instrument of faith - the Healing to the Nations Magazine for kids.
             </p>
 
-            {/* Parent/Teacher Sponsorship */}
+            {/* Parent/Teacher/Leader Sponsorship */}
             <div className="mb-10">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 text-center">Parents/Teachers Sponsorship</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 text-center">Parents/Teachers/Leaders Sponsorship</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 {er100ParentSponsorships.map((tier, index) => (
                   <motion.div
@@ -358,7 +358,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
                   onClick={() => handleER100Click('', 'parent')}
                   className="text-blue-600 hover:text-blue-700 font-bold flex items-center gap-2 mx-auto group"
                 >
-                  <span>View All Parent Sponsorship Options</span>
+                  <span>View All Sponsorship Options</span>
                   <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 </button>
               </div>
