@@ -560,7 +560,7 @@ export function CrosswordGame({ onBack }: CrosswordGameProps) {
                 <Button
                   onClick={initializeGrid}
                   className="bg-gradient-to-r from-[#A78BFA] to-[#8B5CF6] text-white rounded-full shadow-lg p-1.5 sm:p-2 md:px-4 md:py-2"
-                  title="New Puzzle"
+                  aria-label="New Puzzle"
                 >
                   <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
                 </Button>
