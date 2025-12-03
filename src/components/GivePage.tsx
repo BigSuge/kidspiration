@@ -306,24 +306,23 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
         </motion.div>
 
         {/* Glowfest Sponsorship Section */}
-        {!isKid && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mb-16"
-          >
-            <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-500">
-              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
-                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center">
-                  Glowfest 2025 Sponsorship
-                </h2>
-                <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
-              </div>
-              <p className="text-gray-600 text-center mb-8 text-base sm:text-lg px-2">
-                Partner with us to reach children worldwide through Glowfest
-              </p>
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-16"
+        >
+          <div className="bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-purple-500">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center">
+                Glowfest 2025 Sponsorship
+              </h2>
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+            </div>
+            <p className="text-white/90 text-center mb-8 text-base sm:text-lg px-2">
+              Partner with us to reach children worldwide through Glowfest
+            </p>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 {glowfestSponsorships.map((tier, index) => (
@@ -362,7 +361,6 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
               </div>
             </div>
           </motion.section>
-        )}
 
         {/* ER100 Initiative Section */}
         <motion.section
@@ -504,13 +502,12 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
         </motion.section>
 
         {/* Party Initiative Section */}
-        {!isKid && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mb-16"
-          >
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-16"
+        >
             <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border-2 border-pink-200">
               <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
                 <PartyPopper className="w-6 h-6 sm:w-8 sm:h-8 text-pink-500" />
@@ -599,7 +596,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
               </div>
             </div>
           </motion.section>
-        )}
+
         {/* Thank You Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
