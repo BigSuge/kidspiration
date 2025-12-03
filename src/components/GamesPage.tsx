@@ -68,7 +68,7 @@ export function GamesPage({ onGameSelect }: GamesPageProps) {
     {
       id: 'maze',
       title: 'Maze Adventure',
-      description: 'Guide the little sheep through the maze to reach Jesus!',
+      description: 'Guide the little sheep through the maze to reach our Lord Jesus!',
       icon: MapPin,
       color: 'from-[#EC4899] to-[#DB2777]',
       bgColor: 'bg-rose-50',

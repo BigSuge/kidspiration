@@ -31,11 +31,20 @@ const difficulties = {
 };
 
 type Difficulty = keyof typeof difficulties;
+type Direction = 'up' | 'down' | 'left' | 'right';
+
+const DIRECTION_ROTATION: Record<Direction, number> = {
+  right: 0,
+  down: 90,
+  left: 180,
+  up: 270
+};
 
 export function MazeGame({ onBack }: MazeGameProps) {
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [maze, setMaze] = useState<number[][]>([]);
   const [playerPos, setPlayerPos] = useState<Position>({ row: 0, col: 0 });
+  const [playerDirection, setPlayerDirection] = useState<Direction>('right');
   const [endPos, setEndPos] = useState<Position>({ row: 0, col: 0 });
   const [gameWon, setGameWon] = useState(false);
   const [moves, setMoves] = useState(0);
@@ -202,6 +211,7 @@ export function MazeGame({ onBack }: MazeGameProps) {
     
     setMaze(newMaze);
     setPlayerPos({ row: 0, col: 0 });
+    setPlayerDirection('right');
     setEndPos({ row: size - 1, col: size - 1 });
     setGameWon(false);
     setMoves(0);
@@ -218,27 +228,32 @@ export function MazeGame({ onBack }: MazeGameProps) {
 
     let newRow = playerPos.row;
     let newCol = playerPos.col;
+    let direction: Direction = playerDirection;
 
     switch (e.key) {
       case 'ArrowUp':
       case 'w':
       case 'W':
         newRow = Math.max(0, playerPos.row - 1);
+        direction = 'up';
         break;
       case 'ArrowDown':
       case 's':
       case 'S':
         newRow = Math.min(maze.length - 1, playerPos.row + 1);
+        direction = 'down';
         break;
       case 'ArrowLeft':
       case 'a':
       case 'A':
         newCol = Math.max(0, playerPos.col - 1);
+        direction = 'left';
         break;
       case 'ArrowRight':
       case 'd':
       case 'D':
         newCol = Math.min(maze[0].length - 1, playerPos.col + 1);
+        direction = 'right';
         break;
       default:
         return;
@@ -247,6 +262,7 @@ export function MazeGame({ onBack }: MazeGameProps) {
     // Check if new position is a path (not a wall)
     if (maze[newRow][newCol] === 1) {
       setPlayerPos({ row: newRow, col: newCol });
+      setPlayerDirection(direction);
       setMoves(prev => prev + 1);
     }
   };
@@ -270,11 +286,19 @@ export function MazeGame({ onBack }: MazeGameProps) {
     }
 
     // Check if clicked cell is adjacent to player
-    const rowDiff = Math.abs(row - playerPos.row);
-    const colDiff = Math.abs(col - playerPos.col);
+    const rowDiff = row - playerPos.row;
+    const colDiff = col - playerPos.col;
 
-    if ((rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1)) {
+    if ((Math.abs(rowDiff) === 1 && colDiff === 0) || (rowDiff === 0 && Math.abs(colDiff) === 1)) {
+      let direction: Direction = playerDirection;
+      
+      if (rowDiff === -1) direction = 'up';
+      else if (rowDiff === 1) direction = 'down';
+      else if (colDiff === -1) direction = 'left';
+      else if (colDiff === 1) direction = 'right';
+      
       setPlayerPos({ row, col });
+      setPlayerDirection(direction);
       setMoves(prev => prev + 1);
     }
   };
@@ -429,7 +453,11 @@ export function MazeGame({ onBack }: MazeGameProps) {
                             {isPlayer && (
                               <motion.span
                                 initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
+                                animate={{ 
+                                  scale: 1,
+                                  rotate: DIRECTION_ROTATION[playerDirection]
+                                }}
+                                transition={{ duration: 0.2 }}
                                 className="text-sm sm:text-base md:text-xl lg:text-2xl"
                               >
                                 🐑
