@@ -19,7 +19,7 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
       id: 'er100',
       title: 'ER100 Initiative',
       subtitle: 'Each One Reach 100',
-      description: 'An amazing initiative where every child reaches out to 100 other kids with love, hope, and inspiration. Be part of the ripple effect that changes the world!',
+      description: 'This is a campaign to reach 3 Billion Children with the message of faith,healing and hope through the C.O.M.P.L.E.T.E Mandate while distributing the instrument of faith - the Healing to the Nations Magazine for kids.',
       image: image_0f9a8ae30e33c625a31a88a9c4552868a558fbdf,
       icon: Users,
       gradient: 'from-blue-500 to-cyan-500',
