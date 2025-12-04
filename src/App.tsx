@@ -37,10 +37,14 @@ function AppContent() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showBirthdayOverlay, setShowBirthdayOverlay] = useState(false);
 
-  // Get initial page from URL
+  // Helper function to parse page from pathname
+  const parsePageFromPathname = (pathname: string) => {
+    return pathname === '/' ? 'home' : pathname.slice(1);
+  };
+
+  // Get initial page from URL pathname
   const getInitialPage = () => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('page') || 'home';
+    return parsePageFromPathname(window.location.pathname);
   };
 
   const [currentPage, setCurrentPage] = useState(getInitialPage());
@@ -65,8 +69,9 @@ function AppContent() {
 
     // Handle browser back/forward buttons
     const handlePopState = () => {
+      const pathname = window.location.pathname;
       const params = new URLSearchParams(window.location.search);
-      const page = params.get('page') || 'home';
+      const page = parsePageFromPathname(pathname);
       const game = params.get('game');
       const storyId = params.get('story');
 
@@ -104,12 +109,9 @@ function AppContent() {
     setCurrentGame(null);
     setCurrentStoryId(null);
 
-    // Update URL with browser history support
-    const url = new URL(window.location.href);
-    url.searchParams.set('page', page);
-    url.searchParams.delete('game');
-    url.searchParams.delete('story');
-    window.history.pushState({}, '', url);
+    // Update URL with browser history support using pathname
+    const newPath = page === 'home' ? '/' : `/${page}`;
+    window.history.pushState({}, '', newPath);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -117,7 +119,7 @@ function AppContent() {
   const handleViewStory = (storyId: number) => {
     setCurrentStoryId(storyId);
 
-    // Update URL with story ID
+    // Update URL with story ID as query param
     const url = new URL(window.location.href);
     url.searchParams.set('story', storyId.toString());
     window.history.pushState({}, '', url);
@@ -128,7 +130,7 @@ function AppContent() {
   const handleBackToStories = () => {
     setCurrentStoryId(null);
 
-    // Update URL to remove story ID
+    // Update URL to remove story ID, keeping the pathname
     const url = new URL(window.location.href);
     url.searchParams.delete('story');
     window.history.pushState({}, '', url);
@@ -147,7 +149,7 @@ function AppContent() {
     }
     setCurrentGame(gameId);
 
-    // Update URL with game ID
+    // Update URL with game ID as query param, keeping the pathname
     const url = new URL(window.location.href);
     url.searchParams.set('game', gameId);
     window.history.pushState({}, '', url);
@@ -156,7 +158,7 @@ function AppContent() {
   const handleBackToGames = () => {
     setCurrentGame(null);
 
-    // Update URL to remove game ID
+    // Update URL to remove game ID, keeping the pathname
     const url = new URL(window.location.href);
     url.searchParams.delete('game');
     window.history.pushState({}, '', url);
