@@ -37,12 +37,14 @@ function AppContent() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showBirthdayOverlay, setShowBirthdayOverlay] = useState(false);
 
+  // Helper function to parse page from pathname
+  const parsePageFromPathname = (pathname: string) => {
+    return pathname === '/' ? 'home' : pathname.slice(1);
+  };
+
   // Get initial page from URL pathname
   const getInitialPage = () => {
-    const pathname = window.location.pathname;
-    // Remove leading slash and return the path, default to 'home' for root
-    const page = pathname === '/' ? 'home' : pathname.slice(1);
-    return page || 'home';
+    return parsePageFromPathname(window.location.pathname);
   };
 
   const [currentPage, setCurrentPage] = useState(getInitialPage());
@@ -70,8 +72,7 @@ function AppContent() {
       const pathname = window.location.pathname;
       const params = new URLSearchParams(window.location.search);
       
-      // Parse page from pathname
-      const page = pathname === '/' ? 'home' : pathname.slice(1);
+      const page = parsePageFromPathname(pathname);
       const game = params.get('game');
       const storyId = params.get('story');
 
