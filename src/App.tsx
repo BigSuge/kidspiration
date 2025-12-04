@@ -71,7 +71,6 @@ function AppContent() {
     const handlePopState = () => {
       const pathname = window.location.pathname;
       const params = new URLSearchParams(window.location.search);
-      
       const page = parsePageFromPathname(pathname);
       const game = params.get('game');
       const storyId = params.get('story');
