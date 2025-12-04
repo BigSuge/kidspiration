@@ -109,6 +109,13 @@ export const HomeQuickActions: React.FC<HomeQuickActionsProps> = ({ onNavigate, 
     return (
         <section className="py-6 sm:py-10 relative z-20 mt-6 sm:mt-10">
             <div className="container mx-auto px-4 sm:px-6">
+                {/* Section Heading */}
+                <div className="text-center mb-8 sm:mb-12">
+                    <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B9D] via-[#A78BFA] to-[#4ECDC4] text-4xl sm:text-5xl font-extrabold">
+                        Quick Actions
+                    </h2>
+                </div>
+
                 {/* Scroll container - mobile shows 1 card + half of next */}
                 <div
                     className="flex overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:pb-0 gap-3 sm:gap-4 snap-x snap-mandatory sm:grid sm:grid-cols-2 lg:grid-cols-4 scrollbar-hide"
