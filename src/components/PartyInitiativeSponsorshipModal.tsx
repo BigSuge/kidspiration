@@ -173,9 +173,9 @@ export function PartyInitiativeSponsorshipModal({
         throw new Error("Invalid payment response");
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Payment error:", error);
-      toast.error("Failed to initiate payment. Please try again.");
+      toast.error(error.message || "Failed to initiate payment. Please try again.");
     } finally {
       setIsProcessing(false);
     }

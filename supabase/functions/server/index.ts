@@ -591,7 +591,7 @@ app.post("/payment/initiate", async (c: any) => {
 
     const data = await response.json();
     console.log("[REAL PAYMENT] Response:", data);
-    return c.json(data);
+    return c.json(data, response.status as any);
   } catch (error) {
     console.error("Payment initiation error:", error);
     return c.json({ error: "Payment initiation failed" }, 500);

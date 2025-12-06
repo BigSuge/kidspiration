@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { API_BASE_URL } from "../config/urls";
 
 export interface InitiatePaymentParams {
@@ -56,7 +57,14 @@ export class EspeesService {
             });
 
             if (!response.ok) {
-                throw new Error(`Payment initiation failed: ${response.statusText}`);
+                let errorMessage = response.statusText;
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorData.message || JSON.stringify(errorData);
+                } catch (e) {
+                    // Ignore json parse error
+                }
+                throw new Error(`Payment initiation failed: ${response.status} ${errorMessage}`);
             }
 
             return await response.json();
