@@ -24,6 +24,8 @@ import { CrosswordGame } from './components/games/CrosswordGame';
 import { BibleQuiz } from './components/games/BibleQuiz';
 import { WordSearchGame } from './components/games/WordSearchGame';
 import { MazeGame } from './components/games/MazeGame';
+import { PaymentSuccessPage } from './pages/PaymentSuccess';
+import { PaymentFailurePage } from './pages/PaymentFailure';
 import { BackgroundEffects } from './components/BackgroundEffects';
 import { AuthModal } from './components/AuthModal';
 import { BirthdayOverlay } from './components/BirthdayOverlay';
@@ -281,6 +283,12 @@ function AppContent() {
           toast.error('Please login to access your dashboard.', { duration: 3000 });
           return null;
         }
+
+      case 'payment/success':
+        return <PaymentSuccessPage onNavigate={handleNavigate} />;
+
+      case 'payment/failure':
+        return <PaymentFailurePage onNavigate={handleNavigate} />;
 
       case 'admin':
         // Only admins can access this page

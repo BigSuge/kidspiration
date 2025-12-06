@@ -105,3 +105,6 @@ supabase/.temp/project-ref
 supabase/.temp/rest-version
 supabase/.temp/storage-migration
 supabase/.temp/storage-version
+
+#documentation folder
+/docs

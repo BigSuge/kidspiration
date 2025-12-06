@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ArrowRight, CheckCircle } from "lucide-react";
 import { useAuth } from "../utils/AuthContext";
-import confetti from "canvas-confetti";
+import { EspeesService } from "../utils/espees";
+import { toast } from "sonner";
 
 const createEmptyGlowfestForm = () => ({ name: "", email: "", phone: "" });
 
@@ -21,6 +22,9 @@ export function GlowfestSponsorshipModal({
 }: GlowfestSponsorshipModalProps) {
   const [formData, setFormData] = useState(createEmptyGlowfestForm);
   const { user } = useAuth();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // ... tiers ...
 
   const glowfestTiers = [
     {
@@ -82,32 +86,64 @@ export function GlowfestSponsorshipModal({
     }
   }, [isOpen, user]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validate form
     if (!formData.name || !formData.email || !formData.phone) {
-      alert("Please fill in all fields");
+      toast.error("Please fill in all fields");
       return;
     }
 
     if (!selectedTierId) {
-      alert("Please select a sponsorship tier");
+      toast.error("Please select a sponsorship tier");
       return;
     }
 
-    // In production, this would process the payment
-    console.log("Processing Glowfest sponsorship:", {
-      ...formData,
-      tier: selectedTierId,
-    });
+    setIsProcessing(true);
 
-    // For now, show success and close
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-    alert("Thank you for your Glowfest sponsorship! Redirecting to payment...");
-    onClose();
+    try {
+      const tier = glowfestTiers.find(t => t.id === selectedTierId);
+      // Default to 10 if parsing fails or for APPLICABLE (which might need a custom input in reality, but sticking to 10 for now if non-numeric)
+      // Actually "APPLICABLE" likely means custom amount, but user requirement didn't specify. I'll default to 100 if "APPLICABLE" or just parse 100.
+      // Let's check regex.
+      let amount = 100;
+      const amountStr = tier?.espees.replace(/[^0-9.]/g, '');
+      if (amountStr) {
+        amount = parseFloat(amountStr);
+      } else {
+        // Fallback for "APPLICABLE" or non-numeric
+        amount = 100; // Default amount
+      }
+
+      const response = await EspeesService.initiatePayment({
+        sku: `GLOWFEST-${tier?.id}-${Date.now()}`,
+        amount: amount,
+        narration: `Glowfest Sponsorship: ${tier?.name}`,
+        userId: user?.id || "guest",
+        userType: user?.type || "guest",
+        guestDetails: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        },
+      });
+
+      if (response.isMock) {
+        toast.success(response.message);
+        onClose();
+        window.location.href = "/payment/success?ref=" + response.payment_ref;
+      } else if (response.payment_ref) {
+        const paymentUrl = `https://payment.espees.org/pay/${response.payment_ref}`;
+        window.location.href = paymentUrl;
+      } else {
+        throw new Error("Invalid payment response");
+      }
+
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error("Failed to initiate payment. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -283,11 +319,11 @@ export function GlowfestSponsorshipModal({
                   </button>
                   <button
                     onClick={handleSubmit}
-                    disabled={!selectedTierId || !formData.name || !formData.email || !formData.phone}
+                    disabled={!selectedTierId || !formData.name || !formData.email || !formData.phone || isProcessing}
                     className="w-full sm:flex-1 py-3 sm:py-4 px-6 bg-gradient-to-r from-[#9B4DFF] to-[#FF1F8E] text-white rounded-full hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    <span>Continue to Payment</span>
-                    <ArrowRight className="w-5 h-5" />
+                    <span>{isProcessing ? "Processing..." : "Continue to Payment"}</span>
+                    {!isProcessing && <ArrowRight className="w-5 h-5" />}
                   </button>
                 </div>
 

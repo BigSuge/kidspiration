@@ -15,6 +15,10 @@ interface User {
   visitCount?: number;
   lastVisit?: string;
   createdAt?: string;
+  totalSponsorships?: number;
+  totalSponsorshipAmount?: number;
+  lastSponsorshipDate?: string;
+  lastSponsorshipAmount?: number;
 }
 
 interface AuthContextType {

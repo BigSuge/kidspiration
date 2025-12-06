@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ArrowRight, CheckCircle } from "lucide-react";
 import { useAuth } from "../utils/AuthContext";
-import confetti from "canvas-confetti";
+import { EspeesService } from "../utils/espees";
+import { toast } from "sonner";
 
 const createEmptySponsorForm = () => ({ name: "", email: "", phone: "" });
 
@@ -21,6 +22,9 @@ export function SponsorshipModal({
 }: SponsorshipModalProps) {
   const [formData, setFormData] = useState(createEmptySponsorForm);
   const { user } = useAuth();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // ... tiers definitions ...
 
   const sponsorshipTiers = [
     {
@@ -120,32 +124,59 @@ export function SponsorshipModal({
     }
   }, [isOpen, user]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validate form
     if (!formData.name || !formData.email || !formData.phone) {
-      alert("Please fill in all fields");
+      toast.error("Please fill in all fields");
       return;
     }
 
     if (!selectedTierId) {
-      alert("Please select a sponsorship tier");
+      toast.error("Please select a sponsorship tier");
       return;
     }
 
-    // In production, this would process the payment
-    console.log("Processing sponsorship:", {
-      ...formData,
-      tier: selectedTierId,
-    });
+    setIsProcessing(true);
 
-    // For now, show success and close
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-    alert("Thank you for your sponsorship! Redirecting to payment...");
-    onClose();
+    try {
+      const tier = sponsorshipTiers.find(t => t.id === selectedTierId);
+      // Extract numeric amount from string like "10 ESPEES" or "1,000+ ESPEES"
+      // Remove commas and non-numeric chars except dot
+      const amountStr = tier?.espees.replace(/[^0-9.]/g, '') || "10";
+      const amount = parseFloat(amountStr);
+
+      const response = await EspeesService.initiatePayment({
+        sku: `SPONSOR-${tier?.id}-${Date.now()}`,
+        amount: amount,
+        narration: `Sponsorship: ${tier?.name}`,
+        userId: user?.id || "guest",
+        userType: user?.type || "guest",
+        guestDetails: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        },
+      });
+
+      if (response.isMock) {
+        toast.success(response.message);
+        onClose();
+        // Redirect to success page for mock flow
+        window.location.href = "/payment/success?ref=" + response.payment_ref;
+      } else if (response.payment_ref) {
+        // Redirect to Espees payment portal
+        const paymentUrl = `https://payment.espees.org/pay/${response.payment_ref}`;
+        window.location.href = paymentUrl;
+      } else {
+        throw new Error("Invalid payment response");
+      }
+
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error("Failed to initiate payment. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -324,11 +355,11 @@ export function SponsorshipModal({
                   </button>
                   <button
                     onClick={handleSubmit}
-                    disabled={!selectedTierId || !formData.name || !formData.email || !formData.phone}
+                    disabled={!selectedTierId || !formData.name || !formData.email || !formData.phone || isProcessing}
                     className="w-full sm:flex-1 py-3 sm:py-4 px-6 bg-gradient-to-r from-[#9B4DFF] to-[#FF1F8E] text-white rounded-full hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    <span>Continue to Payment</span>
-                    <ArrowRight className="w-5 h-5" />
+                    <span>{isProcessing ? "Processing..." : "Continue to Payment"}</span>
+                    {!isProcessing && <ArrowRight className="w-5 h-5" />}
                   </button>
                 </div>
 
