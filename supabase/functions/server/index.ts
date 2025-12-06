@@ -6,7 +6,7 @@ import * as kv from "./kv_store.ts";
 
 declare const Deno: any;
 
-const app = new Hono();
+const app = new Hono().basePath('/functions/v1/server');
 
 // Enable logger
 app.use('*', logger(console.log));
