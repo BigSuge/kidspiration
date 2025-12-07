@@ -8,35 +8,6 @@ declare const Deno: any;
 
 const app = new Hono().basePath('/functions/v1/server');
 
-// Enable logger
-app.use('*', logger(console.log));
-
-// Enable logger
-app.use('*', logger(console.log));
-
-// MANUAL CORS MIDDLEWARE - Guaranteed to work
-app.use('*', async (c, next) => {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-api-key',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Expose-Headers': 'Content-Length, X-Kuma-Revision',
-    'Access-Control-Max-Age': '600',
-  };
-
-  // Handle preflight requests immediately
-  if (c.req.method === 'OPTIONS') {
-    return c.text('', 204, corsHeaders);
-  }
-
-  // Add CORS headers to actual response
-  await next();
-
-  Object.entries(corsHeaders).forEach(([key, value]) => {
-    c.res.headers.set(key, value);
-  });
-});
-
 // Initialize Supabase client with service role key
 const getSupabaseAdmin = () => {
   return createClient(
