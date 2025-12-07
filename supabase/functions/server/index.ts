@@ -418,11 +418,12 @@ app.get("/admin/users", async (c: any) => {
 
 // Debug 404 Handler - Attached to the ONLY app instance
 app.notFound((c: any) => {
+  const debugInfo = `Method=${c.req.method} Path=${c.req.path} Orig=${c.req.url}`;
   return c.json({
-    error: "Route not found",
+    error: `ROUTE NOT FOUND. Debug: ${debugInfo}`,
     message: "The requested path did not match any defined route.",
-    path: c.req.path, // This is the Hono path (post-normalization)
-    originalUrl: c.req.url, // This is the raw URL
+    path: c.req.path,
+    originalUrl: c.req.url,
     method: c.req.method,
     availableRoutes: ["/payment/initiate", "/payment/confirm", "/auth/...", "/health"]
   }, 404);
