@@ -651,7 +651,7 @@ app.use('*', async (c, next) => {
 });
 
 // Mount the API at both paths to ensure matching
-app.route('/functions/v1/server', api);
+// Mount the API directly to app (Routing is handled by URL normalization below)
 app.route('/', api);
 
 const corsHeaders = {
@@ -664,10 +664,10 @@ const corsHeaders = {
 app.notFound((c) => {
   return c.json({
     error: "Route not found",
-    path: c.req.path,
-    url: c.req.url,
+    path: c.req.path, // This will show the normalized path
+    originalUrl: c.req.url,
     method: c.req.method,
-    routes: app.routes.map(r => `${r.method} ${r.path}`)
+    availableRoutes: ["/payment/initiate", "/payment/confirm", "/auth/...", "/health"]
   }, 404);
 });
 
@@ -677,10 +677,26 @@ Deno.serve(async (req) => {
     return new Response('ok', { headers: corsHeaders });
   }
 
-  // 2. Pass to Hono
+  // 2. Normalize URL (Strip /functions/v1/server prefix if present)
+  try {
+    const url = new URL(req.url);
+    if (url.pathname.startsWith('/functions/v1/server')) {
+      url.pathname = url.pathname.replace('/functions/v1/server', '');
+      // Ensure we don't end up with empty path if it was just the root
+      if (url.pathname === '' || url.pathname.startsWith('/?')) {
+        url.pathname = '/' + url.pathname;
+      }
+      // Create new request with modified URL
+      req = new Request(url.toString(), req);
+    }
+  } catch (e) {
+    console.error("URL Normalization error:", e);
+  }
+
+  // 3. Pass to Hono
   const res = await app.fetch(req);
 
-  // 3. Inject CORS headers into Hono response
+  // 4. Inject CORS headers into Hono response
   Object.entries(corsHeaders).forEach(([key, value]) => {
     res.headers.set(key, value);
   });
