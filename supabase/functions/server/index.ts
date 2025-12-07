@@ -660,6 +660,17 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
 };
 
+// Debug 404 Handler
+app.notFound((c) => {
+  return c.json({
+    error: "Route not found",
+    path: c.req.path,
+    url: c.req.url,
+    method: c.req.method,
+    routes: app.routes.map(r => `${r.method} ${r.path}`)
+  }, 404);
+});
+
 Deno.serve(async (req) => {
   // 1. Handle CORS Preflight immediately
   if (req.method === 'OPTIONS') {
