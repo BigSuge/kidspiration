@@ -441,12 +441,16 @@ Deno.serve(async (req: any) => {
     return new Response('ok', { headers: corsHeaders });
   }
 
-  // 2. Normalize URL (Strip /functions/v1/server prefix if present)
+  // 2. Normalize URL (Strip /functions/v1/server or /server prefix if present)
   // This ensures Hono matches /payment/initiate correctly
   try {
     const url = new URL(req.url);
     if (url.pathname.startsWith('/functions/v1/server')) {
       const normalizedPath = url.pathname.replace('/functions/v1/server', '');
+      url.pathname = normalizedPath === '' || normalizedPath.startsWith('/?') ? '/' + normalizedPath : normalizedPath;
+      req = new Request(url.toString(), req);
+    } else if (url.pathname.startsWith('/server')) {
+      const normalizedPath = url.pathname.replace('/server', '');
       url.pathname = normalizedPath === '' || normalizedPath.startsWith('/?') ? '/' + normalizedPath : normalizedPath;
       req = new Request(url.toString(), req);
     }
