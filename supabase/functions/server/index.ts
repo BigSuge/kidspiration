@@ -1,20 +1,12 @@
 import { Hono } from "npm:hono";
-
 import { logger } from "npm:hono/logger";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import * as kv from "./kv_store.ts";
 
 declare const Deno: any;
 
-const app = new Hono().basePath('/functions/v1/server');
-
-// Initialize Supabase client with service role key
-const getSupabaseAdmin = () => {
-  return createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-  );
-};
+// 1. Create API Router for Logic
+const api = new Hono();
 
 // Helper to generate random OTP
 function generateOTP(): string {
@@ -29,7 +21,7 @@ async function sendEmail(to: string, subject: string, body: string) {
 }
 
 // Health check endpoint
-app.get("/health", (c: any) => {
+api.get("/health", (c: any) => {
   return c.json({ status: "ok" });
 });
 
@@ -38,7 +30,7 @@ app.get("/health", (c: any) => {
 // ====================
 
 // Kid Signup
-app.post("/auth/kid/signup", async (c: any) => {
+api.post("/auth/kid/signup", async (c: any) => {
   try {
     const { firstName, lastName, age, birthday, username, country } = await c.req.json();
 
@@ -95,7 +87,7 @@ app.post("/auth/kid/signup", async (c: any) => {
 });
 
 // Kid Login
-app.post("/auth/kid/login", async (c: any) => {
+api.post("/auth/kid/login", async (c: any) => {
   try {
     const { username } = await c.req.json();
 
@@ -142,8 +134,8 @@ app.post("/auth/kid/login", async (c: any) => {
   }
 });
 
-// Adult (Parent/Teacher or Pastor/Leader) Signup - Simplified without OTP
-app.post("/auth/adult/signup", async (c: any) => {
+// Adult (Parent/Teacher or Pastor/Leader) Signup
+api.post("/auth/adult/signup", async (c: any) => {
   try {
     const { title, firstName, lastName, username, age, birthday, email, password, type, country, occupation } = await c.req.json();
 
@@ -203,11 +195,10 @@ app.post("/auth/adult/signup", async (c: any) => {
   }
 });
 
-// Adult Signup - Step 2: Verify OTP and complete registration
-app.post("/auth/adult/verify-otp", async (c: any) => {
+// Adult Signup - Step 2: Verify OTP
+api.post("/auth/adult/verify-otp", async (c: any) => {
   try {
     const { email, otp } = await c.req.json();
-
     const tempSignupKey = `temp:signup:${email}`;
     const tempData = await kv.get(tempSignupKey);
 
@@ -234,7 +225,7 @@ app.post("/auth/adult/verify-otp", async (c: any) => {
       age: tempData.age,
       birthday: tempData.birthday,
       email: tempData.email,
-      password: tempData.password, // In production, hash this
+      password: tempData.password,
       createdAt: new Date().toISOString(),
       lastVisit: new Date().toISOString(),
       visitCount: 1,
@@ -245,8 +236,6 @@ app.post("/auth/adult/verify-otp", async (c: any) => {
     await kv.set(`user:${tempData.type}:${tempData.username}`, user);
     await kv.set(`user:id:${user.id}`, user);
     await kv.set(`email:${tempData.email}`, user.username);
-
-    // Delete temporary signup data
     await kv.del(tempSignupKey);
 
     // Track signup event
@@ -254,7 +243,7 @@ app.post("/auth/adult/verify-otp", async (c: any) => {
 
     return c.json({
       success: true,
-      user: { ...user, password: undefined }, // Don't send password back
+      user: { ...user, password: undefined },
       message: "Account created successfully! You can now login."
     });
   } catch (error) {
@@ -264,7 +253,7 @@ app.post("/auth/adult/verify-otp", async (c: any) => {
 });
 
 // Adult Login
-app.post("/auth/adult/login", async (c: any) => {
+api.post("/auth/adult/login", async (c: any) => {
   try {
     const { username, password, type } = await c.req.json();
 
@@ -277,10 +266,7 @@ app.post("/auth/adult/login", async (c: any) => {
         firstName: "Admin",
         lastName: "User",
       };
-
-      // Track admin login
       await trackAnalytics('login', { userType: 'admin', userId: 'admin' });
-
       return c.json({
         success: true,
         user: adminUser,
@@ -299,25 +285,21 @@ app.post("/auth/adult/login", async (c: any) => {
       return c.json({ error: "Invalid password" }, 401);
     }
 
-    // Recalculate age from birthday
+    // Recalculate age/update stats
     if (user.birthday) {
       const birthDate = new Date(user.birthday);
       const today = new Date();
       let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      if ((today.getMonth() < birthDate.getMonth()) || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
         age--;
       }
       user.age = age;
     }
-
-    // Update last visit and visit count
     user.lastVisit = new Date().toISOString();
     user.visitCount = (user.visitCount || 0) + 1;
     await kv.set(`user:${type}:${username}`, user);
     await kv.set(`user:id:${user.id}`, user);
 
-    // Track login event
     await trackAnalytics('login', { userType: type, userId: user.id });
 
     return c.json({
@@ -331,46 +313,28 @@ app.post("/auth/adult/login", async (c: any) => {
   }
 });
 
-// Password Reset - Step 1: Request reset
-app.post("/auth/forgot-password", async (c: any) => {
+// Forgot Password
+api.post("/auth/forgot-password", async (c: any) => {
   try {
     const { email } = await c.req.json();
-
     const username = await kv.get(`email:${email}`);
     if (!username) {
-      // Don't reveal if email exists for security
       return c.json({ success: true, message: "If the email exists, a reset code will be sent." });
     }
-
-    // Try both parent and leader types
     let user = await kv.get(`user:parent:${username}`);
-    if (!user) {
-      user = await kv.get(`user:leader:${username}`);
+    if (!user) user = await kv.get(`user:leader:${username}`);
+
+    if (user) {
+      const otp = generateOTP();
+      const otpExpiry = Date.now() + 10 * 60 * 1000;
+      await kv.set(`reset:${email}`, {
+        username: user.username,
+        type: user.type,
+        otp,
+        otpExpiry,
+      });
+      await sendEmail(email, "Kidspiration - Password Reset", `Your reset code is: ${otp}`);
     }
-
-    if (!user) {
-      return c.json({ success: true, message: "If the email exists, a reset code will be sent." });
-    }
-
-    // Generate OTP
-    const otp = generateOTP();
-    const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
-
-    // Store reset token
-    await kv.set(`reset:${email}`, {
-      username: user.username,
-      type: user.type,
-      otp,
-      otpExpiry,
-    });
-
-    // Send OTP email
-    await sendEmail(
-      email,
-      "Kidspiration - Password Reset",
-      `Your password reset code is: ${otp}. This code will expire in 10 minutes.`
-    );
-
     return c.json({ success: true, message: "If the email exists, a reset code will be sent." });
   } catch (error) {
     console.error("Forgot password error:", error);
@@ -378,39 +342,27 @@ app.post("/auth/forgot-password", async (c: any) => {
   }
 });
 
-// Password Reset - Step 2: Verify OTP and set new password
-app.post("/auth/reset-password", async (c: any) => {
+// Reset Password
+api.post("/auth/reset-password", async (c: any) => {
   try {
     const { email, otp, newPassword } = await c.req.json();
-
     const resetData = await kv.get(`reset:${email}`);
-    if (!resetData) {
-      return c.json({ error: "Invalid or expired reset session" }, 400);
-    }
-
+    if (!resetData) return c.json({ error: "Invalid or expired reset session" }, 400);
     if (Date.now() > resetData.otpExpiry) {
       await kv.del(`reset:${email}`);
-      return c.json({ error: "OTP has expired. Please request a new reset." }, 400);
+      return c.json({ error: "OTP expired" }, 400);
     }
+    if (resetData.otp !== otp) return c.json({ error: "Invalid OTP" }, 400);
 
-    if (resetData.otp !== otp) {
-      return c.json({ error: "Invalid OTP" }, 400);
-    }
-
-    // Update password
     const user = await kv.get(`user:${resetData.type}:${resetData.username}`);
-    if (!user) {
-      return c.json({ error: "User not found" }, 404);
+    if (user) {
+      user.password = newPassword;
+      await kv.set(`user:${resetData.type}:${resetData.username}`, user);
+      await kv.set(`user:id:${user.id}`, user);
+      await kv.del(`reset:${email}`);
+      return c.json({ success: true, message: "Password reset successfully!" });
     }
-
-    user.password = newPassword; // In production, hash this
-    await kv.set(`user:${resetData.type}:${resetData.username}`, user);
-    await kv.set(`user:id:${user.id}`, user);
-
-    // Delete reset token
-    await kv.del(`reset:${email}`);
-
-    return c.json({ success: true, message: "Password reset successfully!" });
+    return c.json({ error: "User not found" }, 404);
   } catch (error) {
     console.error("Password reset error:", error);
     return c.json({ error: "Reset failed" }, 500);
@@ -435,8 +387,7 @@ async function trackAnalytics(eventType: string, data: any) {
   }
 }
 
-// Track page visit
-app.post("/analytics/page-visit", async (c: any) => {
+api.post("/analytics/page-visit", async (c: any) => {
   try {
     const { page, userId, userType } = await c.req.json();
     await trackAnalytics('page_visit', { page, userId, userType });
@@ -447,25 +398,19 @@ app.post("/analytics/page-visit", async (c: any) => {
   }
 });
 
-// Get analytics data (admin only)
-app.get("/analytics/dashboard", async (c: any) => {
+api.get("/analytics/dashboard", async (c: any) => {
   try {
-    // Get all analytics events
     const analyticsKeys = await kv.getByPrefix("analytics:");
     const events = analyticsKeys || [];
-
-    // Get all users
     const userKeys = await kv.getByPrefix("user:id:");
     const users = userKeys || [];
 
-    // Calculate country statistics
     const usersByCountry: any = {};
-    users.forEach(user => {
+    users.forEach((user: any) => {
       const country = user.country || 'Unknown';
       usersByCountry[country] = (usersByCountry[country] || 0) + 1;
     });
 
-    // Sort countries by user count
     const topCountries = Object.entries(usersByCountry)
       .sort(([, a]: any, [, b]: any) => b - a)
       .slice(0, 10)
@@ -474,41 +419,36 @@ app.get("/analytics/dashboard", async (c: any) => {
         return obj;
       }, {} as any);
 
-    // Calculate stats
     const stats = {
       totalUsers: users.length,
       usersByType: {
-        kid: users.filter(u => u.type === 'kid').length,
-        parent: users.filter(u => u.type === 'parent').length,
-        leader: users.filter(u => u.type === 'leader').length,
+        kid: users.filter((u: any) => u.type === 'kid').length,
+        parent: users.filter((u: any) => u.type === 'parent').length,
+        leader: users.filter((u: any) => u.type === 'leader').length,
       },
       usersByTitle: {
-        Treasures: users.filter(u => u.title === 'Treasures').length,
-        Sparks: users.filter(u => u.title === 'Sparks').length,
-        Stars: users.filter(u => u.title === 'Stars').length,
-        Trailblazers: users.filter(u => u.title === 'Trailblazers').length,
+        Treasures: users.filter((u: any) => u.title === 'Treasures').length,
+        Sparks: users.filter((u: any) => u.title === 'Sparks').length,
+        Stars: users.filter((u: any) => u.title === 'Stars').length,
+        Trailblazers: users.filter((u: any) => u.title === 'Trailblazers').length,
       },
       usersByCountry: topCountries,
-      pageVisits: events.filter(e => e.eventType === 'page_visit').length,
-      signups: events.filter(e => e.eventType === 'signup').length,
-      logins: events.filter(e => e.eventType === 'login').length,
+      pageVisits: events.filter((e: any) => e.eventType === 'page_visit').length,
+      signups: events.filter((e: any) => e.eventType === 'signup').length,
+      logins: events.filter((e: any) => e.eventType === 'login').length,
     };
 
-    // Get page visits by month
+    // Chart data logic...
     const pageVisitsByMonth: any = {};
-    events.filter(e => e.eventType === 'page_visit').forEach(event => {
+    events.filter((e: any) => e.eventType === 'page_visit').forEach((event: any) => {
       const month = new Date(event.timestamp).toISOString().slice(0, 7);
       pageVisitsByMonth[month] = (pageVisitsByMonth[month] || 0) + 1;
     });
-
-    // Get logins by month
     const loginsByMonth: any = {};
-    events.filter(e => e.eventType === 'login').forEach(event => {
+    events.filter((e: any) => e.eventType === 'login').forEach((event: any) => {
       const month = new Date(event.timestamp).toISOString().slice(0, 7);
       loginsByMonth[month] = (loginsByMonth[month] || 0) + 1;
     });
-
-    // Create combined chart data
     const allMonths = new Set([...Object.keys(pageVisitsByMonth), ...Object.keys(loginsByMonth)]);
     const chartData = Array.from(allMonths).sort().map(month => ({
       month,
@@ -522,7 +462,7 @@ app.get("/analytics/dashboard", async (c: any) => {
       pageVisitsByMonth,
       loginsByMonth,
       chartData,
-      recentEvents: events.slice(-50).reverse(), // Last 50 events
+      recentEvents: events.slice(-50).reverse(),
     });
   } catch (error) {
     console.error("Analytics dashboard error:", error);
@@ -535,13 +475,12 @@ app.get("/analytics/dashboard", async (c: any) => {
 // ====================
 
 // Initiate Payment
-app.post("/payment/initiate", async (c: any) => {
+api.post("/payment/initiate", async (c: any) => {
   try {
     const { sku, amount, narration, successUrl, failUrl, userId, userType } = await c.req.json();
     const apiKey = Deno.env.get('ESPEES_API_KEY');
     const merchantWallet = Deno.env.get('ESPEES_MERCHANT_WALLET');
 
-    // MOCK MODE: If no API key is configured, simulate success
     if (!apiKey || !merchantWallet) {
       console.log("[MOCK PAYMENT] Initiating payment:", { sku, amount });
       return c.json({
@@ -552,7 +491,6 @@ app.post("/payment/initiate", async (c: any) => {
       });
     }
 
-    // REAL MODE
     const response = await fetch("https://api.espees.org/v2/payment/product", {
       method: "POST",
       headers: {
@@ -569,7 +507,7 @@ app.post("/payment/initiate", async (c: any) => {
         user_data: {
           userId,
           userType,
-          ...await c.req.json().then((b: any) => b.guestDetails || {}) // Pass guest details if present
+          ...await c.req.json().then((b: any) => b.guestDetails || {})
         }
       }),
     });
@@ -584,28 +522,21 @@ app.post("/payment/initiate", async (c: any) => {
 });
 
 // Confirm Payment
-app.post("/payment/confirm", async (c: any) => {
+api.post("/payment/confirm", async (c: any) => {
   try {
     const { paymentRef } = await c.req.json();
     const apiKey = Deno.env.get('ESPEES_API_KEY');
 
-    // MOCK MODE: If mock ref, simulate success
     if (paymentRef.startsWith("MOCK-")) {
-      console.log("[MOCK PAYMENT] Confirming payment:", paymentRef);
-
-      // Simulate transaction details
-      const mockTransaction = {
+      return c.json({
         transaction_status: "APPROVED",
         status_details: "Successfully Done (MOCK)",
-        price: 100, // Default mock amount
+        price: 100,
         transaction_date: new Date().toISOString(),
         product_sku: "MOCK-SKU"
-      };
-
-      return c.json(mockTransaction);
+      });
     }
 
-    // REAL MODE
     if (!apiKey) {
       return c.json({ error: "API Key not configured" }, 500);
     }
@@ -616,18 +547,13 @@ app.post("/payment/confirm", async (c: any) => {
         "Content-Type": "application/json",
         "x-api-key": apiKey,
       },
-      body: JSON.stringify({
-        payment_ref: paymentRef,
-      }),
+      body: JSON.stringify({ paymentRef }),
     });
 
     const data = await response.json();
 
-    // If successful, update user stats
     if (data.transaction_status === "APPROVED" && data.user_data?.userId) {
       const { userId, userType } = data.user_data;
-      const userKey = `user:${userType}:${userId}`; // Note: This might need adjustment based on how we store users by username vs ID
-      // However, we look up by ID usually. Let's try to find user by ID since we passed userId.
       const user = await kv.get(`user:id:${userId}`);
 
       if (user) {
@@ -635,12 +561,9 @@ app.post("/payment/confirm", async (c: any) => {
         user.totalSponsorshipAmount = (user.totalSponsorshipAmount || 0) + Number(data.price);
         user.lastSponsorshipDate = new Date().toISOString();
         user.lastSponsorshipAmount = Number(data.price);
-
-        // Update both ID and Username keys
         await kv.set(`user:id:${userId}`, user);
         await kv.set(`user:${user.type}:${user.username}`, user);
 
-        // Track analytics
         await trackAnalytics('sponsorship', {
           userId,
           amount: data.price,
@@ -648,12 +571,10 @@ app.post("/payment/confirm", async (c: any) => {
         });
       }
 
-      // Store in global sponsorships list for Admin
       const sponsorship = {
         id: crypto.randomUUID(),
         userId: data.user_data?.userId || "guest",
         userType: data.user_data?.userType || "guest",
-        // Extract guest details if available in user_data
         guestName: data.user_data?.name,
         guestEmail: data.user_data?.email,
         guestPhone: data.user_data?.phone,
@@ -667,39 +588,27 @@ app.post("/payment/confirm", async (c: any) => {
     }
 
     return c.json(data);
-
   } catch (error) {
     console.error("Payment confirmation error:", error);
     return c.json({ error: "Payment confirmation failed" }, 500);
   }
 });
 
-// Update Login to return latest user data (already done by fetching fresh from KV)
-
-// Get all users with pagination (admin only)
-app.get("/admin/users", async (c: any) => {
+api.get("/admin/users", async (c: any) => {
   try {
     const page = parseInt(c.req.query('page') || '1');
     const limit = parseInt(c.req.query('limit') || '20');
     const type = c.req.query('type') || 'all';
 
-    // Get all users
     let users = await kv.getByPrefix("user:id:") || [];
-
-    // Filter by type if specified
     if (type !== 'all') {
       users = users.filter((u: any) => u.type === type);
     }
-
-    // Sort by last visit (most recent first)
     users.sort((a: any, b: any) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime());
 
-    // Paginate
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedUsers = users.slice(startIndex, endIndex);
-
-    // Remove passwords
     const sanitizedUsers = paginatedUsers.map((u: any) => ({ ...u, password: undefined }));
 
     return c.json({
@@ -717,5 +626,32 @@ app.get("/admin/users", async (c: any) => {
     return c.json({ error: "Failed to load users" }, 500);
   }
 });
+
+// 2. Create Outer App for Global CORS and Routing
+const app = new Hono();
+
+app.use('*', logger(console.log));
+
+// GLOBAL CORS + OPTIONS MIDDLEWARE
+app.use('*', async (c, next) => {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key',
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+  };
+
+  if (c.req.method === 'OPTIONS') {
+    return c.text('ok', 204, corsHeaders);
+  }
+
+  await next();
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    c.res.headers.set(key, value);
+  });
+});
+
+// Mount the API at both paths to ensure matching
+app.route('/functions/v1/server', api);
+app.route('/', api);
 
 Deno.serve(app.fetch);
