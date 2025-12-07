@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 import { API_BASE_URL } from "../config/urls";
+import { publicAnonKey } from "./supabase/info";
 
 export interface InitiatePaymentParams {
     sku: string;
@@ -47,6 +48,7 @@ export class EspeesService {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${publicAnonKey}`,
                 },
                 body: JSON.stringify({
                     ...params,
@@ -93,6 +95,7 @@ export class EspeesService {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${publicAnonKey}`,
                 },
                 body: JSON.stringify({ paymentRef }),
             });
@@ -108,3 +111,4 @@ export class EspeesService {
         }
     }
 }
+
