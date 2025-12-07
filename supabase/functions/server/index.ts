@@ -654,4 +654,25 @@ app.use('*', async (c, next) => {
 app.route('/functions/v1/server', api);
 app.route('/', api);
 
-Deno.serve(app.fetch);
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key',
+  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+};
+
+Deno.serve(async (req) => {
+  // 1. Handle CORS Preflight immediately
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  // 2. Pass to Hono
+  const res = await app.fetch(req);
+
+  // 3. Inject CORS headers into Hono response
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    res.headers.set(key, value);
+  });
+
+  return res;
+});
