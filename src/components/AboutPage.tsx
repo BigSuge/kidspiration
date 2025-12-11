@@ -1,7 +1,7 @@
 import image_f9f7953c4688f21ec50d2c75917ad075685d5286 from 'figma:asset/f9f7953c4688f21ec50d2c75917ad075685d5286.png';
 import { motion, useInView } from 'motion/react';
 import { useRef } from 'react';
-import { Heart, BookOpen, Globe, Sparkles, Star, Users, Trophy, Zap, Target, TrendingUp, Baby, Smile, Award, Flame, UserCheck, BookMarked, PartyPopper, Languages, ShoppingBag } from 'lucide-react';
+import { Heart, BookOpen, Globe, Sparkles, Star, Users, Trophy, Zap, Target, TrendingUp, Gem, Flag, UserCheck, BookMarked, PartyPopper, Languages, ShoppingBag } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import aboutHeroImage from 'figma:asset/0be9827fc0cf186798f1b48d67101495ed9a9353.png';
 import { HTTN_MAGAZINE_URL } from '../config/urls';
@@ -17,7 +17,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
   const eligibilityRef = useRef(null);
   const programsRef = useRef(null);
   const principlesRef = useRef(null);
-  
+
   const heroInView = useInView(heroRef, { once: true, amount: 0.3 });
   const aboutInView = useInView(aboutRef, { once: true, amount: 0.3 });
   const visionInView = useInView(visionRef, { once: true, amount: 0.3 });
@@ -127,7 +127,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B9D] via-[#A78BFA] to-[#4ECDC4] mb-8 text-[40px] font-bold">
               WELCOME TO KIDSPIRATION!
             </h2>
-            
+
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl space-y-6">
               <p className="text-xl text-gray-700 leading-relaxed">
                 <strong className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B9D] to-[#A78BFA]">
@@ -135,7 +135,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 </strong>{' '}
                 inspired by the healing ministry of our Man of God, Pastor Chris Oyakhilome.
               </p>
-              
+
               <p className="text-xl text-gray-700 leading-relaxed">
                 At Kidspiration, our vision is clear — to reach{' '}
                 <strong className="text-[#2D1B69]">
@@ -147,7 +147,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
               <p className="text-xl text-gray-700 leading-relaxed">
                 We're raising a generation of children, ages zero to twelve, filled with the Word and the Spirit — children who experience and share the Gospel, becoming conduits of God's grace and power.
               </p>
-              
+
               <div className="grid md:grid-cols-2 gap-6 mt-8">
                 <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
@@ -162,7 +162,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                   </div>
                   <h3 className="text-gray-900 mb-2 text-center font-bold">OUR VISION</h3>
                   <p className="text-2xl text-center text-[#2D1B69]">
-                    <strong>3 Billion Children</strong>
+                    <strong>Reach3 Billion Children</strong>
                   </p>
                   <p className="text-center text-gray-600 mt-2">Worldwide with the gospel</p>
                 </motion.div>
@@ -259,7 +259,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 className="bg-white rounded-2xl p-6 shadow-md border-2 border-pink-200 hover:shadow-lg transition-shadow"
               >
                 <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-pink-400 to-pink-500 rounded-xl mb-4 mx-auto">
-                  <Baby className="w-6 h-6 text-white" />
+                  <Gem className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-center text-gray-900 mb-2 font-bold text-[20px]">Treasures</h4>
                 <p className="text-center text-sm text-[#FF6B9D] mb-3"><strong>(0-2 years)</strong></p>
@@ -275,7 +275,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 className="bg-white rounded-2xl p-6 shadow-md border-2 border-purple-200 hover:shadow-lg transition-shadow"
               >
                 <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-500 rounded-xl mb-4 mx-auto">
-                  <Smile className="w-6 h-6 text-white" />
+                  <Zap className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-center text-gray-900 mb-2 font-bold text-[20px]">Sparks</h4>
                 <p className="text-center text-sm text-[#A78BFA] mb-3"><strong>(3-5 years)</strong></p>
@@ -291,7 +291,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 className="bg-white rounded-2xl p-6 shadow-md border-2 border-cyan-200 hover:shadow-lg transition-shadow"
               >
                 <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-cyan-400 to-cyan-500 rounded-xl mb-4 mx-auto">
-                  <Award className="w-6 h-6 text-white" />
+                  <Star className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-center text-gray-900 mb-2 font-bold text-[20px]">Stars</h4>
                 <p className="text-center text-sm text-[#4ECDC4] mb-3"><strong>(6-9 years)</strong></p>
@@ -306,8 +306,8 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 transition={{ duration: 0.6, delay: 0.6 }}
                 className="bg-white rounded-2xl p-6 shadow-md border-2 border-amber-200 hover:shadow-lg transition-shadow"
               >
-                <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-amber-400 to-amber-500 rounded-xl mb-4 mx-auto">
-                  <Flame className="w-6 h-6 text-white" />
+                <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl mb-4 mx-auto">
+                  <Flag className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-center text-gray-900 mb-2 font-bold text-[20px]">Trailblazers</h4>
                 <p className="text-center text-sm text-[#FBBF24] mb-3"><strong>(10-12 years)</strong></p>
@@ -334,7 +334,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 Parents, Teachers, Guardians — Organize events, mentor kids, track impact!
               </p>
               <div className="text-center">
-                <span className="inline-block bg-gradient-to-r from-[#4ECDC4] to-[#06B6D4] text-white px-6 py-2 rounded-full font-bold">
+                <span className="inline-block border-2 border-[#4ECDC4] text-[#068D9D] bg-white/60 backdrop-blur-sm px-6 py-2 rounded-full font-bold shadow-sm">
                   Guide & Lead
                 </span>
               </div>
@@ -354,7 +354,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 Manage ministry, view reports, sponsor missions!
               </p>
               <div className="text-center">
-                <span className="inline-block bg-gradient-to-r from-[#A78BFA] to-[#8B5CF6] text-white px-6 py-2 rounded-full font-bold">
+                <span className="inline-block border-2 border-[#8B5CF6] text-[#7C3AED] bg-white/60 backdrop-blur-sm px-6 py-2 rounded-full font-bold shadow-sm">
                   Lead & Inspire
                 </span>
               </div>
@@ -389,7 +389,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                   initial={{ y: 50, opacity: 0 }}
                   animate={programsInView ? { y: 0, opacity: 1 } : {}}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className={`bg-gradient-to-br ${program.bgColor} rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all`}
+                  className={`bg-gradient-to-br ${program.bgColor} rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all border border-white/50 backdrop-blur-sm`}
                 >
                   <div className="flex items-start gap-6">
                     <div className={`flex-shrink-0 w-16 h-16 bg-gradient-to-br ${program.gradient} rounded-2xl flex items-center justify-center shadow-lg`}>
@@ -397,7 +397,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                     </div>
                     <div className="flex-1">
                       <h3 className="text-gray-900 mb-2 text-[24px] font-bold">{program.title}</h3>
-                      <p className={`text-transparent bg-clip-text bg-gradient-to-r ${program.gradient} mb-3 font-bold`}>
+                      <p className="text-gray-800 mb-3 font-bold text-lg opacity-90">
                         {program.subtitle}
                       </p>
                       <p className="text-gray-700 leading-relaxed text-lg mb-6">
@@ -509,56 +509,49 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
       </section>
 
       {/* Appreciation & Call to Action */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-amber-50 to-orange-50">
-        <div className="container mx-auto max-w-4xl">
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="bg-gradient-to-br from-[#FF6B9D] via-[#A78BFA] to-[#4ECDC4] rounded-3xl p-12 text-center text-white shadow-2xl relative overflow-hidden"
-          >
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white border-t border-gray-100">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
-              animate={{ 
-                scale: [1, 1.2, 1],
-                rotate: [0, 180, 360]
-              }}
-              transition={{ 
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"
-            />
-            <motion.div
-              animate={{ 
-                scale: [1.2, 1, 1.2],
-                rotate: [360, 180, 0]
-              }}
-              transition={{ 
-                duration: 15,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"
-            />
-            
-            <div className="relative z-10">
-              <Heart className="w-16 h-16 mx-auto mb-6" />
-              <p className="text-xl mb-6 text-white/95 leading-relaxed">
+              initial={{ x: -30, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              className="space-y-6 text-center md:text-left"
+            >
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-50 rounded-2xl mb-2">
+                <Heart className="w-8 h-8 text-[#FF6B9D]" />
+              </div>
+              <h2 className="text-4xl font-bold text-gray-900">With Gratitude</h2>
+              <p className="text-xl text-gray-600 leading-relaxed font-medium">
                 We appreciate all our partners, arms, and supporters who have made Kidspiration what it is today.
               </p>
-              <Globe className="w-16 h-16 mx-auto mb-6" />
-              <h2 className="text-white mb-6 text-[32px] font-bold">
-                Join the Kidspiration Movement!
-              </h2>
-              <p className="text-2xl mb-8 text-white/95 text-[24px]">
-                Visit <strong className="text-white">www.kidspiration.org</strong> and explore all that Kidspiration has to offer!
+              <p className="text-lg text-gray-500">
+                Your partnership helps us reach millions of children with the message of God's love.
               </p>
-              <p className="text-3xl text-white font-bold">
-                Kidspiration — Reaching Kids, Raising Champions!
-              </p>
-            </div>
-          </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial={{ x: 30, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="bg-gradient-to-br from-[#4ECDC4] to-[#06B6D4] rounded-3xl p-10 text-white shadow-xl text-center relative overflow-hidden"
+            >
+              <div className="relative z-10">
+                <Globe className="w-12 h-12 mx-auto mb-6 text-white/90" />
+                <h3 className="text-3xl font-bold mb-4">Join the Movement!</h3>
+                <p className="mb-8 text-white/90 text-lg">
+                  Visit <strong className="text-white">www.kidspiration.org</strong> and explore all that Kidspiration has to offer!
+                </p>
+                <div className="inline-block text-[#06B6D4] px-8 py-3 font-bold text-lg">
+                  Kidspiration — Reaching Kids, Raising Champions!
+                </div>
+              </div>
+
+              {/* Decorative circles */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -ml-16 -mb-16 pointer-events-none" />
+            </motion.div>
+          </div>
         </div>
       </section>
     </div>
