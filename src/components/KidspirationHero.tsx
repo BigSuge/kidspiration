@@ -81,22 +81,6 @@ export function KidspirationHero({
         "Experience our interactive digital magazine with inspiring stories and fun activities",
     },
     {
-      id: 4,
-      type: 'image',
-      title: "Kidspiration Glowfest 2025",
-      subtitle: "Choose Faith Over Fear! ✨",
-      description:
-        "Join the global celebration as we pray for children worldwide and spread God's light!",
-      image:
-        image_5b8918d244f3d9170f1b217e173a624af722400b,
-      ctaText: "Discover Glowfest",
-      ctaAction: "glowfest",
-      gradient: "from-yellow-400 via-pink-400 to-white-500",
-      overlayText: "KIDSPIRATION GLOWFEST",
-      overlaySubtext:
-        "A joyful celebration where we choose faith instead of fear while distributing the Healing to the Nations Magazine",
-    },
-    {
       id: 5,
       type: 'image',
       title: "Join the Translators Network ",
@@ -170,8 +154,6 @@ export function KidspirationHero({
       window.open(HTTN_MAGAZINE_URL, "_blank");
     } else if (action === "explore") {
       onNavigate?.("explore");
-    } else if (action === "glowfest") {
-      onNavigate?.("glowfest");
     } else if (action === "translators") {
       onNavigate?.("translators");
     } else if (action === "marketplace") {
