@@ -64,16 +64,6 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
       ctaAction: 'er100'
     },
     {
-      icon: Languages,
-      title: 'Kidspiration Translators Network',
-      subtitle: 'Training Trailblazers',
-      description: 'Equipping trailblazers, ages nine to twelve, to serve as upcoming translators of our ministry materials — mentored by certified translators. What a powerful way to train up a child in the way he should go!',
-      gradient: 'from-orange-500 to-pink-500',
-      bgColor: 'from-orange-50 to-pink-50',
-      ctaText: 'Learn More',
-      ctaAction: 'translators'
-    },
-    {
       icon: PartyPopper,
       title: 'Kidspiration Party Initiative',
       subtitle: 'Celebrating Every Child',
