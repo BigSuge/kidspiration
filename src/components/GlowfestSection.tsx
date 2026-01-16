@@ -1,6 +1,6 @@
 import { Sparkles, Target, Calendar, ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
-import HomepageImpactVideo from "../imports/HomepageGlowfestVideo";
+import { HomepageGlowfestVideo, HomepageImpactVideo } from "../imports/HomepageGlowfestVideo";
 
 interface GlowfestSectionProps {
   onNavigate?: (page: string) => void;
