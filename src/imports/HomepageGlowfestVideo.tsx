@@ -1,4 +1,4 @@
-export default function HomepageGlowfestVideo() {
+export function HomepageGlowfestVideo() {
   return (
     <div className="relative w-full h-full" data-name="Homepage Glowfest Video">
       <video
@@ -15,10 +15,9 @@ export default function HomepageGlowfestVideo() {
   );
 }
 
-
-export default function HomepageImpactVideo() {
+export function HomepageImpactVideo() {
   return (
-    <div className="relative w-full h-full" data-name="Homepage Glowfest Video">
+    <div className="relative w-full h-full" data-name="Homepage Impact Video">
       <video
         className="absolute inset-0 w-full h-full object-cover"
         src="/videos/KIDSPIRATION_IMPACT.mp4"
