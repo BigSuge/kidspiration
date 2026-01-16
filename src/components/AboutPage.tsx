@@ -64,26 +64,6 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
       ctaAction: 'er100'
     },
     {
-      icon: Languages,
-      title: 'Kidspiration Translators Network',
-      subtitle: 'Training Trailblazers',
-      description: 'Equipping trailblazers, ages nine to twelve, to serve as upcoming translators of our ministry materials — mentored by certified translators. What a powerful way to train up a child in the way he should go!',
-      gradient: 'from-orange-500 to-pink-500',
-      bgColor: 'from-orange-50 to-pink-50',
-      ctaText: 'Learn More',
-      ctaAction: 'translators'
-    },
-    {
-      icon: Sparkles,
-      title: 'Kidspiration Glowfest',
-      subtitle: 'Choose Faith Over Fear',
-      description: 'A joyful celebration where we choose faith instead of fear! We pray and intercede for children everywhere while distributing the Healing to the Nations Magazine. Dressed in our bright Kidspiration T-shirts, we boldly declare God\'s Word and spread light in every community!',
-      gradient: 'from-purple-500 to-indigo-500',
-      bgColor: 'from-purple-50 to-indigo-50',
-      ctaText: 'Discover Glowfest',
-      ctaAction: 'glowfest'
-    },
-    {
       icon: PartyPopper,
       title: 'Kidspiration Party Initiative',
       subtitle: 'Celebrating Every Child',

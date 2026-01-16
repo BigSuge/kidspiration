@@ -47,17 +47,6 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
       adultOnly: true,
     },
     {
-      id: 'translators',
-      title: 'Kidspiration Translators Network',
-      subtitle: 'Young Language Heroes',
-      description: 'Calling all trailblazers aged 9-12! Use your language skills to help translate Kidspiration content and reach even more kids around the world.',
-      image: image_bb07a1601daf44f77a41d1ac57e45dc5ac294a33,
-      icon: Languages,
-      gradient: 'from-[#FF9A8B] to-[#FFA894]',
-      stats: ['30+ Languages', '200+ Translators', 'Ages 9-12'],
-      trailblazersOnly: true,
-    },
-    {
       id: 'glowfest',
       title: 'Kidspiration Glowfest',
       subtitle: 'Music, Fun & Faith',
