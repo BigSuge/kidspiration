@@ -47,16 +47,6 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
       adultOnly: true,
     },
     {
-      id: 'glowfest',
-      title: 'Kidspiration Glowfest',
-      subtitle: 'Music, Fun & Faith',
-      description: 'Join the ultimate celebration of faith, music, and joy! Experience amazing performances, inspiring messages, and unforgettable moments with friends.',
-      image: image_glowfest,
-      icon: Music,
-      gradient: 'from-[#FF6B9D] to-[#F472B6]',
-      stats: ['Live Concerts', 'Global Events', 'Amazing Artists'],
-    },
-    {
       id: 'httn-animated',
       title: 'HTTN Magazine For Kids',
       subtitle: 'Watch the Word Come Alive',
