@@ -74,16 +74,6 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
       ctaAction: 'translators'
     },
     {
-      icon: Sparkles,
-      title: 'Kidspiration Glowfest',
-      subtitle: 'Choose Faith Over Fear',
-      description: 'A joyful celebration where we choose faith instead of fear! We pray and intercede for children everywhere while distributing the Healing to the Nations Magazine. Dressed in our bright Kidspiration T-shirts, we boldly declare God\'s Word and spread light in every community!',
-      gradient: 'from-purple-500 to-indigo-500',
-      bgColor: 'from-purple-50 to-indigo-50',
-      ctaText: 'Discover Glowfest',
-      ctaAction: 'glowfest'
-    },
-    {
       icon: PartyPopper,
       title: 'Kidspiration Party Initiative',
       subtitle: 'Celebrating Every Child',
