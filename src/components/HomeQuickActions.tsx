@@ -73,14 +73,6 @@ export const HomeQuickActions: React.FC<HomeQuickActionsProps> = ({ onNavigate, 
 
     const actions = [
         {
-            title: "Pray for Children",
-            description: "Join us in prayer for children around the world on Kingschat.",
-            icon: Heart,
-            gradient: "from-[#3B82F6] to-[#1D4ED8]", // Blue gradient
-            onClick: () => window.open('https://prayerclouds.org/app/kidspiration', '_blank'),
-            buttonText: "Join Prayer"
-        },
-        {
             title: "Sponsor Initiatives",
             description: "Support our mission to reach every child with the Gospel.",
             icon: Gift,
