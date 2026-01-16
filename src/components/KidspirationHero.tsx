@@ -337,5 +337,3 @@ export function KidspirationHero({
   );
 }
 
-
-How can I get the HTTN magazine Slide to have two CTAs, such that one button redirects to another link.
