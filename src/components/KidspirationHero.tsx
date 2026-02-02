@@ -107,7 +107,6 @@ export function KidspirationHero({
   const handleCTA = (action: string) => {
     if (action === "join" && onAuthClick) onAuthClick();
     else if (action === "httn") window.open(HTTN_MAGAZINE_URL, "_blank");
-    else if (action === "portal") window.open("https://healingstreams.tv", "_blank");
     else if (action === "order") window.open("https://httnmagazine.org/magazine/order?type=kids", "_blank");
     else if (action === "explore") onNavigate?.("explore");
     else if (action === "marketplace") onNavigate?.("marketplace");
@@ -213,7 +212,7 @@ export function KidspirationHero({
                 <div className="pt-2 flex flex-wrap gap-2">
                   <button
                     onClick={() => handleCTA(slides[currentSlide].ctaAction)}
-                    className={`bg-white/90 px-4 py-2 rounded-full font-bold text-[14px] text-transparent bg-clip-text bg-gradient-to-r ${slides[currentSlide].gradient.replace(/from-(\w+)-(\d+)/, "from-$1-800")}`}
+                    className={`bg-white/90 backdrop-blur-sm border-2 border-white/50 px-4 py-2 rounded-full font-bold hover:shadow-xl hover:bg-white transform hover:scale-105 transition-all text-transparent bg-clip-text bg-gradient-to-r ${slides[currentSlide].gradient.replace(/from-(\w+)-(\d+)/, "from-$1-800").replace(/via-(\w+)-(\d+)/, "via-$1-700").replace(/to-(\w+)-(\d+)/, "to-$1-700")}`}
                   >
                     {slides[currentSlide].ctaText}
                   </button>
