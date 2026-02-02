@@ -59,8 +59,6 @@ export function KidspirationHero({
       image: image_4f9488c7a65b0ab8875c64ffff889f8f25e9d7d6,
       ctaText: "HTTN Magazine",
       ctaAction: "httn",
-      secondaryCtaText: "Visit Portal", // Added secondary CTA
-      secondaryCtaAction: "portal",
       gradient: "from-teal-400 via-cyan-500 to-blue-500",
     },
     {
@@ -166,15 +164,6 @@ export function KidspirationHero({
                       {slides[currentSlide].ctaText}
                     </button>
 
-                    {/* Conditional Secondary Button */}
-                    {slides[currentSlide].secondaryCtaText && (
-                      <button
-                        onClick={() => handleCTA(slides[currentSlide].secondaryCtaAction!)}
-                        className="bg-transparent border-2 border-white/70 px-6 py-3 rounded-full text-base font-bold text-white hover:bg-white hover:text-black transition-all transform hover:scale-105"
-                      >
-                        {slides[currentSlide].secondaryCtaText}
-                      </button>
-                    )}
                   </div>
 
                   <div className="flex gap-6">
@@ -228,14 +217,6 @@ export function KidspirationHero({
                   >
                     {slides[currentSlide].ctaText}
                   </button>
-                  {slides[currentSlide].secondaryCtaText && (
-                    <button
-                      onClick={() => handleCTA(slides[currentSlide].secondaryCtaAction!)}
-                      className="bg-white/20 border-2 border-white/40 px-4 py-2 rounded-full font-bold text-white text-[14px]"
-                    >
-                      {slides[currentSlide].secondaryCtaText}
-                    </button>
-                  )}
                 </div>
               </motion.div>
 
