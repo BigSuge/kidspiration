@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { Users, Activity, TrendingUp, Eye, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { projectId, publicAnonKey, functionName } from '../utils/supabase/info';
 import { supabase } from '../utils/supabaseClient';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export function AdminPanel() {
   const [loading, setLoading] = useState(true);
@@ -365,8 +365,8 @@ export function AdminPanel() {
               <button
                 onClick={() => setActiveTab('users')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'users'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-900'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-900'
                   }`}
               >
                 Users
@@ -374,8 +374,8 @@ export function AdminPanel() {
               <button
                 onClick={() => setActiveTab('blue_elite')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'blue_elite'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-900'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-900'
                   }`}
               >
                 Staff Giving
@@ -495,8 +495,8 @@ export function AdminPanel() {
                           <td className="py-3 px-4 text-gray-900 font-semibold">{item.amount.toLocaleString()}</td>
                           <td className="py-3 px-4">
                             <span className={`px-2 py-1 rounded-full text-xs ${item.status === 'success' || item.status === 'completed'
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-yellow-100 text-yellow-700'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-yellow-100 text-yellow-700'
                               }`}>
                               {item.status}
                             </span>
