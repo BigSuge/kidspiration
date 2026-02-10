@@ -30,6 +30,7 @@ import { BackgroundEffects } from './components/BackgroundEffects';
 import { AuthModal } from './components/AuthModal';
 import { BirthdayOverlay } from './components/BirthdayOverlay';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
+import { BlueEliteStaffPage } from './components/BlueEliteStaffPage';
 import { AuthProvider, useAuth } from './utils/AuthContext';
 import { Footer } from './components/Footer';
 import { Toaster, toast } from 'sonner';
@@ -41,7 +42,11 @@ function AppContent() {
 
   // Helper function to parse page from pathname
   const parsePageFromPathname = (pathname: string) => {
-    return pathname === '/' ? 'home' : pathname.slice(1);
+    if (pathname === '/') return 'home';
+    // Remove leading slash
+    const path = pathname.slice(1);
+    // Return the full path for nested routes
+    return path;
   };
 
   // Get initial page from URL pathname
@@ -318,6 +323,9 @@ function AppContent() {
 
       case 'give':
         return <GivePage onBack={() => handleNavigate('home')} onNavigate={handleNavigate} />;
+
+      case 'give/blueelitestaff':
+        return <BlueEliteStaffPage onBack={() => handleNavigate('give')} onNavigate={handleNavigate} />;
 
       default:
         return null;

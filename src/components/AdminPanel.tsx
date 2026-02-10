@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Users, Activity, TrendingUp, Eye, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { projectId, publicAnonKey, functionName } from '../utils/supabase/info';
+import { supabase } from '../utils/supabaseClient';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export function AdminPanel() {
@@ -14,13 +15,20 @@ export function AdminPanel() {
   const [filterType, setFilterType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [activeTab, setActiveTab] = useState<'users' | 'blue_elite'>('users');
+  const [blueEliteData, setBlueEliteData] = useState<any[]>([]);
+
   useEffect(() => {
     loadAnalytics();
   }, []);
 
   useEffect(() => {
-    loadUsers();
-  }, [currentPage, filterType]);
+    if (activeTab === 'users') {
+      loadUsers();
+    } else {
+      loadBlueEliteData();
+    }
+  }, [currentPage, filterType, activeTab]);
 
   const loadAnalytics = async () => {
     try {
@@ -65,11 +73,36 @@ export function AdminPanel() {
     }
   };
 
+  const loadBlueEliteData = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('blue_elite_staff_giving')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setBlueEliteData(data || []);
+    } catch (error) {
+      console.error("Error loading blue elite data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredUsers = users.filter(user =>
     searchQuery === '' ||
     user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredBlueElite = blueEliteData.filter(item =>
+    searchQuery === '' ||
+    item.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.zone.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -316,14 +349,39 @@ export function AdminPanel() {
           </div>
         )}
 
-        {/* User Management */}
+        {/* Management Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
           className="bg-white rounded-2xl shadow-lg p-6"
         >
-          <h2 className="text-gray-900 mb-8 text-3xl font-bold">User Management</h2>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <h2 className="text-gray-900 text-3xl font-bold">
+              {activeTab === 'users' ? 'User Management' : 'Blue Elite Staff Giving'}
+            </h2>
+
+            <div className="flex bg-gray-100 p-1 rounded-xl">
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'users'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-900'
+                  }`}
+              >
+                Users
+              </button>
+              <button
+                onClick={() => setActiveTab('blue_elite')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'blue_elite'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-900'
+                  }`}
+              >
+                Staff Giving
+              </button>
+            </div>
+          </div>
 
           {/* Filters and Search */}
           <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -331,40 +389,57 @@ export function AdminPanel() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search users..."
+                placeholder={activeTab === 'users' ? "Search users..." : "Search staff..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#FF6B9D]"
               />
             </div>
-            <select
-              value={filterType}
-              onChange={(e) => {
-                setFilterType(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#FF6B9D]"
-            >
-              <option value="all">All Users</option>
-              <option value="kid">Kids</option>
-              <option value="parent">Parents/Teachers</option>
-              <option value="leader">Pastors/Leaders</option>
-            </select>
+            {activeTab === 'users' && (
+              <select
+                value={filterType}
+                onChange={(e) => {
+                  setFilterType(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#FF6B9D]"
+              >
+                <option value="all">All Users</option>
+                <option value="kid">Kids</option>
+                <option value="parent">Parents/Teachers</option>
+                <option value="leader">Pastors/Leaders</option>
+              </select>
+            )}
           </div>
 
-          {/* Users Table */}
+          {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 text-gray-600">Title</th>
-                  <th className="text-left py-3 px-4 text-gray-600">Name</th>
-                  <th className="text-left py-3 px-4 text-gray-600">Username</th>
-                  <th className="text-left py-3 px-4 text-gray-600">Type</th>
-                  <th className="text-left py-3 px-4 text-gray-600">Occupation</th>
-                  <th className="text-left py-3 px-4 text-gray-600">Country</th>
-                  <th className="text-left py-3 px-4 text-gray-600">Visits</th>
-                  <th className="text-left py-3 px-4 text-gray-600">Last Visit</th>
+                  {activeTab === 'users' ? (
+                    <>
+                      <th className="text-left py-3 px-4 text-gray-600">Title</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Name</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Username</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Type</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Occupation</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Country</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Visits</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Last Visit</th>
+                    </>
+                  ) : (
+                    <>
+                      <th className="text-left py-3 px-4 text-gray-600">Date</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Title</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Name</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Department</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Church</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Zone</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Amount</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Status</th>
+                    </>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -374,53 +449,69 @@ export function AdminPanel() {
                       Loading...
                     </td>
                   </tr>
-                ) : filteredUsers.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="text-center py-8 text-gray-500">
-                      No users found
-                    </td>
-                  </tr>
                 ) : (
-                  filteredUsers.map((user, index) => (
-                    <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-600">
-                        {user.title || '-'}
-                      </td>
-                      <td className="py-3 px-4">
-                        {user.firstName} {user.lastName}
-                      </td>
-                      <td className="py-3 px-4 text-gray-600">{user.username}</td>
-                      <td className="py-3 px-4">
-                        <span className={`px-2 py-1 rounded-full text-xs ${user.type === 'kid'
-                          ? 'bg-[#FF6B9D]/10 text-[#FF6B9D]'
-                          : user.type === 'parent'
-                            ? 'bg-[#A78BFA]/10 text-[#A78BFA]'
-                            : 'bg-[#4ECDC4]/10 text-[#4ECDC4]'
-                          }`}>
-                          {user.type}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-gray-600">
-                        {user.occupation || '-'}
-                      </td>
-                      <td className="py-3 px-4 text-gray-600">
-                        {user.country || 'Unknown'}
-                      </td>
-                      <td className="py-3 px-4 text-gray-600">
-                        {user.visitCount || 0}
-                      </td>
-                      <td className="py-3 px-4 text-gray-600 text-sm">
-                        {user.lastVisit ? new Date(user.lastVisit).toLocaleDateString() : '-'}
-                      </td>
-                    </tr>
-                  ))
+                  activeTab === 'users' ? (
+                    filteredUsers.length === 0 ? (
+                      <tr><td colSpan={8} className="text-center py-8 text-gray-500">No users found</td></tr>
+                    ) : (
+                      filteredUsers.map((user) => (
+                        <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-3 px-4 text-gray-600">{user.title || '-'}</td>
+                          <td className="py-3 px-4">{user.firstName} {user.lastName}</td>
+                          <td className="py-3 px-4 text-gray-600">{user.username}</td>
+                          <td className="py-3 px-4">
+                            <span className={`px-2 py-1 rounded-full text-xs ${user.type === 'kid'
+                              ? 'bg-[#FF6B9D]/10 text-[#FF6B9D]'
+                              : user.type === 'parent'
+                                ? 'bg-[#A78BFA]/10 text-[#A78BFA]'
+                                : 'bg-[#4ECDC4]/10 text-[#4ECDC4]'
+                              }`}>
+                              {user.type}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-gray-600">{user.occupation || '-'}</td>
+                          <td className="py-3 px-4 text-gray-600">{user.country || 'Unknown'}</td>
+                          <td className="py-3 px-4 text-gray-600">{user.visitCount || 0}</td>
+                          <td className="py-3 px-4 text-gray-600 text-sm">
+                            {user.lastVisit ? new Date(user.lastVisit).toLocaleDateString() : '-'}
+                          </td>
+                        </tr>
+                      ))
+                    )
+                  ) : (
+                    filteredBlueElite.length === 0 ? (
+                      <tr><td colSpan={8} className="text-center py-8 text-gray-500">No records found</td></tr>
+                    ) : (
+                      filteredBlueElite.map((item) => (
+                        <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-3 px-4 text-gray-600 text-sm">
+                            {new Date(item.created_at).toLocaleDateString()}
+                          </td>
+                          <td className="py-3 px-4 text-gray-600">{item.title}</td>
+                          <td className="py-3 px-4 font-medium">{item.first_name} {item.last_name}</td>
+                          <td className="py-3 px-4 text-gray-600">{item.department}</td>
+                          <td className="py-3 px-4 text-gray-600">{item.church}</td>
+                          <td className="py-3 px-4 text-gray-600">{item.zone}</td>
+                          <td className="py-3 px-4 text-gray-900 font-semibold">{item.amount.toLocaleString()}</td>
+                          <td className="py-3 px-4">
+                            <span className={`px-2 py-1 rounded-full text-xs ${item.status === 'success' || item.status === 'completed'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-yellow-100 text-yellow-700'
+                              }`}>
+                              {item.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )
+                  )
                 )}
               </tbody>
             </table>
           </div>
 
-          {/* Pagination */}
-          {!loading && filteredUsers.length > 0 && (
+          {/* Pagination (Only for Users for now) */}
+          {!loading && activeTab === 'users' && filteredUsers.length > 0 && (
             <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
               <p className="text-sm text-gray-600">
                 Page {currentPage} of {totalPages}
