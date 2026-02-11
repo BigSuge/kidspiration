@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Users, Activity, TrendingUp, Eye, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { projectId, publicAnonKey, functionName } from '../utils/supabase/info';
@@ -32,6 +32,7 @@ export function AdminPanel() {
 
   const loadAnalytics = async () => {
     try {
+      // 1. Fetch backend analytics for general stats
       const response = await fetch(
         `https://${projectId}.supabase.co/functions/v1/${functionName}/analytics/dashboard`,
         {
@@ -41,10 +42,71 @@ export function AdminPanel() {
         }
       );
       const data = await response.json();
+
+      let finalStats = null;
       if (data.success) {
-        setStats(data.stats);
+        finalStats = data.stats;
         setChartData(data.chartData || []);
       }
+
+      // 2. Fetch ALL users to calculate correct "Kids by Title" stats client-side 
+      // (Workaround for backend aggregation issue)
+      try {
+        const usersResponse = await fetch(
+          `https://${projectId}.supabase.co/functions/v1/${functionName}/admin/users?page=1&limit=1000&type=kid`,
+          {
+            headers: { 'Authorization': `Bearer ${publicAnonKey}` }
+          }
+        );
+        const usersData = await usersResponse.json();
+
+        if (usersData.users) {
+          const kids = usersData.users;
+          const byTitle = {
+            Treasures: 0,
+            Sparks: 0,
+            Stars: 0,
+            Trailblazers: 0
+          };
+
+          kids.forEach((kid: any) => {
+            const age = kid.age;
+            if (typeof age === 'number') {
+              if (age >= 0 && age <= 2) byTitle.Treasures++;
+              else if (age >= 3 && age <= 5) byTitle.Sparks++;
+              else if (age >= 6 && age <= 9) byTitle.Stars++;
+              else if (age >= 10 && age <= 12) byTitle.Trailblazers++;
+            } else if (kid.title) {
+              // Fallback to title string matching if age is missing
+              const t = kid.title.toLowerCase();
+              if (t.includes('treasure')) byTitle.Treasures++;
+              else if (t.includes('spark')) byTitle.Sparks++;
+              else if (t.includes('star')) byTitle.Stars++;
+              else if (t.includes('trailblazer')) byTitle.Trailblazers++;
+            }
+          });
+
+          // Override backend stats
+          if (finalStats) {
+            finalStats.usersByTitle = byTitle;
+          } else {
+            // Fallback if backend analytics completely failed
+            finalStats = {
+              totalUsers: 0, logins: 0, pageVisits: 0, signups: 0,
+              usersByType: { kid: 0, parent: 0, leader: 0 },
+              usersByCountry: {},
+              usersByTitle: byTitle
+            };
+          }
+        }
+      } catch (err) {
+        console.error("Failed to calculate client-side stats:", err);
+      }
+
+      if (finalStats) {
+        setStats(finalStats);
+      }
+
     } catch (error) {
       console.error('Failed to load analytics:', error);
     }
@@ -90,20 +152,20 @@ export function AdminPanel() {
     }
   };
 
-  const filteredUsers = users.filter(user =>
+  const filteredUsers = useMemo(() => users.filter(user =>
     searchQuery === '' ||
     user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.username.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ), [users, searchQuery]);
 
-  const filteredBlueElite = blueEliteData.filter(item =>
+  const filteredBlueElite = useMemo(() => blueEliteData.filter(item =>
     searchQuery === '' ||
     item.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.zone.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ), [blueEliteData, searchQuery]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-32 pb-20">

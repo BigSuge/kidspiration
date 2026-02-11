@@ -1,39 +1,50 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Navigation } from './components/Navigation';
 import { KidspirationHero } from './components/KidspirationHero';
 import { GlowfestSection } from './components/GlowfestSection';
 import { HomeQuickActions } from './components/HomeQuickActions';
-import { GlowfestPage } from './components/GlowfestPage';
 import { JoinExploreSection } from './components/JoinExploreSection';
-import { GamesPage } from './components/GamesPage';
-import { LiveTVPage } from './components/LiveTVPage';
-import { ImpactStoriesPage } from './components/ImpactStoriesPage';
-import { ImpactStoryPage } from './components/ImpactStoryPage';
-import { ExplorePage } from './components/ExplorePage';
-import { AdminPanel } from './components/AdminPanel';
-import { DashboardPage } from './components/DashboardPage';
-import { ER100Section } from './components/ER100Section';
-import { TranslatorsNetworkPage } from './components/TranslatorsNetworkPage';
-import { PartyInitiativePage } from './components/PartyInitiativePage';
-import { MarketplacePage } from './components/MarketplacePage';
-import { AboutPage } from './components/AboutPage';
-import { GivePage } from './components/GivePage';
-import { ColorMeGame } from './components/games/ColorMeGame';
-import { PuzzleGame } from './components/games/PuzzleGame';
-import { CrosswordGame } from './components/games/CrosswordGame';
-import { BibleQuiz } from './components/games/BibleQuiz';
-import { WordSearchGame } from './components/games/WordSearchGame';
-import { MazeGame } from './components/games/MazeGame';
-import { PaymentSuccessPage } from './pages/PaymentSuccess';
-import { PaymentFailurePage } from './pages/PaymentFailure';
 import { BackgroundEffects } from './components/BackgroundEffects';
 import { AuthModal } from './components/AuthModal';
 import { BirthdayOverlay } from './components/BirthdayOverlay';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
-import { BlueEliteStaffPage } from './components/BlueEliteStaffPage';
 import { AuthProvider, useAuth } from './utils/AuthContext';
 import { Footer } from './components/Footer';
 import { Toaster, toast } from 'sonner';
+
+// Lazy Load Pages
+const GlowfestPage = lazy(() => import('./components/GlowfestPage').then(module => ({ default: module.GlowfestPage })));
+const GamesPage = lazy(() => import('./components/GamesPage').then(module => ({ default: module.GamesPage })));
+const LiveTVPage = lazy(() => import('./components/LiveTVPage').then(module => ({ default: module.LiveTVPage })));
+const ImpactStoriesPage = lazy(() => import('./components/ImpactStoriesPage').then(module => ({ default: module.ImpactStoriesPage })));
+const ImpactStoryPage = lazy(() => import('./components/ImpactStoryPage').then(module => ({ default: module.ImpactStoryPage })));
+const ExplorePage = lazy(() => import('./components/ExplorePage').then(module => ({ default: module.ExplorePage })));
+const AdminPanel = lazy(() => import('./components/AdminPanel').then(module => ({ default: module.AdminPanel })));
+const DashboardPage = lazy(() => import('./components/DashboardPage').then(module => ({ default: module.DashboardPage })));
+const ER100Section = lazy(() => import('./components/ER100Section').then(module => ({ default: module.ER100Section })));
+const TranslatorsNetworkPage = lazy(() => import('./components/TranslatorsNetworkPage').then(module => ({ default: module.TranslatorsNetworkPage })));
+const PartyInitiativePage = lazy(() => import('./components/PartyInitiativePage').then(module => ({ default: module.PartyInitiativePage })));
+const MarketplacePage = lazy(() => import('./components/MarketplacePage').then(module => ({ default: module.MarketplacePage })));
+const AboutPage = lazy(() => import('./components/AboutPage').then(module => ({ default: module.AboutPage })));
+const GivePage = lazy(() => import('./components/GivePage').then(module => ({ default: module.GivePage })));
+// Games are small enough or could be lazy loaded too, let's keep them here for now via their parent or lazy load them if they are big.
+// Actually, let's lazy load the games too since they might have assets.
+const ColorMeGame = lazy(() => import('./components/games/ColorMeGame').then(module => ({ default: module.ColorMeGame })));
+const PuzzleGame = lazy(() => import('./components/games/PuzzleGame').then(module => ({ default: module.PuzzleGame })));
+const CrosswordGame = lazy(() => import('./components/games/CrosswordGame').then(module => ({ default: module.CrosswordGame })));
+const BibleQuiz = lazy(() => import('./components/games/BibleQuiz').then(module => ({ default: module.BibleQuiz })));
+const WordSearchGame = lazy(() => import('./components/games/WordSearchGame').then(module => ({ default: module.WordSearchGame })));
+const MazeGame = lazy(() => import('./components/games/MazeGame').then(module => ({ default: module.MazeGame })));
+const PaymentSuccessPage = lazy(() => import('./pages/PaymentSuccess').then(module => ({ default: module.PaymentSuccessPage })));
+const PaymentFailurePage = lazy(() => import('./pages/PaymentFailure').then(module => ({ default: module.PaymentFailurePage })));
+const BlueEliteStaffPage = lazy(() => import('./components/BlueEliteStaffPage').then(module => ({ default: module.BlueEliteStaffPage })));
+
+// Simple Loading Component
+const PageLoader = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+  </div>
+);
 
 function AppContent() {
   const { user, isAuthenticated, trackPageVisit } = useAuth();
@@ -204,132 +215,151 @@ function AppContent() {
   const renderPage = () => {
     // If a game is selected, show the game
     if (currentPage === 'games' && currentGame) {
-      switch (currentGame) {
-        case 'color-me':
-          return <ColorMeGame onBack={handleBackToGames} />;
-        case 'puzzle':
-          return <PuzzleGame onBack={handleBackToGames} />;
-        case 'crossword':
-          return <CrosswordGame onBack={handleBackToGames} />;
-        case 'bible-quiz':
-          return <BibleQuiz onBack={handleBackToGames} />;
-        case 'word-search':
-          return <WordSearchGame onBack={handleBackToGames} />;
-        case 'maze':
-          return <MazeGame onBack={handleBackToGames} />;
-        default:
-          return <GamesPage onGameSelect={handleGameSelect} />;
-      }
+      return (
+        <Suspense fallback={<PageLoader />}>
+          {(() => {
+            switch (currentGame) {
+              case 'color-me':
+                return <ColorMeGame onBack={handleBackToGames} />;
+              case 'puzzle':
+                return <PuzzleGame onBack={handleBackToGames} />;
+              case 'crossword':
+                return <CrosswordGame onBack={handleBackToGames} />;
+              case 'bible-quiz':
+                return <BibleQuiz onBack={handleBackToGames} />;
+              case 'word-search':
+                return <WordSearchGame onBack={handleBackToGames} />;
+              case 'maze':
+                return <MazeGame onBack={handleBackToGames} />;
+              default:
+                return <GamesPage onGameSelect={handleGameSelect} />;
+            }
+          })()}
+        </Suspense>
+      );
     }
 
     // Regular page routing
-    switch (currentPage) {
-      case 'home':
-        return (
-          <>
-            {/* Hero Section with Container */}
-            <div className="container mx-auto px-4 sm:px-6 pt-24 md:pt-[144px] pr-[27px] pl-[27px]">
-              <KidspirationHero
-                onAuthClick={() => setShowAuthModal(true)}
-                onNavigate={handleNavigate}
-              />
-            </div>
+    return (
+      <Suspense fallback={<PageLoader />}>
+        {(() => {
+          switch (currentPage) {
+            case 'home':
+              return (
+                <>
+                  <div className="container mx-auto px-4 sm:px-6 pt-24 md:pt-[144px] pr-[27px] pl-[27px]">
+                    <KidspirationHero
+                      onAuthClick={() => setShowAuthModal(true)}
+                      onNavigate={handleNavigate}
+                    />
+                  </div>
 
-            <HomeQuickActions
-              onNavigate={handleNavigate}
-              onAuthClick={() => setShowAuthModal(true)}
-            />
+                  <HomeQuickActions
+                    onNavigate={handleNavigate}
+                    onAuthClick={() => setShowAuthModal(true)}
+                  />
 
-            {/* Full Width Sections */}
-            <GlowfestSection onNavigate={handleNavigate} />
-            <JoinExploreSection
-              onAuthClick={() => setShowAuthModal(true)}
-              onNavigate={handleNavigate}
-            />
-          </>
-        );
+                  <GlowfestSection onNavigate={handleNavigate} />
+                  <JoinExploreSection
+                    onAuthClick={() => setShowAuthModal(true)}
+                    onNavigate={handleNavigate}
+                  />
+                </>
+              );
 
-      case 'about':
-        return <AboutPage onNavigate={handleNavigate} />;
+            case 'about':
+              return <AboutPage onNavigate={handleNavigate} />;
 
-      case 'games':
-        return <GamesPage onGameSelect={handleGameSelect} />;
+            case 'games':
+              return <GamesPage onGameSelect={handleGameSelect} />;
 
-      case 'live-tv':
-        return <LiveTVPage />;
+            case 'live-tv':
+              return <LiveTVPage />;
 
-      case 'impact-stories':
-        // If a story is selected, show the individual story page
-        if (currentStoryId !== null) {
-          return (
-            <ImpactStoryPage
-              storyId={currentStoryId}
-              onBack={handleBackToStories}
-              onViewStory={handleViewStory}
-            />
-          );
-        }
-        return (
-          <ImpactStoriesPage
-            onViewStory={handleViewStory}
-            onAuthClick={() => setShowAuthModal(true)}
-          />
-        );
+            case 'impact-stories':
+              if (currentStoryId !== null) {
+                return (
+                  <ImpactStoryPage
+                    storyId={currentStoryId}
+                    onBack={handleBackToStories}
+                    onViewStory={handleViewStory}
+                  />
+                );
+              }
+              return (
+                <ImpactStoriesPage
+                  onViewStory={handleViewStory}
+                  onAuthClick={() => setShowAuthModal(true)}
+                />
+              );
 
-      case 'explore':
-        return <ExplorePage onNavigate={handleNavigate} />;
+            case 'explore':
+              return <ExplorePage onNavigate={handleNavigate} />;
 
-      case 'dashboard':
-        // Only authenticated users can access dashboard
-        if (isAuthenticated) {
-          return <DashboardPage onNavigate={handleNavigate} />;
-        } else {
-          handleNavigate('home');
-          toast.error('Please login to access your dashboard.', { duration: 3000 });
-          return null;
-        }
+            case 'dashboard':
+              if (isAuthenticated) {
+                return <DashboardPage onNavigate={handleNavigate} />;
+              } else {
+                // This side effect might be better handled in useEffect, but for now:
+                // We return null to avoid rendering anything while redirecting/toasting
+                // To avoid "cannot update while rendering" warnings, strict mode checks.
+                // Better to just show placeholder or redirect logic elsewhere.
+                // Keeping original logic structure but ensuring no render loop.
+                setTimeout(() => {
+                  if (currentPage === 'dashboard' && !isAuthenticated) {
+                    handleNavigate('home');
+                    toast.error('Please login to access your dashboard.', { duration: 3000 });
+                  }
+                }, 0);
+                return <PageLoader />;
+              }
 
-      case 'payment/success':
-        return <PaymentSuccessPage onNavigate={handleNavigate} />;
+            case 'payment/success':
+              return <PaymentSuccessPage onNavigate={handleNavigate} />;
 
-      case 'payment/failure':
-        return <PaymentFailurePage onNavigate={handleNavigate} />;
+            case 'payment/failure':
+              return <PaymentFailurePage onNavigate={handleNavigate} />;
 
-      case 'admin':
-        // Only admins can access this page
-        if (user?.type === 'admin') {
-          return <AdminPanel />;
-        } else {
-          handleNavigate('home');
-          toast.error('Access denied. Admin only.', { duration: 3000 });
-          return null;
-        }
+            case 'admin':
+              if (user?.type === 'admin') {
+                return <AdminPanel />;
+              } else {
+                setTimeout(() => {
+                  if (currentPage === 'admin' && user?.type !== 'admin') {
+                    handleNavigate('home');
+                    toast.error('Access denied. Admin only.', { duration: 3000 });
+                  }
+                }, 0);
+                return <PageLoader />;
+              }
 
-      // Program pages
-      case 'er100':
-        return <ER100Section onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
+            case 'er100':
+              return <ER100Section onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
 
-      case 'translators':
-        return <TranslatorsNetworkPage onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
+            case 'translators':
+              return <TranslatorsNetworkPage onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
 
-      case 'glowfest':
-        return <GlowfestPage onBack={() => handleNavigate('home')} onAuthClick={() => setShowAuthModal(true)} />;
+            case 'glowfest':
+              return <GlowfestPage onBack={() => handleNavigate('home')} onAuthClick={() => setShowAuthModal(true)} />;
 
-      case 'party':
-        return <PartyInitiativePage onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
+            case 'party':
+              return <PartyInitiativePage onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
 
-      case 'marketplace':
-        return <MarketplacePage onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
+            case 'marketplace':
+              return <MarketplacePage onBack={() => handleNavigate('explore')} onAuthClick={() => setShowAuthModal(true)} />;
 
-      case 'give':
-        return <GivePage onBack={() => handleNavigate('home')} onNavigate={handleNavigate} />;
+            case 'give':
+              return <GivePage onBack={() => handleNavigate('home')} onNavigate={handleNavigate} />;
 
-      case 'give/blueelitestaff':
-        return <BlueEliteStaffPage onBack={() => handleNavigate('give')} onNavigate={handleNavigate} />;
+            case 'give/blueelitestaff':
+              return <BlueEliteStaffPage onBack={() => handleNavigate('give')} onNavigate={handleNavigate} />;
 
-      default:
-        return null;
-    }
+            default:
+              return null;
+          }
+        })()}
+      </Suspense>
+    );
   };
 
   return (
