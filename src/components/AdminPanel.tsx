@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Users, Activity, TrendingUp, Eye, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { projectId, publicAnonKey, functionName } from '../utils/supabase/info';
@@ -152,20 +152,20 @@ export function AdminPanel() {
     }
   };
 
-  const filteredUsers = users.filter(user =>
+  const filteredUsers = useMemo(() => users.filter(user =>
     searchQuery === '' ||
     user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.username.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ), [users, searchQuery]);
 
-  const filteredBlueElite = blueEliteData.filter(item =>
+  const filteredBlueElite = useMemo(() => blueEliteData.filter(item =>
     searchQuery === '' ||
     item.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.zone.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ), [blueEliteData, searchQuery]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-32 pb-20">
