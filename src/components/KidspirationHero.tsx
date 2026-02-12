@@ -114,123 +114,109 @@ export function KidspirationHero({
   };
 
   return (
-    <section className="relative bg-white rounded-3xl overflow-hidden shadow-2xl">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentSlide}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="relative"
-        >
-          {/* Desktop Layout */}
-          <div className="hidden lg:grid lg:grid-cols-2">
-            <div className="relative w-full aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
-              <ImageWithFallback
-                src={slides[currentSlide].image}
-                alt={slides[currentSlide].title}
-                className="w-full h-full object-contain"
-              />
-            </div>
-
-            <div className={`bg-gradient-to-br ${slides[currentSlide].gradient} p-12 xl:p-16 flex flex-col justify-center items-start`}>
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="space-y-8"
-              >
-                <h1 className="text-white leading-none max-w-xl font-bold text-[40px]">
-                  {slides[currentSlide].title}
-                </h1>
-
-                <div className="space-y-3">
-                  <p className="text-white text-2xl xl:text-3xl font-bold text-[27px]">
-                    {slides[currentSlide].subtitle}
-                  </p>
-                  <p className="text-white text-xl xl:text-2xl font-medium opacity-90">
-                    {slides[currentSlide].description}
-                  </p>
+    <section className="relative bg-white rounded-3xl overflow-hidden shadow-2xl h-[600px] lg:h-[500px]">
+      <AnimatePresence>
+        {slides.map((slide, index) => (
+          index === currentSlide && (
+            <motion.div
+              key={slide.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, zIndex: 1 }}
+              exit={{ opacity: 0, zIndex: 0 }}
+              transition={{ duration: 0.8 }} // Slower transition for smoothness
+              className="absolute inset-0 w-full h-full"
+            >
+              {/* Desktop Layout */}
+              <div className="hidden lg:grid lg:grid-cols-2 h-full">
+                <div className="relative w-full h-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                  <ImageWithFallback
+                    src={slide.image}
+                    alt={slide.title}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
 
-                <div className="space-y-8">
-                  <div className="flex flex-wrap gap-4">
-                    <button
-                      onClick={() => handleCTA(slides[currentSlide].ctaAction)}
-                      className={`bg-white/90 backdrop-blur-sm border-2 border-white/50 px-6 py-3 rounded-full text-base font-bold hover:shadow-2xl hover:bg-white transform hover:scale-105 transition-all text-transparent bg-clip-text bg-gradient-to-r ${slides[currentSlide].gradient.replace(/from-(\w+)-(\d+)/, "from-$1-800").replace(/via-(\w+)-(\d+)/, "via-$1-700").replace(/to-(\w+)-(\d+)/, "to-$1-700")}`}
-                    >
-                      {slides[currentSlide].ctaText}
-                    </button>
+                <div className={`bg-gradient-to-br ${slide.gradient} p-12 xl:p-16 flex flex-col justify-center items-start h-full`}>
+                  <div className="space-y-8">
+                    <h1 className="text-white leading-none max-w-xl font-bold text-[40px]">
+                      {slide.title}
+                    </h1>
 
-                  </div>
+                    <div className="space-y-3">
+                      <p className="text-white text-2xl xl:text-3xl font-bold text-[27px]">
+                        {slide.subtitle}
+                      </p>
+                      <p className="text-white text-xl xl:text-2xl font-medium opacity-90">
+                        {slide.description}
+                      </p>
+                    </div>
 
-                  <div className="flex gap-6">
-                    <button onClick={prevSlide} className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/30 transition-all border border-white/30">
-                      <ChevronLeft className="w-6 h-6 text-white" />
-                    </button>
-                    <button onClick={nextSlide} className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/30 transition-all border border-white/30">
-                      <ChevronRight className="w-6 h-6 text-white" />
-                    </button>
+                    <div className="space-y-8">
+                      <div className="flex flex-wrap gap-4">
+                        <button
+                          onClick={() => handleCTA(slide.ctaAction)}
+                          className={`bg-white/90 backdrop-blur-sm border-2 border-white/50 px-6 py-3 rounded-full text-base font-bold hover:shadow-2xl hover:bg-white transform hover:scale-105 transition-all text-transparent bg-clip-text bg-gradient-to-r ${slide.gradient.replace(/from-(\w+)-(\d+)/, "from-$1-800").replace(/via-(\w+)-(\d+)/, "via-$1-700").replace(/to-(\w+)-(\d+)/, "to-$1-700")}`}
+                        >
+                          {slide.ctaText}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Mobile Layout */}
-          <div className="lg:hidden flex flex-col relative">
-            <div className="relative w-full aspect-square flex-shrink-0 bg-gray-100 flex items-center justify-center">
-              <ImageWithFallback
-                src={slides[currentSlide].image}
-                alt={slides[currentSlide].title}
-                className="w-full h-full object-contain"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
-            </div>
-
-            <div className={`bg-gradient-to-br ${slides[currentSlide].gradient} p-5 pb-16 flex flex-col justify-between flex-shrink-0 relative`}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="space-y-3"
-              >
-                <h1 className="text-white leading-tight font-bold text-[24px]">
-                  {slides[currentSlide].title}
-                </h1>
-
-                <div className="space-y-1">
-                  <p className="text-white font-bold text-[16px]">
-                    {slides[currentSlide].subtitle}
-                  </p>
-                  <p className="text-white opacity-90 text-[16px]">
-                    {slides[currentSlide].description}
-                  </p>
-                </div>
-
-                <div className="pt-2 flex flex-wrap gap-2">
-                  <button
-                    onClick={() => handleCTA(slides[currentSlide].ctaAction)}
-                    className={`bg-white/90 backdrop-blur-sm border-2 border-white/50 px-4 py-2 rounded-full font-bold hover:shadow-xl hover:bg-white transform hover:scale-105 transition-all text-transparent bg-clip-text bg-gradient-to-r ${slides[currentSlide].gradient.replace(/from-(\w+)-(\d+)/, "from-$1-800").replace(/via-(\w+)-(\d+)/, "via-$1-700").replace(/to-(\w+)-(\d+)/, "to-$1-700")}`}
-                  >
-                    {slides[currentSlide].ctaText}
-                  </button>
-                </div>
-              </motion.div>
-
-              <div className="absolute bottom-5 right-5 flex gap-2">
-                <button onClick={prevSlide} className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
-                  <ChevronLeft className="w-5 h-5 text-white" />
-                </button>
-                <button onClick={nextSlide} className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
-                  <ChevronRight className="w-5 h-5 text-white" />
-                </button>
               </div>
-            </div>
-          </div>
-        </motion.div>
+
+              {/* Mobile Layout */}
+              <div className="lg:hidden flex flex-col relative h-full">
+                <div className="relative w-full h-1/2 flex-shrink-0 bg-gray-100 flex items-center justify-center">
+                  <ImageWithFallback
+                    src={slide.image}
+                    alt={slide.title}
+                    className="w-full h-full object-contain"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
+                </div>
+
+                <div className={`bg-gradient-to-br ${slide.gradient} p-5 pb-16 flex flex-col justify-between flex-grow relative`}>
+                  <div className="space-y-3">
+                    <h1 className="text-white leading-tight font-bold text-[24px]">
+                      {slide.title}
+                    </h1>
+
+                    <div className="space-y-1">
+                      <p className="text-white font-bold text-[16px]">
+                        {slide.subtitle}
+                      </p>
+                      <p className="text-white opacity-90 text-[16px]">
+                        {slide.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleCTA(slide.ctaAction)}
+                        className={`bg-white/90 backdrop-blur-sm border-2 border-white/50 px-4 py-2 rounded-full font-bold hover:shadow-xl hover:bg-white transform hover:scale-105 transition-all text-transparent bg-clip-text bg-gradient-to-r ${slide.gradient.replace(/from-(\w+)-(\d+)/, "from-$1-800").replace(/via-(\w+)-(\d+)/, "via-$1-700").replace(/to-(\w+)-(\d+)/, "to-$1-700")}`}
+                      >
+                        {slide.ctaText}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )
+        ))}
       </AnimatePresence>
+
+      {/* Navigation Controls - Absolute on top of slides */}
+      <div className="absolute bottom-5 right-5 lg:bottom-12 lg:right-12 z-20 flex gap-4">
+        <button onClick={prevSlide} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/30 transition-all border border-white/30">
+          <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+        </button>
+        <button onClick={nextSlide} className="w-10 h-10 lg:w-12 lg:h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/30 transition-all border border-white/30">
+          <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+        </button>
+      </div>
+
     </section>
   );
 }
