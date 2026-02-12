@@ -83,14 +83,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
             </button>
           )}
           <div className="flex gap-2">
-            {onNavigate && (
-              <button
-                onClick={() => onNavigate('give/old')}
-                className="text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
-              >
-                View Previous Layout
-              </button>
-            )}
+            {/* View Previous Layout button removed as per user request */}
           </div>
         </div>
 
