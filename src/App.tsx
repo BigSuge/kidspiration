@@ -395,7 +395,7 @@ function AppContent() {
         userTitle={user?.title}
       />
 
-      <ScrollToTopButton />
+      {currentPage !== 'give' && <ScrollToTopButton />}
 
       <Toaster position="top-center" richColors />
     </div>
