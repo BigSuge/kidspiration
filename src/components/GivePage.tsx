@@ -120,16 +120,16 @@ export function GivePage({ onBack }: GivePageProps) {
 
           {/* Image Side (Left on Desktop, Top on Mobile) */}
           <div className="relative h-[400px] lg:h-auto lg:min-h-[500px] bg-gray-100 overflow-hidden group">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="popLayout">
               <motion.img
                 key={currentSlide}
                 src={FEATURED_INITIATIVE.slides[currentSlide]}
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.7 }}
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
                 alt={`Slide ${currentSlide + 1}`}
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
               />
             </AnimatePresence>
 

@@ -1,15 +1,9 @@
 import image_7b2f5724360e58b47e5c818f7e6408804fbfdb34 from 'figma:asset/7b2f5724360e58b47e5c818f7e6408804fbfdb34.png';
-import image_57a8d0f946d1db1c7324aeca20477e476b6a49d9 from 'figma:asset/57a8d0f946d1db1c7324aeca20477e476b6a49d9.png';
 import image_7ee397727c1451e714b7b75dc34f315f393f5955 from 'figma:asset/7ee397727c1451e714b7b75dc34f315f393f5955.png';
-import image_5b8918d244f3d9170f1b217e173a624af722400b from 'figma:asset/5b8918d244f3d9170f1b217e173a624af722400b.png';
 import image_0f9a8ae30e33c625a31a88a9c4552868a558fbdf from 'figma:asset/0f9a8ae30e33c625a31a88a9c4552868a558fbdf.png';
 import image_0a7cbf864b8e6de8cbd28879a11b16d402dba0e9 from 'figma:asset/0a7cbf864b8e6de8cbd28879a11b16d402dba0e9.png';
 import image_4f9488c7a65b0ab8875c64ffff889f8f25e9d7d6 from 'figma:asset/4f9488c7a65b0ab8875c64ffff889f8f25e9d7d6.png';
-import image_df5ddd2e48a69f07c2a5ea948154814462659579 from 'figma:asset/df5ddd2e48a69f07c2a5ea948154814462659579.png';
-import image_a54fe49f263085b7799f38fcfdf3d3186f2ad9e3 from 'figma:asset/a54fe49f263085b7799f38fcfdf3d3186f2ad9e3.png';
-import image_e7506fa59ace7795db96662da684683e9316c803 from 'figma:asset/image_e7506fa59ace7795db96662da684683e9316c803.png';
-import image_3b530c062a1e4a0287ce00ec4e7549cbd8c41f1b from 'figma:asset/3b530c062a1e4a0287ce00ec4e7549cbd8c41f1b.png';
-import image_bb07a1601daf44f77a41d1ac57e45dc5ac294a33 from 'figma:asset/bb07a1601daf44f77a41d1ac57e45dc5ac294a33.png';
+
 import { useState, useEffect } from "react";
 import {
   ChevronLeft,
@@ -115,15 +109,15 @@ export function KidspirationHero({
 
   return (
     <section className="relative bg-white rounded-3xl overflow-hidden shadow-2xl h-[600px] lg:h-[500px]">
-      <AnimatePresence>
+      <AnimatePresence mode="popLayout">
         {slides.map((slide, index) => (
           index === currentSlide && (
             <motion.div
               key={slide.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, zIndex: 1 }}
-              exit={{ opacity: 0, zIndex: 0 }}
-              transition={{ duration: 0.8 }} // Slower transition for smoothness
+              initial={{ x: "100%" }}
+              animate={{ x: 0, zIndex: 1 }}
+              exit={{ x: "-100%", zIndex: 0 }}
+              transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
               className="absolute inset-0 w-full h-full"
             >
               {/* Desktop Layout */}
