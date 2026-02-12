@@ -27,6 +27,7 @@ const PartyInitiativePage = lazy(() => import('./components/PartyInitiativePage'
 const MarketplacePage = lazy(() => import('./components/MarketplacePage').then(module => ({ default: module.MarketplacePage })));
 const AboutPage = lazy(() => import('./components/AboutPage').then(module => ({ default: module.AboutPage })));
 const GivePage = lazy(() => import('./components/GivePage').then(module => ({ default: module.GivePage })));
+const GivePageOld = lazy(() => import('./components/GivePageOld').then(module => ({ default: module.GivePageOld })));
 // Games are small enough or could be lazy loaded too, let's keep them here for now via their parent or lazy load them if they are big.
 // Actually, let's lazy load the games too since they might have assets.
 const ColorMeGame = lazy(() => import('./components/games/ColorMeGame').then(module => ({ default: module.ColorMeGame })));
@@ -350,6 +351,9 @@ function AppContent() {
 
             case 'give':
               return <GivePage onBack={() => handleNavigate('home')} onNavigate={handleNavigate} />;
+
+            case 'give/old':
+              return <GivePageOld onBack={() => handleNavigate('give')} onNavigate={handleNavigate} />;
 
             case 'give/blueelitestaff':
               return <BlueEliteStaffPage onBack={() => handleNavigate('give')} onNavigate={handleNavigate} />;
