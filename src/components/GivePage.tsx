@@ -67,20 +67,24 @@ export function GivePage({ onBack }: GivePageProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [direction, setDirection] = useState(1);
 
   // Auto-play carousel
   useEffect(() => {
     const timer = setInterval(() => {
+      setDirection(1);
       setCurrentSlide((prev) => (prev + 1) % FEATURED_INITIATIVE.slides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [currentSlide]);
 
   const nextSlide = () => {
+    setDirection(1);
     setCurrentSlide((prev) => (prev + 1) % FEATURED_INITIATIVE.slides.length);
   };
 
   const prevSlide = () => {
+    setDirection(-1);
     setCurrentSlide((prev) => (prev - 1 + FEATURED_INITIATIVE.slides.length) % FEATURED_INITIATIVE.slides.length);
   };
 
@@ -120,16 +124,17 @@ export function GivePage({ onBack }: GivePageProps) {
 
           {/* Image Side (Left on Desktop, Top on Mobile) */}
           <div className="relative h-[400px] lg:h-auto lg:min-h-[500px] bg-gray-100 overflow-hidden group">
-            <AnimatePresence>
+            <AnimatePresence mode="wait" custom={direction}>
               <motion.img
                 key={currentSlide}
+                custom={direction}
                 src={FEATURED_INITIATIVE.slides[currentSlide]}
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "-100%" }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
+                initial={{ x: direction === 1 ? "100%" : "-100%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: direction === 1 ? "-100%" : "100%", opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
                 alt={`Slide ${currentSlide + 1}`}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="w-full h-full object-cover"
               />
             </AnimatePresence>
 
@@ -138,7 +143,7 @@ export function GivePage({ onBack }: GivePageProps) {
               {FEATURED_INITIATIVE.slides.map((_, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setCurrentSlide(idx)}
+                  onClick={() => { setDirection(idx > currentSlide ? 1 : -1); setCurrentSlide(idx); }}
                   className={`w-2.5 h-2.5 rounded-full transition-all shadow-lg ${currentSlide === idx ? 'bg-white w-8' : 'bg-white/50 hover:bg-white/80'}`}
                 />
               ))}
