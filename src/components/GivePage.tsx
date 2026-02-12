@@ -11,6 +11,16 @@ interface GivePageProps {
 
 const INITIATIVES = [
   {
+    id: "last-child",
+    title: "Last Child Challenge",
+    description: "Ensuring every child in every nation receives the Gospel.",
+    icon: <Sparkles className="w-8 h-8 text-purple-500" />,
+    color: "bg-purple-500",
+    gradient: "from-purple-500 to-pink-500",
+    image: "/images/initiatives/last-child.png",
+    featured: true
+  },
+  {
     id: "er100",
     title: "ER100",
     description: "Reach 100 children with the Gospel through the C.O.M.P.L.E.T.E mandate.",
@@ -18,15 +28,6 @@ const INITIATIVES = [
     color: "bg-blue-500",
     gradient: "from-blue-500 to-cyan-500",
     image: "/images/initiatives/er100.png"
-  },
-  {
-    id: "last-child",
-    title: "Last Child Challenge",
-    description: "Ensuring every child in every nation receives the Gospel.",
-    icon: <Sparkles className="w-8 h-8 text-purple-500" />,
-    color: "bg-purple-500",
-    gradient: "from-purple-500 to-pink-500",
-    image: "/images/initiatives/last-child.png"
   },
   {
     id: "party",
@@ -57,7 +58,7 @@ const INITIATIVES = [
   }
 ];
 
-export function GivePage({ onBack, onNavigate }: GivePageProps) {
+export function GivePage({ onBack }: GivePageProps) {
   const [selectedInitiative, setSelectedInitiative] = useState<typeof INITIATIVES[0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
@@ -82,16 +83,6 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
               <span>Back</span>
             </button>
           )}
-          <div className="flex gap-2">
-            {onNavigate && (
-              <button
-                onClick={() => onNavigate('give/old')}
-                className="text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
-              >
-                View Previous Layout
-              </button>
-            )}
-          </div>
         </div>
 
         <div className="text-center mb-12">
@@ -112,8 +103,16 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full border border-gray-100"
+              className={`relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full border ${initiative.featured ? 'border-purple-500 ring-4 ring-purple-500/10 scale-[1.02]' : 'border-gray-100'
+                }`}
             >
+              {initiative.featured && (
+                <div className="absolute top-4 right-4 z-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" />
+                  FEATURED
+                </div>
+              )}
+
               {/* Image Section (Top) */}
               <div className="h-56 relative overflow-hidden group cursor-pointer" onClick={() => setZoomedImage(initiative.image)}>
                 <img
@@ -131,7 +130,7 @@ export function GivePage({ onBack, onNavigate }: GivePageProps) {
 
               {/* Content Section (Middle & Bottom) */}
               <div className="p-6 flex flex-col flex-grow items-center text-center">
-                <div className="mb-4 p-3 bg-gray-50 rounded-2xl">
+                <div className={`mb-4 p-3 rounded-2xl ${initiative.featured ? 'bg-purple-50' : 'bg-gray-50'}`}>
                   {initiative.icon}
                 </div>
 
