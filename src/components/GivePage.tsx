@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, Heart, Sparkles, Globe, Gift, Users, ZoomIn, X } from 'lucide-react';
+import { ArrowLeft, Sparkles, Globe, Gift, Users, ZoomIn, Heart, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from "./ui/button";
 import { UnifiedSponsorshipModal } from './UnifiedSponsorshipModal';
 
@@ -9,17 +9,21 @@ interface GivePageProps {
   onNavigate?: (page: string) => void;
 }
 
-const INITIATIVES = [
-  {
-    id: "last-child",
-    title: "Last Child Challenge",
-    description: "Ensuring every child in every nation receives the Gospel.",
-    icon: <Sparkles className="w-8 h-8 text-purple-500" />,
-    color: "bg-purple-500",
-    gradient: "from-purple-500 to-pink-500",
-    image: "/images/initiatives/last-child.png",
-    featured: true
-  },
+const FEATURED_INITIATIVE = {
+  id: "last-child",
+  title: "The Last Child Challenge",
+  description: "We are on the race to reach the last child with the Healing to the Nations Magazine for Kids.",
+  icon: <Sparkles className="w-8 h-8 text-purple-500" />,
+  color: "bg-purple-500",
+  gradient: "from-purple-500 to-pink-500",
+  slides: [
+    "/images/featured/last-child/slide1.png",
+    "/images/featured/last-child/slide2.png",
+    "/images/featured/last-child/slide3.png"
+  ]
+};
+
+const OTHER_INITIATIVES = [
   {
     id: "er100",
     title: "ER100",
@@ -59,11 +63,28 @@ const INITIATIVES = [
 ];
 
 export function GivePage({ onBack }: GivePageProps) {
-  const [selectedInitiative, setSelectedInitiative] = useState<typeof INITIATIVES[0] | null>(null);
+  const [selectedInitiative, setSelectedInitiative] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  const handleSponsorClick = (initiative: typeof INITIATIVES[0]) => {
+  // Auto-play carousel
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % FEATURED_INITIATIVE.slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % FEATURED_INITIATIVE.slides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + FEATURED_INITIATIVE.slides.length) % FEATURED_INITIATIVE.slides.length);
+  };
+
+  const handleSponsorClick = (initiative: any) => {
     setSelectedInitiative(initiative);
     setIsModalOpen(true);
   };
@@ -91,28 +112,98 @@ export function GivePage({ onBack }: GivePageProps) {
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Your sponsorship helps us bring hope, joy, and the Gospel to children around the world.
-            Select an initiative below to get started.
           </p>
+        </div>
+
+        {/* Featured Initiative Carousel Section - Split Layout */}
+        <div className="mb-16 rounded-3xl overflow-hidden shadow-2xl bg-white grid grid-cols-1 lg:grid-cols-2">
+
+          {/* Image Side (Left on Desktop, Top on Mobile) */}
+          <div className="relative h-[400px] lg:h-auto lg:min-h-[500px] bg-gray-100 overflow-hidden group">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={currentSlide}
+                src={FEATURED_INITIATIVE.slides[currentSlide]}
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.7 }}
+                alt={`Slide ${currentSlide + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </AnimatePresence>
+
+            {/* Dots Overlay on Image */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+              {FEATURED_INITIATIVE.slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all shadow-lg ${currentSlide === idx ? 'bg-white w-8' : 'bg-white/50 hover:bg-white/80'}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Content Side (Right on Desktop, Bottom on Mobile) */}
+          <div className="relative bg-gradient-to-br from-purple-600 to-pink-600 p-8 md:p-12 lg:p-16 flex flex-col justify-center text-white">
+
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-sm font-bold mb-6 border border-white/20 shadow-sm">
+                <Sparkles className="w-4 h-4" />
+                FEATURED CAMPAIGN
+              </div>
+
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 leading-tight">
+                {FEATURED_INITIATIVE.title}
+              </h2>
+
+              <p className="text-lg md:text-xl text-purple-100 mb-8 max-w-xl leading-relaxed">
+                {FEATURED_INITIATIVE.description}
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                <Button
+                  onClick={() => handleSponsorClick(FEATURED_INITIATIVE)}
+                  className="px-8 py-6 text-lg font-bold bg-white text-purple-600 hover:bg-purple-50 hover:scale-105 transition-all shadow-xl border-none"
+                >
+                  Sponsor Now
+                </Button>
+              </div>
+
+              {/* Navigation Controls */}
+              <div className="flex gap-4 mt-12">
+                <button
+                  onClick={prevSlide}
+                  className="w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center transition-all border border-white/20"
+                >
+                  <ChevronLeft className="w-6 h-6 text-white" />
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className="w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center transition-all border border-white/20"
+                >
+                  <ChevronRight className="w-6 h-6 text-white" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold text-gray-800">More Ways to Give</h3>
         </div>
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {INITIATIVES.map((initiative, index) => (
+          {OTHER_INITIATIVES.map((initiative, index) => (
             <motion.div
               key={initiative.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className={`relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full border ${initiative.featured ? 'border-purple-500 ring-4 ring-purple-500/10 scale-[1.02]' : 'border-gray-100'
-                }`}
+              className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full border border-gray-100"
             >
-              {initiative.featured && (
-                <div className="absolute top-4 right-4 z-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" />
-                  FEATURED
-                </div>
-              )}
-
               {/* Image Section (Top) */}
               <div className="h-56 relative overflow-hidden group cursor-pointer" onClick={() => setZoomedImage(initiative.image)}>
                 <img
@@ -130,7 +221,7 @@ export function GivePage({ onBack }: GivePageProps) {
 
               {/* Content Section (Middle & Bottom) */}
               <div className="p-6 flex flex-col flex-grow items-center text-center">
-                <div className={`mb-4 p-3 rounded-2xl ${initiative.featured ? 'bg-purple-50' : 'bg-gray-50'}`}>
+                <div className="mb-4 p-3 bg-gray-50 rounded-2xl">
                   {initiative.icon}
                 </div>
 
