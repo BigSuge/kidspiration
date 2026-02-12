@@ -3,7 +3,6 @@ import image_7ee397727c1451e714b7b75dc34f315f393f5955 from 'figma:asset/7ee39772
 import image_0f9a8ae30e33c625a31a88a9c4552868a558fbdf from 'figma:asset/0f9a8ae30e33c625a31a88a9c4552868a558fbdf.png';
 import image_0a7cbf864b8e6de8cbd28879a11b16d402dba0e9 from 'figma:asset/0a7cbf864b8e6de8cbd28879a11b16d402dba0e9.png';
 import image_4f9488c7a65b0ab8875c64ffff889f8f25e9d7d6 from 'figma:asset/4f9488c7a65b0ab8875c64ffff889f8f25e9d7d6.png';
-
 import { useState, useEffect } from "react";
 import {
   ChevronLeft,
@@ -109,7 +108,7 @@ export function KidspirationHero({
 
   return (
     <section className="relative bg-white rounded-3xl overflow-hidden shadow-2xl h-[600px] lg:h-[500px]">
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {slides.map((slide, index) => (
           index === currentSlide && (
             <motion.div
@@ -117,7 +116,7 @@ export function KidspirationHero({
               initial={{ x: "100%" }}
               animate={{ x: 0, zIndex: 1 }}
               exit={{ x: "-100%", zIndex: 0 }}
-              transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
               className="absolute inset-0 w-full h-full"
             >
               {/* Desktop Layout */}
