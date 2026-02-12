@@ -15,8 +15,8 @@ export function AdminPanel() {
   const [filterType, setFilterType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const [activeTab, setActiveTab] = useState<'users' | 'blue_elite'>('users');
-  const [blueEliteData, setBlueEliteData] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'users' | 'sponsorships'>('users');
+  const [sponsorshipData, setSponsorshipData] = useState<any[]>([]);
 
   useEffect(() => {
     loadAnalytics();
@@ -26,7 +26,7 @@ export function AdminPanel() {
     if (activeTab === 'users') {
       loadUsers();
     } else {
-      loadBlueEliteData();
+      loadSponsorshipData();
     }
   }, [currentPage, filterType, activeTab]);
 
@@ -135,7 +135,7 @@ export function AdminPanel() {
     }
   };
 
-  const loadBlueEliteData = async () => {
+  const loadSponsorshipData = async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -144,9 +144,9 @@ export function AdminPanel() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setBlueEliteData(data || []);
+      setSponsorshipData(data || []);
     } catch (error) {
-      console.error("Error loading blue elite data:", error);
+      console.error("Error loading sponsorship data:", error);
     } finally {
       setLoading(false);
     }
@@ -159,13 +159,16 @@ export function AdminPanel() {
     user.username.toLowerCase().includes(searchQuery.toLowerCase())
   ), [users, searchQuery]);
 
-  const filteredBlueElite = useMemo(() => blueEliteData.filter(item =>
+  const filteredSponsorships = useMemo(() => sponsorshipData.filter(item =>
     searchQuery === '' ||
-    item.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.zone.toLowerCase().includes(searchQuery.toLowerCase())
-  ), [blueEliteData, searchQuery]);
+    item.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.last_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.department?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.zone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.network?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.initiative?.toLowerCase().includes(searchQuery.toLowerCase())
+  ), [sponsorshipData, searchQuery]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-32 pb-20">
@@ -420,7 +423,7 @@ export function AdminPanel() {
         >
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <h2 className="text-gray-900 text-3xl font-bold">
-              {activeTab === 'users' ? 'User Management' : 'Blue Elite Staff Giving'}
+              {activeTab === 'users' ? 'User Management' : 'Sponsorships'}
             </h2>
 
             <div className="flex bg-gray-100 p-1 rounded-xl">
@@ -434,13 +437,13 @@ export function AdminPanel() {
                 Users
               </button>
               <button
-                onClick={() => setActiveTab('blue_elite')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'blue_elite'
+                onClick={() => setActiveTab('sponsorships')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'sponsorships'
                   ? 'bg-white text-gray-900 shadow-sm'
                   : 'text-gray-500 hover:text-gray-900'
                   }`}
               >
-                Staff Giving
+                Sponsorships
               </button>
             </div>
           </div>
@@ -451,7 +454,7 @@ export function AdminPanel() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder={activeTab === 'users' ? "Search users..." : "Search staff..."}
+                placeholder={activeTab === 'users' ? "Search users..." : "Search sponsorships..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#FF6B9D]"
@@ -493,11 +496,11 @@ export function AdminPanel() {
                   ) : (
                     <>
                       <th className="text-left py-3 px-4 text-gray-600">Date</th>
-                      <th className="text-left py-3 px-4 text-gray-600">Title</th>
-                      <th className="text-left py-3 px-4 text-gray-600">Name</th>
-                      <th className="text-left py-3 px-4 text-gray-600">Department</th>
-                      <th className="text-left py-3 px-4 text-gray-600">Church</th>
-                      <th className="text-left py-3 px-4 text-gray-600">Zone</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Initiative</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Sponsor</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Network</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Contact</th>
+                      <th className="text-left py-3 px-4 text-gray-600">Church/Zone</th>
                       <th className="text-left py-3 px-4 text-gray-600">Amount</th>
                       <th className="text-left py-3 px-4 text-gray-600">Status</th>
                     </>
@@ -541,20 +544,32 @@ export function AdminPanel() {
                       ))
                     )
                   ) : (
-                    filteredBlueElite.length === 0 ? (
+                    filteredSponsorships.length === 0 ? (
                       <tr><td colSpan={8} className="text-center py-8 text-gray-500">No records found</td></tr>
                     ) : (
-                      filteredBlueElite.map((item) => (
+                      filteredSponsorships.map((item) => (
                         <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="py-3 px-4 text-gray-600 text-sm">
                             {new Date(item.created_at).toLocaleDateString()}
                           </td>
-                          <td className="py-3 px-4 text-gray-600">{item.title}</td>
-                          <td className="py-3 px-4 font-medium">{item.first_name} {item.last_name}</td>
-                          <td className="py-3 px-4 text-gray-600">{item.department}</td>
-                          <td className="py-3 px-4 text-gray-600">{item.church}</td>
-                          <td className="py-3 px-4 text-gray-600">{item.zone}</td>
-                          <td className="py-3 px-4 text-gray-900 font-semibold">{item.amount.toLocaleString()}</td>
+                          <td className="py-3 px-4 font-medium text-purple-600">{item.initiative || 'General'}</td>
+                          <td className="py-3 px-4">
+                            <div className="font-medium">{item.title} {item.first_name} {item.last_name}</div>
+                          </td>
+                          <td className="py-3 px-4 text-gray-600 text-sm">{item.network || 'Blue Elite Staff'}</td>
+                          <td className="py-3 px-4 text-gray-600 text-xs">
+                            <div className="flex flex-col">
+                              <span>{item.email}</span>
+                              <span>{item.phone}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-gray-600 text-xs">
+                            <div className="flex flex-col">
+                              <span className="font-semibold">{item.church}</span>
+                              <span>{item.zone}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-gray-900 font-semibold">{item.amount?.toLocaleString()}</td>
                           <td className="py-3 px-4">
                             <span className={`px-2 py-1 rounded-full text-xs ${item.status === 'success' || item.status === 'completed'
                               ? 'bg-green-100 text-green-700'
