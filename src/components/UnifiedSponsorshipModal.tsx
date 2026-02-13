@@ -97,15 +97,8 @@ export function UnifiedSponsorshipModal({ isOpen, onClose, initiative, tierInfo 
             // Save to Supabase (using blue_elite_staff_giving table for now as requested, but genericized)
             // We might want to rename this table in the future or add columns if they don't exist.
             // Assuming we are just adding new columns or reusing existing structure.
-            // For now, I will use the table 'blue_elite_staff_giving' and map the fields.
-            // If new columns (email, phone, network, initiative) don't exist, this will fail.
-            // However, since I cannot modify the DB directly, I'm assuming the user will handle or I use available fields.
-            // Wait, I *should* have verified if I can add columns. I can't.
-            // I will assume the table has been updated or I will store extra data in a JSONB field if available,
-            // OR I will just insert what I can and log.
-            // actually, let's just insert and hope the columns were added by the user as per plan?
-            // "Create a new table... or update".
-            // I'll try to insert efficiently.
+            // For now, we will use the table 'blue_elite_staff_giving' and map the fields.
+
 
             const { error: dbError } = await supabase
                 .from('blue_elite_staff_giving')
@@ -217,16 +210,6 @@ export function UnifiedSponsorshipModal({ isOpen, onClose, initiative, tierInfo 
                                                 {TITLES.map(t => <option key={t} value={t}>{t}</option>)}
                                             </select>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-semibold text-gray-700">Phone Number</label>
-                                            <input
-                                                type="tel"
-                                                {...register("phone", { required: "Required" })}
-                                                className="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-purple-200 outline-none"
-                                                placeholder="+1234567890"
-                                            />
-                                        </div>
-                                    </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <label className="text-sm font-semibold text-gray-700">First Name</label>
@@ -253,6 +236,16 @@ export function UnifiedSponsorshipModal({ isOpen, onClose, initiative, tierInfo 
                                             className="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-purple-200 outline-none"
                                             placeholder="john@example.com"
                                         />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-semibold text-gray-700">Phone Number</label>
+                                        <input
+                                            type="tel"
+                                            {...register("phone", { required: "Required" })}
+                                            className="w-full rounded-xl border border-gray-300 p-3 focus:ring-2 focus:ring-purple-200 outline-none"
+                                            placeholder="+1234567890"
+                                        />
+                                        </div>
                                     </div>
                                 </div>
 
