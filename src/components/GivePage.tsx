@@ -19,7 +19,8 @@ const FEATURED_INITIATIVE = {
   slides: [
     "/images/featured/last-child/slide1.png",
     "/images/featured/last-child/slide2.png",
-    "/images/featured/last-child/slide3.png"
+    "/images/featured/last-child/slide3.png",
+    "/images/featured/last-child/slide4.jpg"
   ]
 };
 
