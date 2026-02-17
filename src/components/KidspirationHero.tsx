@@ -1,8 +1,9 @@
 import image_7b2f5724360e58b47e5c818f7e6408804fbfdb34 from '../assets/7b2f5724360e58b47e5c818f7e6408804fbfdb34.png';
 import image_7ee397727c1451e714b7b75dc34f315f393f5955 from '../assets/7ee397727c1451e714b7b75dc34f315f393f5955.png';
-import image_0f9a8ae30e33c625a31a88a9c4552868a558fbdf from '../assets/0f9a8ae30e33c625a31a88a9c4552868a558fbdf.png';
+import image_0f9a8ae30e33c625a31a88a9c4552868a558fbdf from '../assets/last_child.webp';
 import image_0a7cbf864b8e6de8cbd28879a11b16d402dba0e9 from '../assets/0a7cbf864b8e6de8cbd28879a11b16d402dba0e9.png';
-import image_4f9488c7a65b0ab8875c64ffff889f8f25e9d7d6 from '../assets/4f9488c7a65b0ab8875c64ffff889f8f25e9d7d6.png';
+import image_4f9488c7a65b0ab8875c64ffff889f8f25e9 from '../assets/httn_interactive.webp';
+import image_4f9488c7a65b0ab8875c64ffff889f8f25e9d7d6 from '../assets/february_magazine.webp';
 import { useState, useEffect } from "react";
 import {
     ChevronLeft,
@@ -29,9 +30,9 @@ const slides = [
     },
     {
         id: 2,
-        title: "Become a Kidspiration Hero Today",
-        subtitle: "Enlist to join the ER💯 Campaign.",
-        description: "Everyone reach 100 children.",
+        title: "The Last Child Challenge",
+        subtitle: "Enlist to join the Last Child challenge.",
+        description: "We are on the race to reach the last child with the Healing to the Nations Magazine for Kids.",
         image: image_0f9a8ae30e33c625a31a88a9c4552868a558fbdf,
         ctaText: "Join Now",
         ctaAction: "join",
@@ -42,7 +43,7 @@ const slides = [
         title: "Read Healing to the Nations Magazine",
         subtitle: "Interactive Digital Magazine for Kids",
         description: "Stories, games, and miracles made just for you!",
-        image: image_4f9488c7a65b0ab8875c64ffff889f8f25e9d7d6,
+        image: image_4f9488c7a65b0ab8875c64ffff889f8f25e9,
         ctaText: "HTTN Magazine",
         ctaAction: "httn",
         gradient: "from-teal-400 via-cyan-500 to-blue-500",
