@@ -51,7 +51,7 @@ const slides = [
     {
         id: 5,
         title: "Order HTTN Magazine for Kids",
-        subtitle: "Get the January Edition of the HTTN FOR KIDS",
+        subtitle: "Get the February Edition of the HTTN FOR KIDS",
         description: "Order the new Healing to the Nations Magazine for Kids",
         image: image_4f9488c7a65b0ab8875c64ffff889f8f25e9d7d6,
         ctaText: "Order Now",
